@@ -80,7 +80,6 @@ export default function Part1({ item }: Part1Props) {
           ))}
         </div>
       </div>
-
     </div>
   );
 }

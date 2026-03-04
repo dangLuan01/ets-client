@@ -16,7 +16,15 @@ interface TestState {
   // --- THÊM MỚI ---
   setCurrentItemIndex: (index: number) => void;
   nextQuestion: () => void;
+  prevQuestion: () => void;
+  jumpToQuestion: (index: number) => void;
   resetTest: () => void;
+  isSubmitModalOpen: boolean; // Trạng thái đóng/mở Modal Nộp bài
+  setSubmitModalOpen: (isOpen: boolean) => void;
+  isQuestionListModalOpen: boolean;
+  setQuestionListModalOpen: (isOpen: boolean) => void;
+  volume: number;
+  setVolume: (vol: number) => void;
 }
 
 export const useTestStore = create<TestState>((set) => ({
@@ -49,5 +57,20 @@ export const useTestStore = create<TestState>((set) => ({
     currentItemIndex: state.currentItemIndex + 1 
   })),
 
-  resetTest: () => set({ answers: {}, markedForReview: new Set(), currentPart: 1, currentItemIndex: 0 })
+  prevQuestion: () => set((state) => ({ 
+    currentItemIndex: Math.max(0, state.currentItemIndex - 1) 
+  })),
+
+  jumpToQuestion: (index) => set({ currentItemIndex: index }),
+
+  resetTest: () => set({ answers: {}, markedForReview: new Set(), currentPart: 1, currentItemIndex: 0 }),
+
+  isSubmitModalOpen: false,
+  setSubmitModalOpen: (isOpen) => set({ isSubmitModalOpen: isOpen }),
+
+  isQuestionListModalOpen: false,
+  setQuestionListModalOpen: (isOpen) => set({ isQuestionListModalOpen: isOpen }),
+
+  volume: 1, // Mặc định 100% âm lượng
+  setVolume: (vol) => set({ volume: vol }),
 }));

@@ -6,6 +6,11 @@ import TestLayout from '@/components/layout/TestLayout';
 import Part1 from '@/components/parts/Part1';
 import Part2 from '@/components/parts/Part2';
 import Part3_4 from '@/components/parts/Part3_4';
+import Part5 from './parts/Part5';
+import Part6 from './parts/Part6';
+import Part7 from './parts/Part7';
+import SubmitModal from './ui/SubmitModal';
+import QuestionListModal from './ui/QuestionListModal';
 
 export default function TestEngine({ initialData }: any) {
   // 1. STATE QUẢN LÝ MÀN HÌNH BẮT ĐẦU
@@ -13,6 +18,7 @@ export default function TestEngine({ initialData }: any) {
 
   const currentItemIndex = useTestStore((state) => state.currentItemIndex);
   const setCurrentPart = useTestStore((state) => state.setCurrentPart);
+  const jumpToQuestion = useTestStore((state) => state.jumpToQuestion);
 
  // 1. HÀM FLATTEN THÔNG MINH (Xử lý mảng Skills -> Parts -> Items)
   const flatItemsList = useMemo(() => {
@@ -78,37 +84,6 @@ export default function TestEngine({ initialData }: any) {
     }
   }, [currentItem, setCurrentPart]);
 
-  // if (!isTestStarted) {
-  //   return (
-  //     <div className="flex flex-col items-center justify-center h-screen w-full bg-[#f0f2f5]">
-  //       <div className="bg-white p-12 rounded-[8px] shadow-lg text-center max-w-xl border-t-8 border-[#0a1b3f]">
-  //         <h1 className="text-3xl font-bold text-[#0a1b3f] mb-2">
-  //           IIG VIET NAM
-  //         </h1>
-  //         <h2 className="text-xl font-semibold text-gray-700 mb-8">
-  //           {initialData.title || "Listening & Reading Test"}
-  //         </h2>
-          
-  //         <div className="bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded text-left mb-8 text-sm leading-relaxed">
-  //           <p className="font-bold mb-1">Lưu ý trước khi thi:</p>
-  //           <ul className="list-disc pl-5">
-  //             <li>Hãy đảm bảo loa hoặc tai nghe của bạn đang hoạt động tốt.</li>
-  //             <li>Không tải lại trang (F5) trong suốt quá trình làm bài.</li>
-  //             <li>Hệ thống âm thanh sẽ tự động phát và <b>không thể tua lại</b>.</li>
-  //           </ul>
-  //         </div>
-
-  //         <button
-  //           onClick={() => setIsTestStarted(true)} // Cú click "thần thánh" mở khóa Autoplay
-  //           className="bg-[#f28322] hover:bg-[#d97017] transition-colors text-white font-bold py-3 px-10 rounded-[6px] shadow-md text-lg"
-  //         >
-  //           Bắt đầu làm bài
-  //         </button>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
   if (!currentItem) {
     return <div className="p-10 text-center font-bold">End of Test...</div>;
   }
@@ -129,9 +104,9 @@ export default function TestEngine({ initialData }: any) {
       return (
         <div className="flex flex-col items-center justify-center h-full p-10 bg-white overflow-y-auto">
           <div className="max-w-3xl border-2 border-gray-400 p-8 shadow-sm bg-[#fafafa] w-full">
-            <h2 className="text-2xl font-bold mb-6 text-center underline font-serif">
-              {currentItem.partId === 0 ? 'LISTENING TEST' : `PART ${currentItem.partId}`}
-            </h2>
+            {/* <h2 className="text-2xl font-bold mb-6 text-center underline font-serif">
+              {currentItem.partId === 0 ? '' : `PART ${currentItem.partId}`}
+            </h2> */}
             <p className="text-[16px] leading-relaxed text-justify font-serif whitespace-pre-line">
               {currentItem.text}
             </p>
@@ -175,6 +150,12 @@ export default function TestEngine({ initialData }: any) {
       case 3:
       case 4:
         return <Part3_4 item={currentItem}/>
+      case 5:
+        return <Part5 item={currentItem}/>
+      case 6:
+        return <Part6 item={currentItem}/>
+      case 7:
+        return <Part7 item={currentItem}/>
       default:
         return <div>Question UI for Part {currentItem.partId}</div>;
     }
@@ -211,6 +192,12 @@ export default function TestEngine({ initialData }: any) {
       headerTitle = `${skillPrefix}: Questions ${currentQuestionNumber} of ${totalQ}`;
     }
   }
+  const currentSkillCode = currentItem?.skillCode || 'LISTENING'
+  const isListening = currentSkillCode === 'LISTENING';
+  // LOGIC CHẶN LÙI LẠI LISTENING TỪ READING
+  const prevItem = flatItemsList[currentItemIndex - 1];
+  // Khóa nút Back nếu: Đang ở câu đầu tiên (0) HOẶC Đang ở Reading mà định lùi về Listening
+  const disableBackButton = currentItemIndex === 0 || (currentSkillCode === 'READING' && prevItem?.skillCode === 'LISTENING');
 
   const handleStartTest = () => {
     // Ngay khoảnh khắc người dùng click chuột, ta "tóm" lấy thẻ audio và ép nó phát!
@@ -226,19 +213,21 @@ export default function TestEngine({ initialData }: any) {
     setIsTestStarted(true);
   };
 
-  // return (
-  //   <TestLayout 
-  //     timeLeft="02:00:00" // Tương lai sẽ gắn với Hook đếm ngược
-  //     headerTitle={headerTitle}
-  //     totalQuestion={initialData.total_question}
-  //     currentQuestionNumber={currentQuestionNumber}
-  //     audioUrl={initialData.audio_full_url}
-  //     currentAudioStartMs={currentAudioStartMs || null}
-  //     currentAudioEndMs={currentAudioEndMs || null}
-  //   >
-  //     {renderCurrentPart()}
-  //   </TestLayout>
-  // );
+  // HÀM DEBUG: NHẢY THẲNG ĐẾN READING
+  const handleSkipToReading = () => {
+    // 1. Tìm vị trí (index) đầu tiên trong mảng có mã kỹ năng là 'READING'
+    const readingIndex = flatItemsList.findIndex(item => item.skillCode === 'READING');
+
+    if (readingIndex !== -1) {
+      // 2. Ép Store nhảy thẳng đến index đó
+      jumpToQuestion(readingIndex);
+      // 3. Mở khóa màn hình thi (Không cần bật Audio vì Reading không có âm thanh)
+      setIsTestStarted(true);
+    } else {
+      alert("Oops! Không tìm thấy phần READING trong JSON của bạn.");
+    }
+  };
+
   return (
     <TestLayout 
       timeLeft="02:00:00"
@@ -250,8 +239,11 @@ export default function TestEngine({ initialData }: any) {
       // BƯỚC QUAN TRỌNG: Nếu chưa bắt đầu, truyền null để chặn logic tự nhảy câu
       currentAudioStartMs={isTestStarted ? (currentAudioStartMs ?? null) : null}
       currentAudioEndMs={isTestStarted ? (currentAudioEndMs ?? null) : null}
+      currentSkillCode= {currentSkillCode}
+      disableBackButton={disableBackButton}
     >
-      
+      <SubmitModal flatItemsList={flatItemsList} />
+      <QuestionListModal flatItemsList={flatItemsList} />
       {!isTestStarted ? (
         // --- GIAO DIỆN MÀN HÌNH CHỜ ---
         <div className="flex flex-col items-center justify-center h-full w-full bg-[#f0f2f5] absolute inset-0 z-20">
@@ -274,8 +266,15 @@ export default function TestEngine({ initialData }: any) {
               onClick={handleStartTest}
               className="bg-[#f28322] hover:bg-[#d97017] transition-colors text-white font-bold py-3 px-10 rounded-[6px] shadow-md text-lg"
             >
-              Bắt đầu làm bài
+              Let's Go
             </button>
+            {/* NÚT DÀNH CHO DEVELOPER (Xóa đi khi đưa lên Production) */}
+              <button
+                onClick={handleSkipToReading}
+                className="bg-gray-800 hover:bg-black transition-colors text-white font-bold py-2 px-6 rounded-[6px] shadow-sm text-sm border-2 border-dashed border-gray-400 w-full max-w-[300px]"
+              >
+                🚀 Skip to Reading (Debug)
+              </button>
           </div>
         </div>
       ) : (

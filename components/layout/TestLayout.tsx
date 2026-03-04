@@ -13,7 +13,9 @@ interface TestLayoutProps {
   audioUrl?: string;
   currentAudioStartMs?: number | null;
   currentAudioEndMs?: number | null;
-  totalQuestion?: number; // Thêm prop này từ TestEngine
+  totalQuestion?: number;
+  currentSkillCode?: string;
+  disableBackButton?: boolean;
 }
 
 export default function TestLayout({ 
@@ -24,7 +26,9 @@ export default function TestLayout({
   audioUrl, 
   currentAudioStartMs, 
   currentAudioEndMs,
-  totalQuestion = 200
+  totalQuestion = 200,
+  currentSkillCode = 'LISTENING',
+  disableBackButton = false
 }: TestLayoutProps) {
   
   return (
@@ -71,7 +75,11 @@ export default function TestLayout({
       </main>
 
       {/* 4. FOOTER */}
-      <TestFooter totalQuestions={totalQuestion} />
+      <TestFooter 
+      totalQuestions={totalQuestion} 
+      currentSkillCode={currentSkillCode}
+      disableBackButton={disableBackButton}
+      />
       
     </div>
   );
