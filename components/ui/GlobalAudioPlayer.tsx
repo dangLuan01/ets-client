@@ -40,7 +40,7 @@ export default function GlobalAudioPlayer({
       hls.attachMedia(audioRef.current);
       
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        console.log("Đã tải xong luồng M3U8!");
+        //console.log("Đã tải xong luồng M3U8!");
       });
     } 
     // Dành cho Safari (tự hỗ trợ nguyên bản)

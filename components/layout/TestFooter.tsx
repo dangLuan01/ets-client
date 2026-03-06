@@ -1,17 +1,17 @@
 'use client';
 
-import QuestionPalette from '../ui/QuestionPalette';
 import { useTestStore } from '@/store/useTestStore';
 
 interface TestFooterProps {
-  totalQuestions?: number;
   currentSkillCode: string;
   disableBackButton?: boolean;
+  disableNextButton?: boolean;
 }
 
 export default function TestFooter({ 
   currentSkillCode,
-  disableBackButton = false
+  disableBackButton = false,
+  disableNextButton = false
 }: TestFooterProps) {
   const nextQuestion = useTestStore((state) => state.nextQuestion);
   const prevQuestion = useTestStore((state) => state.prevQuestion);
@@ -52,7 +52,8 @@ export default function TestFooter({
           </button>
           <button
             onClick={nextQuestion}
-            className="px-5 py-2 h-[40px] bg-[#1e3a8a] hover:bg-[#152b69] text-white font-bold rounded-[4px] shadow-sm transition-colors flex items-center"
+            disabled={disableNextButton}
+            className="px-5 py-2 h-[40px] bg-[#1e3a8a] hover:bg-[#152b69] disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed text-white font-bold rounded-[4px] shadow-sm transition-colors flex items-center"
           >
             Next
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-4 h-4 ml-1">
@@ -62,7 +63,6 @@ export default function TestFooter({
         </div>
       </div>
       )}
-      {/* <QuestionPalette totalQuestions={totalQuestions} /> */}
     </footer>
   );
 }

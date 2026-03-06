@@ -11,14 +11,24 @@ import Part6 from './parts/Part6';
 import Part7 from './parts/Part7';
 import SubmitModal from './ui/SubmitModal';
 import QuestionListModal from './ui/QuestionListModal';
+import { examService } from '@/services/examService';
+import { SubmitExamPayload } from '@/types/exam';
+import ResultScreen from './ui/ResultScreen';
 
 export default function TestEngine({ initialData }: any) {
   // 1. STATE QUẢN LÝ MÀN HÌNH BẮT ĐẦU
   const [isTestStarted, setIsTestStarted] = useState(false);
-
+  const [remainingSeconds, setRemainingSeconds] = useState(7200);
+  // Cờ đánh dấu xem đã reset giờ cho phần Reading chưa (chỉ reset 1 lần)
+  const [hasResetForReading, setHasResetForReading] = useState(false);
   const currentItemIndex = useTestStore((state) => state.currentItemIndex);
   const setCurrentPart = useTestStore((state) => state.setCurrentPart);
   const jumpToQuestion = useTestStore((state) => state.jumpToQuestion);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [testResult, setTestResult] = useState<any>(null); // State lưu kết quả trả về từ API
+  const answers = useTestStore((state) => state.answers);
+
 
  // 1. HÀM FLATTEN THÔNG MINH (Xử lý mảng Skills -> Parts -> Items)
   const flatItemsList = useMemo(() => {
@@ -193,11 +203,13 @@ export default function TestEngine({ initialData }: any) {
     }
   }
   const currentSkillCode = currentItem?.skillCode || 'LISTENING'
-  const isListening = currentSkillCode === 'LISTENING';
+
   // LOGIC CHẶN LÙI LẠI LISTENING TỪ READING
   const prevItem = flatItemsList[currentItemIndex - 1];
   // Khóa nút Back nếu: Đang ở câu đầu tiên (0) HOẶC Đang ở Reading mà định lùi về Listening
   const disableBackButton = currentItemIndex === 0 || (currentSkillCode === 'READING' && prevItem?.skillCode === 'LISTENING');
+
+  const disableNextButton = currentItemIndex === flatItemsList.length - 1;
 
   const handleStartTest = () => {
     // Ngay khoảnh khắc người dùng click chuột, ta "tóm" lấy thẻ audio và ép nó phát!
@@ -228,9 +240,108 @@ export default function TestEngine({ initialData }: any) {
     }
   };
 
+  // 1. EFFECT ĐẾM NGƯỢC THỜI GIAN
+  useEffect(() => {
+    // Chỉ đếm ngược khi đã bắt đầu thi và thời gian còn > 0
+    if (!isTestStarted || remainingSeconds <= 0) {
+      if (remainingSeconds === 0 && isTestStarted) {
+        // HẾT GIỜ: Tự động xử lý nộp bài ở đây
+        alert("Hết giờ làm bài! Hệ thống đang tự động nộp bài...");
+        // Bạn có thể gọi hàm submit ở đây ở các bước sau
+      }
+      return;
+    }
+
+    const timerId = setInterval(() => {
+      setRemainingSeconds((prev) => prev - 1);
+    }, 1000);
+
+    // Dọn dẹp interval khi component unmount hoặc state thay đổi
+    return () => clearInterval(timerId);
+  }, [isTestStarted, remainingSeconds]);
+
+  // 2. EFFECT KIỂM TRA VÀ RESET GIỜ KHI SANG READING
+  useEffect(() => {
+    // Nếu vừa bước sang READING và chưa reset giờ bao giờ
+    if (currentSkillCode === 'READING' && !hasResetForReading) {
+      // 4500 giây = 75 phút (01:15:00)
+      setRemainingSeconds(4500); 
+      setHasResetForReading(true); // Đánh dấu là đã reset rồi, không reset lại nữa
+    }
+  }, [currentSkillCode, hasResetForReading]);
+
+  // 3. HÀM FORMAT GIÂY THÀNH CHUỖI HH:MM:SS
+  const formatTime = (totalSeconds: number) => {
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    
+    // Thêm số 0 đằng trước nếu nhỏ hơn 10 (VD: 9 -> 09)
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
+
+  const handleSubmitTest = async () => {
+    setIsSubmitting(true);
+
+    const formattedAnswers: any[] = [];
+
+    // Format dữ liệu giống hệt bước trước
+    flatItemsList.forEach(item => {
+      if (item.entity_type === 'SINGLE') {
+        const qId = item.entity_id || item.question_data?.question_id;
+        formattedAnswers.push({
+          question_id: qId,
+          selected_answer: answers[qId]?.option || "" 
+        });
+      } else if (item.entity_type === 'GROUP') {
+        item.group_data?.sub_questions?.forEach((q: any) => {
+          const qId = q.id || q.question_id;
+          formattedAnswers.push({
+            question_id: qId,
+            selected_answer: answers[qId]?.option || "" 
+          });
+        });
+      }
+    });
+
+    // 2. Tạo Payload với Type chuẩn
+    const payload: SubmitExamPayload = {
+      exam_id: initialData.id || initialData.exam_id || 1,
+      //time_taken: timeElapsedRef.current,
+      answers: formattedAnswers
+    };
+
+    // 3. Gọi qua Tầng Service thay vì dùng Fetch trực tiếp
+    try {
+      const result = await examService.submitTest(payload);
+
+      if (result && result.data) {
+        setTestResult(result.data); // Hiển thị UI bảng điểm
+      } else {
+        alert("Không thể chấm điểm, dữ liệu trả về không hợp lệ!");
+      }
+    } catch (error) {
+      alert("Lỗi kết nối máy chủ khi nộp bài! Vui lòng kiểm tra lại mạng.");
+    } finally {
+      setIsSubmitting(false);
+      useTestStore.getState().setSubmitModalOpen(false);
+    }
+  };
+
+  if (testResult) {
+    return (
+      <ResultScreen 
+        testResult={testResult} 
+        onBack={() => {
+          window.location.reload(); 
+        }} 
+      />
+    );
+  }
+
   return (
     <TestLayout 
-      timeLeft="02:00:00"
+      timeLeft={formatTime(remainingSeconds)}
       totalQuestion={initialData.total_question || 200}
       // Nếu chưa bắt đầu, đổi Header thành "Ready to Start"
       headerTitle={!isTestStarted ? "Ready to Start" : headerTitle}
@@ -241,8 +352,13 @@ export default function TestEngine({ initialData }: any) {
       currentAudioEndMs={isTestStarted ? (currentAudioEndMs ?? null) : null}
       currentSkillCode= {currentSkillCode}
       disableBackButton={disableBackButton}
+      disableNextButton={disableNextButton}
     >
-      <SubmitModal flatItemsList={flatItemsList} />
+      <SubmitModal 
+        flatItemsList={flatItemsList} 
+        onSubmitTest={handleSubmitTest}
+        isSubmitting={isSubmitting}
+      />
       <QuestionListModal flatItemsList={flatItemsList} />
       {!isTestStarted ? (
         // --- GIAO DIỆN MÀN HÌNH CHỜ ---
@@ -281,7 +397,6 @@ export default function TestEngine({ initialData }: any) {
         // --- GIAO DIỆN BÀI THI ---
         renderCurrentPart()
       )}
-
     </TestLayout>
   );
 }

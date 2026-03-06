@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import GlobalAudioPlayer from '../ui/GlobalAudioPlayer';
 import TestHeader from './TestHeader';
 import TestFooter from './TestFooter';
@@ -16,6 +16,7 @@ interface TestLayoutProps {
   totalQuestion?: number;
   currentSkillCode?: string;
   disableBackButton?: boolean;
+  disableNextButton?: boolean;
 }
 
 export default function TestLayout({ 
@@ -28,7 +29,8 @@ export default function TestLayout({
   currentAudioEndMs,
   totalQuestion = 200,
   currentSkillCode = 'LISTENING',
-  disableBackButton = false
+  disableBackButton = false,
+  disableNextButton = false
 }: TestLayoutProps) {
   
   return (
@@ -76,9 +78,9 @@ export default function TestLayout({
 
       {/* 4. FOOTER */}
       <TestFooter 
-      totalQuestions={totalQuestion} 
       currentSkillCode={currentSkillCode}
       disableBackButton={disableBackButton}
+      disableNextButton={disableNextButton}
       />
       
     </div>

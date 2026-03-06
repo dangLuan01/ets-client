@@ -5,9 +5,11 @@ import { useTestStore } from '@/store/useTestStore';
 
 interface SubmitModalProps {
   flatItemsList: any[];
+  onSubmitTest: () => void;
+  isSubmitting: boolean;
 }
 
-export default function SubmitModal({ flatItemsList }: SubmitModalProps) {
+export default function SubmitModal({ flatItemsList, isSubmitting, onSubmitTest }: SubmitModalProps) {
   const isSubmitModalOpen = useTestStore((state) => state.isSubmitModalOpen);
   const setSubmitModalOpen = useTestStore((state) => state.setSubmitModalOpen);
   const jumpToQuestion = useTestStore((state) => state.jumpToQuestion);
@@ -123,11 +125,12 @@ export default function SubmitModal({ flatItemsList }: SubmitModalProps) {
           >
             Review
           </button>
-          <button 
-            onClick={() => alert("Chức năng nộp bài, tính điểm và hiển thị kết quả sẽ được xử lý ở bước sau!")}
+          <button
+            onClick={onSubmitTest}
+            disabled={isSubmitting}
             className="px-8 py-2.5 rounded-[6px] bg-[#0a1b3f] text-white font-bold hover:bg-[#152b69] transition-colors"
           >
-            Finish test
+            {isSubmitting ? "Submitting..." : "Finish test"}
           </button>
         </div>
 

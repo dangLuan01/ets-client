@@ -1,5 +1,5 @@
 // services/examService.ts
-import { ExamPayload } from '@/types/exam';
+import { ExamPayload, SubmitExamPayload } from '@/types/exam';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.yourserver.com';
 
@@ -48,6 +48,33 @@ export const examService = {
     } catch (error) {
       console.error('Error fetching exam:', error);
       return null;
+    }
+  },
+
+  // Hàm nộp bài thi
+  submitTest: async (payload: SubmitExamPayload) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/exams/calculate/score`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Bạn có thể thêm Authorization Token ở đây sau này:
+          // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(payload),
+      });
+
+      // Bắt lỗi HTTP (400, 500...)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      return result;
+      
+    } catch (error) {
+      console.error("[examService] Error submitting test:", error);
+      throw error; // Ném lỗi ra ngoài để UI Component tự xử lý hiển thị
     }
   }
 };

@@ -64,3 +64,13 @@ export interface ExamSkill {
   skill_name: string;
   parts: ExamPart[];
 }
+
+export interface SubmitAnswer {
+  question_id: number;
+  selected_answer: string;
+}
+
+export interface SubmitExamPayload {
+  exam_id: number;
+  answers: SubmitAnswer[];
+}
