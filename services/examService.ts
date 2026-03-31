@@ -1,5 +1,6 @@
 // services/examService.ts
 import { ExamPayload, SubmitExamPayload } from '@/types/exam';
+import { FilterApiResponse, FilterOption } from '@/types/filter';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.yourserver.com';
 
@@ -76,5 +77,37 @@ export const examService = {
       console.error("[examService] Error submitting test:", error);
       throw error; // Ném lỗi ra ngoài để UI Component tự xử lý hiển thị
     }
-  }
+  },
+
+  /**
+   * Lấy cấu trúc bộ lọc cho trang danh sách đề thi
+   */
+  async getFilterStructure(): Promise<FilterOption[] | null> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/exams/filter-structure`, {
+        method: 'GET',
+        cache: 'no-store', 
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        console.error(`Failed to fetch filter structure: ${response.statusText}`);
+        return null;
+      }
+
+      const resJson: FilterApiResponse = await response.json();
+
+      if (!resJson || !resJson.data) {
+        console.error('Invalid API response structure for filters: Missing "data" payload');
+        return null;
+      }
+
+      return resJson.data;
+    } catch (error) {
+      console.error('Error fetching filter structure:', error);
+      return null;
+    }
+  },
 };

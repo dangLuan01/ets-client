@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { examService } from "@/services/examService";
+import { FilterOption } from "@/types/filter";
 
 const exams = [
   {
@@ -179,6 +181,17 @@ const ExamListRow = ({ exam }: { exam: typeof exams[0] }) => {
 const KhoDeThiPage = () => {
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
     const [filterPreset, setFilterPreset] = useState<string>('all');
+    const [filters, setFilters] = useState<FilterOption[]>([]);
+
+    useEffect(() => {
+      const fetchFilters = async () => {
+        const filterData = await examService.getFilterStructure();
+        if (filterData) {
+          setFilters(filterData);
+        }
+      };
+      fetchFilters();
+    }, []);
 
     const filterPresets = [
         { id: 'all', label: '📚 Tất cả đề', icon: 'fa-th' },
@@ -210,30 +223,14 @@ const KhoDeThiPage = () => {
                       <i className="fas fa-search absolute left-3.5 top-3.5 text-slate-400"></i>
                   </div>
 
-                  {/* Filter by Type */}
-                  <div className="space-y-3 mb-6">
-                      <h4 className="font-bold text-sm uppercase text-slate-400">Loại đề</h4>
-                      <FilterCheckbox label="Full Test (200 câu)" />
-                      <FilterCheckbox label="Mini Test (100 câu)" />
-                      <FilterCheckbox label="Luyện Part 1-7" />
-                  </div>
-
-                  {/* Filter by Source */}
-                  <div className="space-y-3 mb-6">
-                      <h4 className="font-bold text-sm uppercase text-slate-400">Bộ đề</h4>
-                      <FilterCheckbox label="ETS 2026" />
-                      <FilterCheckbox label="ETS 2025" />
-                      <FilterCheckbox label="Hacker TOEIC" />
-                      <FilterCheckbox label="Economy TOEIC" />
-                  </div>
-                  
-                   {/* Filter by Status */}
-                  <div className="space-y-3 mb-6">
-                      <h4 className="font-bold text-sm uppercase text-slate-400">Trạng thái</h4>
-                      <FilterCheckbox label="Chưa làm" />
-                      <FilterCheckbox label="Đang làm" />
-                      <FilterCheckbox label="Đã hoàn thành" />
-                  </div>
+                  {filters.map(filterGroup => (
+                    <div key={filterGroup.id} className="space-y-3 mb-6">
+                      <h4 className="font-bold text-sm uppercase text-slate-400">{filterGroup.name}</h4>
+                      {filterGroup.children?.map(option => (
+                        <FilterCheckbox key={option.id} label={option.name} />
+                      ))}
+                    </div>
+                  ))}
                   
                   <button className="w-full text-sm text-indigo-600 font-bold hover:underline">Xóa tất cả bộ lọc</button>
               </div>
