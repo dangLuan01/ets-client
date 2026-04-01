@@ -1,3 +1,4 @@
+
 // services/examService.ts
 import { ExamPayload, SubmitExamPayload } from '@/types/exam';
 import { FilterApiResponse, FilterOption } from '@/types/filter';
@@ -108,6 +109,36 @@ export const examService = {
     } catch (error) {
       console.error('Error fetching filter structure:', error);
       return null;
+    }
+  },
+  /**
+   * Lấy danh sách đề thi với filter
+   * @param params Các tham số filter: limit, page, search, category_id
+   */
+  async filterExams(params: { limit?: number; page?: number; search?: string; category_id?: number[] }) {
+    try {
+      const query = new URLSearchParams();
+      if (params.search !== undefined) query.append('search', params.search);
+      if (params.limit !== undefined) query.append('limit', String(params.limit));
+      if (params.page !== undefined) query.append('page', String(params.page));
+      if (params.category_id && Array.isArray(params.category_id)) {
+        params.category_id.forEach(id => query.append('category_id', String(id)));
+      }
+      const url = `${API_BASE_URL}/api/v1/exams/filter?${query.toString()}`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('[examService] Error filtering exams:', error);
+      throw error;
     }
   },
 };
