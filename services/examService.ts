@@ -3,7 +3,7 @@
 import { ExamPayload, SubmitExamPayload } from '@/types/exam';
 import { FilterApiResponse, FilterOption } from '@/types/filter';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.yourserver.com';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.vidhub.io.vn';
 
 interface ApiResponse {
   data: ExamPayload;

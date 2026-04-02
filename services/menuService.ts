@@ -1,6 +1,6 @@
 import { ApiResponse, Menu } from '@/types/menu';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.yourserver.com';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.vidhub.io.vn';
 
 export const menuService = {
     async getMenu(limit = 10, type = "header"): Promise<Menu[] | null> {
