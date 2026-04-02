@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+export const dynamic = "force-dynamic";
+
 export default function Home() {
   return (
     <main className="container mx-auto max-w-7xl md:pt-32 p-4 md:p-6">
