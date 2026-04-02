@@ -28,3 +28,5 @@ export default async function TestPage({ params }: PageProps) {
     <TestEngine initialData={examData} />
   );
 }
+
+export const dynamic = "force-dynamic";
