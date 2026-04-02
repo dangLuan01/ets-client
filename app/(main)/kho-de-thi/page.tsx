@@ -293,4 +293,6 @@ const KhoDeThiPage = () => {
     );
 }
 
+export const dynamic = "force-dynamic";
+
 export default KhoDeThiPage;

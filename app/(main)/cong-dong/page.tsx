@@ -58,6 +58,8 @@ const communityPosts = [
   },
 ];
 
+export const dynamic = "force-dynamic";
+
 const CongDongPage = () => {
   return (
     <main className="container mx-auto max-w-3xl md:pt-32 p-4 md:p-6">

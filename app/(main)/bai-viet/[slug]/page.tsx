@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+export const dynamic = "force-dynamic";
+
 const BaiVietPage = () => {
   return (
     <main className="container mx-auto md:pt-32 p-4 md:p-6">

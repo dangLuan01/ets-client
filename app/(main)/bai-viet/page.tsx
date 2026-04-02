@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+export const dynamic = "force-dynamic";
+
 const BlogPage = () => {
     return (
         <main className="container mx-auto max-w-7xl md:pt-32 p-4 md:p-6">
