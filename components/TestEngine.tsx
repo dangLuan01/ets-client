@@ -6,13 +6,29 @@ import TestLayout from '@/components/layout/TestLayout';
 import Part1 from '@/components/parts/Part1';
 import Part2 from '@/components/parts/Part2';
 import Part3_4 from '@/components/parts/Part3_4';
+import Part5 from './parts/Part5';
+import Part6 from './parts/Part6';
+import Part7 from './parts/Part7';
+import SubmitModal from './ui/SubmitModal';
+import QuestionListModal from './ui/QuestionListModal';
+import { examService } from '@/services/examService';
+import { SubmitExamPayload } from '@/types/exam';
+import ResultScreen from './ui/ResultScreen';
 
 export default function TestEngine({ initialData }: any) {
   // 1. STATE QUẢN LÝ MÀN HÌNH BẮT ĐẦU
   const [isTestStarted, setIsTestStarted] = useState(false);
-
+  const [remainingSeconds, setRemainingSeconds] = useState(7200);
+  // Cờ đánh dấu xem đã reset giờ cho phần Reading chưa (chỉ reset 1 lần)
+  const [hasResetForReading, setHasResetForReading] = useState(false);
   const currentItemIndex = useTestStore((state) => state.currentItemIndex);
   const setCurrentPart = useTestStore((state) => state.setCurrentPart);
+  const jumpToQuestion = useTestStore((state) => state.jumpToQuestion);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [testResult, setTestResult] = useState<any>(null); // State lưu kết quả trả về từ API
+  const answers = useTestStore((state) => state.answers);
+
 
  // 1. HÀM FLATTEN THÔNG MINH (Xử lý mảng Skills -> Parts -> Items)
   const flatItemsList = useMemo(() => {
@@ -78,37 +94,6 @@ export default function TestEngine({ initialData }: any) {
     }
   }, [currentItem, setCurrentPart]);
 
-  // if (!isTestStarted) {
-  //   return (
-  //     <div className="flex flex-col items-center justify-center h-screen w-full bg-[#f0f2f5]">
-  //       <div className="bg-white p-12 rounded-[8px] shadow-lg text-center max-w-xl border-t-8 border-[#0a1b3f]">
-  //         <h1 className="text-3xl font-bold text-[#0a1b3f] mb-2">
-  //           IIG VIET NAM
-  //         </h1>
-  //         <h2 className="text-xl font-semibold text-gray-700 mb-8">
-  //           {initialData.title || "Listening & Reading Test"}
-  //         </h2>
-          
-  //         <div className="bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded text-left mb-8 text-sm leading-relaxed">
-  //           <p className="font-bold mb-1">Lưu ý trước khi thi:</p>
-  //           <ul className="list-disc pl-5">
-  //             <li>Hãy đảm bảo loa hoặc tai nghe của bạn đang hoạt động tốt.</li>
-  //             <li>Không tải lại trang (F5) trong suốt quá trình làm bài.</li>
-  //             <li>Hệ thống âm thanh sẽ tự động phát và <b>không thể tua lại</b>.</li>
-  //           </ul>
-  //         </div>
-
-  //         <button
-  //           onClick={() => setIsTestStarted(true)} // Cú click "thần thánh" mở khóa Autoplay
-  //           className="bg-[#f28322] hover:bg-[#d97017] transition-colors text-white font-bold py-3 px-10 rounded-[6px] shadow-md text-lg"
-  //         >
-  //           Bắt đầu làm bài
-  //         </button>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
   if (!currentItem) {
     return <div className="p-10 text-center font-bold">End of Test...</div>;
   }
@@ -129,9 +114,9 @@ export default function TestEngine({ initialData }: any) {
       return (
         <div className="flex flex-col items-center justify-center h-full p-10 bg-white overflow-y-auto">
           <div className="max-w-3xl border-2 border-gray-400 p-8 shadow-sm bg-[#fafafa] w-full">
-            <h2 className="text-2xl font-bold mb-6 text-center underline font-serif">
-              {currentItem.partId === 0 ? 'LISTENING TEST' : `PART ${currentItem.partId}`}
-            </h2>
+            {/* <h2 className="text-2xl font-bold mb-6 text-center underline font-serif">
+              {currentItem.partId === 0 ? '' : `PART ${currentItem.partId}`}
+            </h2> */}
             <p className="text-[16px] leading-relaxed text-justify font-serif whitespace-pre-line">
               {currentItem.text}
             </p>
@@ -175,6 +160,12 @@ export default function TestEngine({ initialData }: any) {
       case 3:
       case 4:
         return <Part3_4 item={currentItem}/>
+      case 5:
+        return <Part5 item={currentItem}/>
+      case 6:
+        return <Part6 item={currentItem}/>
+      case 7:
+        return <Part7 item={currentItem}/>
       default:
         return <div>Question UI for Part {currentItem.partId}</div>;
     }
@@ -211,6 +202,14 @@ export default function TestEngine({ initialData }: any) {
       headerTitle = `${skillPrefix}: Questions ${currentQuestionNumber} of ${totalQ}`;
     }
   }
+  const currentSkillCode = currentItem?.skillCode || 'LISTENING'
+
+  // LOGIC CHẶN LÙI LẠI LISTENING TỪ READING
+  const prevItem = flatItemsList[currentItemIndex - 1];
+  // Khóa nút Back nếu: Đang ở câu đầu tiên (0) HOẶC Đang ở Reading mà định lùi về Listening
+  const disableBackButton = currentItemIndex === 0 || (currentSkillCode === 'READING' && prevItem?.skillCode === 'LISTENING');
+
+  const disableNextButton = currentItemIndex === flatItemsList.length - 1;
 
   const handleStartTest = () => {
     // Ngay khoảnh khắc người dùng click chuột, ta "tóm" lấy thẻ audio và ép nó phát!
@@ -226,22 +225,123 @@ export default function TestEngine({ initialData }: any) {
     setIsTestStarted(true);
   };
 
-  // return (
-  //   <TestLayout 
-  //     timeLeft="02:00:00" // Tương lai sẽ gắn với Hook đếm ngược
-  //     headerTitle={headerTitle}
-  //     totalQuestion={initialData.total_question}
-  //     currentQuestionNumber={currentQuestionNumber}
-  //     audioUrl={initialData.audio_full_url}
-  //     currentAudioStartMs={currentAudioStartMs || null}
-  //     currentAudioEndMs={currentAudioEndMs || null}
-  //   >
-  //     {renderCurrentPart()}
-  //   </TestLayout>
-  // );
+  // HÀM DEBUG: NHẢY THẲNG ĐẾN READING
+  const handleSkipToReading = () => {
+    // 1. Tìm vị trí (index) đầu tiên trong mảng có mã kỹ năng là 'READING'
+    const readingIndex = flatItemsList.findIndex(item => item.skillCode === 'READING');
+
+    if (readingIndex !== -1) {
+      // 2. Ép Store nhảy thẳng đến index đó
+      jumpToQuestion(readingIndex);
+      // 3. Mở khóa màn hình thi (Không cần bật Audio vì Reading không có âm thanh)
+      setIsTestStarted(true);
+    } else {
+      alert("Oops! Không tìm thấy phần READING trong JSON của bạn.");
+    }
+  };
+
+  // 1. EFFECT ĐẾM NGƯỢC THỜI GIAN
+  useEffect(() => {
+    // Chỉ đếm ngược khi đã bắt đầu thi và thời gian còn > 0
+    if (!isTestStarted || remainingSeconds <= 0) {
+      if (remainingSeconds === 0 && isTestStarted) {
+        // HẾT GIỜ: Tự động xử lý nộp bài ở đây
+        alert("Hết giờ làm bài! Hệ thống đang tự động nộp bài...");
+        // Bạn có thể gọi hàm submit ở đây ở các bước sau
+      }
+      return;
+    }
+
+    const timerId = setInterval(() => {
+      setRemainingSeconds((prev) => prev - 1);
+    }, 1000);
+
+    // Dọn dẹp interval khi component unmount hoặc state thay đổi
+    return () => clearInterval(timerId);
+  }, [isTestStarted, remainingSeconds]);
+
+  // 2. EFFECT KIỂM TRA VÀ RESET GIỜ KHI SANG READING
+  useEffect(() => {
+    // Nếu vừa bước sang READING và chưa reset giờ bao giờ
+    if (currentSkillCode === 'READING' && !hasResetForReading) {
+      // 4500 giây = 75 phút (01:15:00)
+      setRemainingSeconds(4500); 
+      setHasResetForReading(true); // Đánh dấu là đã reset rồi, không reset lại nữa
+    }
+  }, [currentSkillCode, hasResetForReading]);
+
+  // 3. HÀM FORMAT GIÂY THÀNH CHUỖI HH:MM:SS
+  const formatTime = (totalSeconds: number) => {
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    
+    // Thêm số 0 đằng trước nếu nhỏ hơn 10 (VD: 9 -> 09)
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
+
+  const handleSubmitTest = async () => {
+    setIsSubmitting(true);
+
+    const formattedAnswers: any[] = [];
+
+    // Format dữ liệu giống hệt bước trước
+    flatItemsList.forEach(item => {
+      if (item.entity_type === 'SINGLE') {
+        const qId = item.entity_id || item.question_data?.question_id;
+        formattedAnswers.push({
+          question_id: qId,
+          selected_answer: answers[qId]?.option || "" 
+        });
+      } else if (item.entity_type === 'GROUP') {
+        item.group_data?.sub_questions?.forEach((q: any) => {
+          const qId = q.id || q.question_id;
+          formattedAnswers.push({
+            question_id: qId,
+            selected_answer: answers[qId]?.option || "" 
+          });
+        });
+      }
+    });
+
+    // 2. Tạo Payload với Type chuẩn
+    const payload: SubmitExamPayload = {
+      exam_id: initialData.id || initialData.exam_id || 1,
+      //time_taken: timeElapsedRef.current,
+      answers: formattedAnswers
+    };
+
+    // 3. Gọi qua Tầng Service thay vì dùng Fetch trực tiếp
+    try {
+      const result = await examService.submitTest(payload);
+
+      if (result && result.data) {
+        setTestResult(result.data); // Hiển thị UI bảng điểm
+      } else {
+        alert("Không thể chấm điểm, dữ liệu trả về không hợp lệ!");
+      }
+    } catch (error) {
+      alert("Lỗi kết nối máy chủ khi nộp bài! Vui lòng kiểm tra lại mạng.");
+    } finally {
+      setIsSubmitting(false);
+      useTestStore.getState().setSubmitModalOpen(false);
+    }
+  };
+
+  if (testResult) {
+    return (
+      <ResultScreen 
+        testResult={testResult} 
+        onBack={() => {
+          window.location.reload(); 
+        }} 
+      />
+    );
+  }
+
   return (
     <TestLayout 
-      timeLeft="02:00:00"
+      timeLeft={formatTime(remainingSeconds)}
       totalQuestion={initialData.total_question || 200}
       // Nếu chưa bắt đầu, đổi Header thành "Ready to Start"
       headerTitle={!isTestStarted ? "Ready to Start" : headerTitle}
@@ -250,8 +350,16 @@ export default function TestEngine({ initialData }: any) {
       // BƯỚC QUAN TRỌNG: Nếu chưa bắt đầu, truyền null để chặn logic tự nhảy câu
       currentAudioStartMs={isTestStarted ? (currentAudioStartMs ?? null) : null}
       currentAudioEndMs={isTestStarted ? (currentAudioEndMs ?? null) : null}
+      currentSkillCode= {currentSkillCode}
+      disableBackButton={disableBackButton}
+      disableNextButton={disableNextButton}
     >
-      
+      <SubmitModal 
+        flatItemsList={flatItemsList} 
+        onSubmitTest={handleSubmitTest}
+        isSubmitting={isSubmitting}
+      />
+      <QuestionListModal flatItemsList={flatItemsList} />
       {!isTestStarted ? (
         // --- GIAO DIỆN MÀN HÌNH CHỜ ---
         <div className="flex flex-col items-center justify-center h-full w-full bg-[#f0f2f5] absolute inset-0 z-20">
@@ -274,15 +382,21 @@ export default function TestEngine({ initialData }: any) {
               onClick={handleStartTest}
               className="bg-[#f28322] hover:bg-[#d97017] transition-colors text-white font-bold py-3 px-10 rounded-[6px] shadow-md text-lg"
             >
-              Bắt đầu làm bài
+              Let's Go
             </button>
+            {/* NÚT DÀNH CHO DEVELOPER (Xóa đi khi đưa lên Production) */}
+              <button
+                onClick={handleSkipToReading}
+                className="bg-gray-800 hover:bg-black transition-colors text-white font-bold py-2 px-6 rounded-[6px] shadow-sm text-sm border-2 border-dashed border-gray-400 w-full max-w-[300px]"
+              >
+                🚀 Skip to Reading (Debug)
+              </button>
           </div>
         </div>
       ) : (
         // --- GIAO DIỆN BÀI THI ---
         renderCurrentPart()
       )}
-
     </TestLayout>
   );
 }

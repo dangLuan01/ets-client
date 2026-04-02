@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import { useTestStore } from "@/store/useTestStore";
+import { useEffect, useRef, useState } from "react";
 
 interface TestHeaderProps {
   headerTitle: string;
@@ -15,12 +16,32 @@ export default function TestHeader({
   timeLeft,
   totalQuestion
 }: TestHeaderProps) {
+
+  const setSubmitModalOpen = useTestStore((state) => state.setSubmitModalOpen);
+  const volume = useTestStore((state) => state.volume);
+  const setVolume = useTestStore((state) => state.setVolume);
+
+  // State cục bộ để đóng/mở thanh trượt âm lượng
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+  const volumeRef = useRef<HTMLDivElement>(null);
+
+  // Tự động đóng thanh âm lượng khi click ra ngoài
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (volumeRef.current && !volumeRef.current.contains(event.target as Node)) {
+        setShowVolumeSlider(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+  
   return (
     <header className="flex justify-between items-center bg-[#0a1b3f] text-white px-4 py-2 shrink-0 h-[60px] shadow-md z-10">
       
       {/* Góc trái: Logo IIG */}
       <div className="bg-white rounded-[4px] px-3 py-1 flex items-center justify-center h-10 w-[100px]">
-        <span className="text-[#0a1b3f] font-extrabold italic text-xl leading-none">IIG</span>
+        <span className="text-[#0a1b3f] font-extrabold italic text-xl leading-none">ETS</span>
       </div>
       
       {/* Ở giữa: Tiêu đề bài thi */}
@@ -31,12 +52,49 @@ export default function TestHeader({
       {/* Góc phải: Thanh công cụ */}
       <div className="flex items-center space-x-3">
         
-        {/* Nút Âm lượng */}
-        <button className="bg-[#4b84e6] hover:bg-[#396fc8] transition-colors rounded-[6px] w-10 h-[34px] flex items-center justify-center shadow-sm">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-white">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
-          </svg>
-        </button>
+        {/* NÚT ÂM LƯỢNG (Kèm thanh trượt) */}
+        <div className="relative" ref={volumeRef}>
+          <button 
+            onClick={() => setShowVolumeSlider(!showVolumeSlider)}
+            className="bg-[#4b84e6] hover:bg-[#396fc8] transition-colors rounded-[6px] w-10 h-[34px] flex items-center justify-center shadow-sm"
+          >
+            {/* Đổi Icon theo mức âm lượng */}
+            {volume === 0 ? (
+              // Icon Tắt tiếng (Muted)
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-white">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 9.75L19.5 12m0 0l2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+              </svg>
+            ) : volume < 0.5 ? (
+              // Icon Âm lượng nhỏ
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-white">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+              </svg>
+            ) : (
+              // Icon Âm lượng to
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-white">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+              </svg>
+            )}
+          </button>
+
+          {/* Thanh trượt Popup xổ xuống */}
+          {showVolumeSlider && (
+            <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white border border-gray-200 shadow-xl rounded-[6px] p-3 z-50 flex flex-col items-center space-y-2">
+              <span className="text-xs font-bold text-gray-700 select-none">
+                {Math.round(volume * 100)}%
+              </span>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.05" // Mỗi nấc tăng/giảm 5%
+                value={volume}
+                onChange={(e) => setVolume(parseFloat(e.target.value))}
+                className="w-24 accent-[#4b84e6] cursor-pointer"
+              />
+            </div>
+          )}
+        </div>
 
         {/* Bộ đếm câu hỏi */}
         <div className="bg-white text-gray-800 font-bold rounded-[6px] px-4 h-[34px] flex items-center text-[14px] shadow-sm">
@@ -52,7 +110,7 @@ export default function TestHeader({
         </div>
 
         {/* Nút Submit */}
-        <button className="bg-[#f28322] hover:bg-[#d97017] transition-colors text-white font-bold rounded-[6px] px-6 h-[34px] text-[14px] shadow-sm">
+        <button onClick={() =>setSubmitModalOpen(true)} className="bg-[#f28322] hover:bg-[#d97017] transition-colors text-white font-bold rounded-[6px] px-6 h-[34px] text-[14px] shadow-sm">
           Submit
         </button>
       </div>

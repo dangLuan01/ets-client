@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import GlobalAudioPlayer from '../ui/GlobalAudioPlayer';
 import TestHeader from './TestHeader';
 import TestFooter from './TestFooter';
@@ -13,7 +13,10 @@ interface TestLayoutProps {
   audioUrl?: string;
   currentAudioStartMs?: number | null;
   currentAudioEndMs?: number | null;
-  totalQuestion?: number; // Thêm prop này từ TestEngine
+  totalQuestion?: number;
+  currentSkillCode?: string;
+  disableBackButton?: boolean;
+  disableNextButton?: boolean;
 }
 
 export default function TestLayout({ 
@@ -24,7 +27,10 @@ export default function TestLayout({
   audioUrl, 
   currentAudioStartMs, 
   currentAudioEndMs,
-  totalQuestion = 200
+  totalQuestion = 200,
+  currentSkillCode = 'LISTENING',
+  disableBackButton = false,
+  disableNextButton = false
 }: TestLayoutProps) {
   
   return (
@@ -71,7 +77,11 @@ export default function TestLayout({
       </main>
 
       {/* 4. FOOTER */}
-      <TestFooter totalQuestions={totalQuestion} />
+      <TestFooter 
+      currentSkillCode={currentSkillCode}
+      disableBackButton={disableBackButton}
+      disableNextButton={disableNextButton}
+      />
       
     </div>
   );
