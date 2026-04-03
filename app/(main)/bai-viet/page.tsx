@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 
 export const dynamic = "force-dynamic";
@@ -19,7 +18,7 @@ const BlogPage = () => {
                     <Link href="/bai-viet/chien-thuat-skimming-scanning-part-7">
                         <article className="group cursor-pointer">
                             <div className="relative rounded-2xl overflow-hidden mb-5 aspect-video shadow-sm border border-slate-100">
-                                <Image src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=500" alt="post image" fill style={{objectFit: 'cover'}} className="group-hover:scale-105 transition duration-500"/>
+                                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=500" alt="post image" style={{objectFit: 'cover'}} className="group-hover:scale-105 transition duration-500"/>
                                 <div className="absolute bottom-4 left-4">
                                     <span className="bg-indigo-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase">Kinh nghiệm</span>
                                 </div>
@@ -37,7 +36,7 @@ const BlogPage = () => {
 
                     <article className="group cursor-pointer">
                         <div className="relative rounded-2xl overflow-hidden mb-5 aspect-video shadow-sm border border-slate-100">
-                            <Image src="https://images.unsplash.com/photo-1454165205744-3b78555e5572?auto=format&fit=crop&w=500" alt="post image" fill style={{objectFit: 'cover'}} className="group-hover:scale-105 transition duration-500"/>
+                            <img src="https://images.unsplash.com/photo-1454165205744-3b78555e5572?auto=format&fit=crop&w=500" alt="post image" style={{objectFit: 'cover'}} className="group-hover:scale-105 transition duration-500"/>
                             <div className="absolute bottom-4 left-4">
                                 <span className="bg-emerald-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase">Từ vựng</span>
                             </div>
@@ -54,7 +53,7 @@ const BlogPage = () => {
 
                     <article className="group cursor-pointer">
                         <div className="relative rounded-2xl overflow-hidden mb-5 aspect-video shadow-sm border border-slate-100">
-                            <Image src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=500" alt="post image" fill style={{objectFit: 'cover'}} className="group-hover:scale-105 transition duration-500"/>
+                            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=500" alt="post image" style={{objectFit: 'cover'}} className="group-hover:scale-105 transition duration-500"/>
                             <div className="absolute bottom-4 left-4">
                                 <span className="bg-amber-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase">Ngữ pháp</span>
                             </div>

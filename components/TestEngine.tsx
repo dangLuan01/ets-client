@@ -364,7 +364,7 @@ export default function TestEngine({ initialData }: any) {
         // --- GIAO DIỆN MÀN HÌNH CHỜ ---
         <div className="flex flex-col items-center justify-center h-full w-full bg-[#f0f2f5] absolute inset-0 z-20">
           <div className="bg-white p-12 rounded-[8px] shadow-lg text-center max-w-xl border-t-8 border-[#0a1b3f]">
-            <h1 className="text-3xl font-bold text-[#0a1b3f] mb-2">IIG VIET NAM</h1>
+            <h1 className="text-3xl font-bold text-[#0a1b3f] mb-2">TOIEC VIET</h1>
             <h2 className="text-xl font-semibold text-gray-700 mb-8">
               {initialData.title || "Listening & Reading Test"}
             </h2>
@@ -385,12 +385,12 @@ export default function TestEngine({ initialData }: any) {
               Let's Go
             </button>
             {/* NÚT DÀNH CHO DEVELOPER (Xóa đi khi đưa lên Production) */}
-              <button
+              {/* <button
                 onClick={handleSkipToReading}
                 className="bg-gray-800 hover:bg-black transition-colors text-white font-bold py-2 px-6 rounded-[6px] shadow-sm text-sm border-2 border-dashed border-gray-400 w-full max-w-[300px]"
               >
                 🚀 Skip to Reading (Debug)
-              </button>
+              </button> */}
           </div>
         </div>
       ) : (

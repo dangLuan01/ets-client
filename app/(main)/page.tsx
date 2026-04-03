@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 export const dynamic = "force-dynamic";
 
 export default function Home() {
@@ -105,7 +103,7 @@ export default function Home() {
             <div className="space-y-4">
                 <div className="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm">
                     <div className="flex gap-4 items-center mb-3">
-                        <Image src="https://i.pravatar.cc/100?u=1" className="w-8 h-8 rounded-full" alt="user" width={32} height={32}/>
+                        <img src="https://i.pravatar.cc/100?u=1" className="w-8 h-8 rounded-full" alt="user" width={32} height={32}/>
                         <span className="font-bold text-sm">Trần Nam</span>
                         <span className="text-[10px] text-slate-400 ml-auto">5 phút trước</span>
                     </div>

@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 
 export const dynamic = "force-dynamic";
@@ -26,7 +25,7 @@ const BaiVietPage = () => {
             {/* Author Meta */}
             <div className="flex items-center gap-4 mb-6 text-sm text-slate-500">
               <div className="flex items-center gap-2">
-                <Image src="https://i.pravatar.cc/100?u=author" alt="Tác giả" width={32} height={32} className="rounded-full" />
+                <img src="https://i.pravatar.cc/100?u=author" alt="Tác giả" width={32} height={32} className="rounded-full" />
                 <span className="font-bold">Chuyên gia TOEIC</span>
               </div>
               <span>•</span>
@@ -37,9 +36,8 @@ const BaiVietPage = () => {
 
             {/* Main Image */}
             <div className="relative rounded-3xl overflow-hidden mb-8 aspect-video shadow-lg">
-                <Image src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800"
+                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800"
                   alt="Post image"
-                  fill
                   style={{objectFit: 'cover'}}
                 />
             </div>
@@ -99,7 +97,7 @@ const BaiVietPage = () => {
           <div className="sticky top-28 space-y-8">
             {/* Author Box */}
             <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm text-center">
-              <Image src="https://i.pravatar.cc/100?u=author" alt="Tác giả" width={80} height={80} className="rounded-full mx-auto mb-3" />
+              <img src="https://i.pravatar.cc/100?u=author" alt="Tác giả" width={80} height={80} className="rounded-full mx-auto mb-3" />
               <h4 className="font-bold text-lg">Chuyên gia TOEIC</h4>
               <p className="text-sm text-slate-500 mb-3">10 năm kinh nghiệm luyện thi</p>
               <button className="bg-indigo-100 text-indigo-600 text-sm font-bold px-5 py-2 rounded-lg hover:bg-indigo-200 transition-colors">Theo dõi</button>
@@ -111,7 +109,7 @@ const BaiVietPage = () => {
               <div className="space-y-4">
                 <div className="flex gap-4 items-center group">
                   <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-                    <Image src="https://images.unsplash.com/photo-1454165205744-3b78555e5572?auto=format&fit=crop&w=100" width={80} height={80} style={{objectFit: 'cover'}} alt="related post"/>
+                    <img src="https://images.unsplash.com/photo-1454165205744-3b78555e5572?auto=format&fit=crop&w=100" width={80} height={80} style={{objectFit: 'cover'}} alt="related post"/>
                   </div>
                   <div>
                     <p className="text-xs font-bold uppercase text-emerald-500">Từ vựng</p>
@@ -120,7 +118,7 @@ const BaiVietPage = () => {
                 </div>
                  <div className="flex gap-4 items-center group">
                   <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-                     <Image src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=100" width={80} height={80} style={{objectFit: 'cover'}} alt="related post 2"/>
+                     <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=100" width={80} height={80} style={{objectFit: 'cover'}} alt="related post 2"/>
                   </div>
                   <div>
                     <p className="text-xs font-bold uppercase text-amber-500">Ngữ pháp</p>

@@ -1,7 +1,6 @@
 'use client';
 
 import Link from "next/link";
-import Image from "next/image";
 import { useState, useEffect } from "react";
 import { examService } from "@/services/examService";
 import { FilterOption } from "@/types/filter";
@@ -22,7 +21,7 @@ const ExamCard = ({ exam }: { exam: ExamListItem }) => {
   return (
     <div className="bg-white rounded-2xl border border-slate-200/80 hover:shadow-xl hover:shadow-indigo-100/50 transition-all duration-300 group">
       <div className="relative rounded-t-2xl overflow-hidden aspect-[16/10]">
-        <Image src={exam.thumbnail} alt={exam.title} fill style={{objectFit: 'cover'}} className="group-hover:scale-105 transition duration-500" />
+        <img src={exam.thumbnail} alt={exam.title} style={{objectFit: "cover"}} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500" />
       </div>
       <div className="p-4">
         <h4 className="font-black text-slate-900 mb-2 h-12 group-hover:text-indigo-600 transition">{exam.title}</h4>
@@ -49,7 +48,7 @@ const ExamListRow = ({ exam }: { exam: ExamListItem }) => {
   return (
     <div className="bg-white border border-slate-200/80 rounded-xl p-4 hover:shadow-lg hover:shadow-indigo-100/50 transition-all flex gap-4 items-center group">
       <div className="relative w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
-        <Image src={exam.thumbnail} alt={exam.title} fill style={{objectFit: 'cover'}} className="group-hover:scale-110 transition duration-500" />
+        <img src={exam.thumbnail} alt={exam.title} style={{objectFit: "cover"}} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500" />
       </div>
       <div className="flex-1">
         <h4 className="font-black text-slate-900 mb-2 group-hover:text-indigo-600 transition">{exam.title}</h4>
