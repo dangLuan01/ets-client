@@ -1,4 +1,4 @@
-import Image from 'next/image';
+// import Image from 'next/image';
 
 const communityPosts = [
   {
@@ -92,13 +92,7 @@ const CongDongPage = () => {
           <div key={post.id} className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
             {/* Post Header */}
             <div className="flex items-center mb-4">
-              <Image
-                src={post.avatarUrl}
-                alt={post.author}
-                width={40}
-                height={40}
-                className="rounded-full"
-              />
+              <img src={post.avatarUrl} alt={post.author} width={40} height={40} className="rounded-full" />
               <div className="ml-3">
                 <p className="font-bold text-slate-800">{post.author}</p>
                 <p className="text-xs text-slate-400">{post.timestamp}</p>
@@ -142,13 +136,14 @@ const CongDongPage = () => {
                 {post.comments.map(comment => (
                   <div key={comment.id}>
                     <div className="flex items-start">
-                      <Image
+                      <img
                         src={comment.avatarUrl}
                         alt={comment.author}
                         width={32}
                         height={32}
                         className="rounded-full"
                       />
+
                       <div className="ml-3 bg-slate-50 rounded-xl px-4 py-2 w-full">
                         <div className="flex justify-between">
                           <p className="font-bold text-slate-800 text-sm">{comment.author}</p>
@@ -167,7 +162,7 @@ const CongDongPage = () => {
                       <div className="mt-3 ml-8 space-y-3">
                         {comment.replies.map(reply => (
                           <div key={reply.id} className="flex items-start">
-                            <Image
+                            <img
                               src={reply.avatarUrl}
                               alt={reply.author}
                               width={28}
@@ -191,7 +186,7 @@ const CongDongPage = () => {
             )}
              {/* Write a comment */}
             <div className="mt-4 flex items-center gap-3 border-t border-slate-100 pt-4">
-              <Image
+              <img
                 src="https://i.pravatar.cc/100?u=me"
                 alt="Your avatar"
                 width={32}
