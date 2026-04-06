@@ -16,10 +16,10 @@ export default function Part6({ item }: Part6Props) {
   const optionsKeys = ['A', 'B', 'C', 'D'];
 
   return (
-    <div className="flex flex-row h-full w-full p-4 gap-4 bg-[#f0f2f5] overflow-hidden">
+    <div className="flex flex-col lg:flex-row h-full w-full p-2 lg:p-4 gap-4 bg-[#f0f2f5] overflow-hidden">
       
       {/* CỘT TRÁI: Khu vực Hình ảnh Đoạn văn hoặc Text */}
-      <div className="w-1/2 h-full bg-white border border-gray-300 shadow-sm p-8 overflow-y-auto flex flex-col items-center">
+      <div className="w-full lg:w-1/2 h-full bg-white border border-gray-300 shadow-sm p-4 lg:p-8 overflow-y-auto flex flex-col items-center">
         <div className="w-full font-bold text-[#1e3a8a] text-lg mb-6 border-b border-gray-200 pb-2">
           Questions {subQuestions[0]?.display_number} - {subQuestions[subQuestions.length - 1]?.display_number} refer to the following text.
         </div>
@@ -43,7 +43,7 @@ export default function Part6({ item }: Part6Props) {
       </div>
 
       {/* CỘT PHẢI: Khu vực 4 Câu hỏi phụ đổ dọc */}
-      <div className="w-1/2 h-full bg-white border border-gray-300 shadow-sm p-8 overflow-y-auto">
+      <div className="w-full lg:w-1/2 h-full bg-white border border-gray-300 shadow-sm p-4 lg:p-8 overflow-y-auto">
         <h3 className="text-[#1e3a8a] font-bold text-lg mb-6 border-b border-gray-200 pb-2">
           Questions
         </h3>

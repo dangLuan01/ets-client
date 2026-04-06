@@ -74,3 +74,35 @@ export interface SubmitExamPayload {
   exam_id: number;
   answers: SubmitAnswer[];
 }
+
+export interface FeaturedExam {
+    id: number;
+    title: string;
+    year: number;
+    total_time: number;
+    total_question: number;
+    thumbnail: string | null;
+}
+
+export interface FeaturedExamsResponse {
+    name: string;
+    type: string;
+    description: string;
+    exams: FeaturedExam[];
+}
+
+export interface FeaturedExamsApiResponse {
+    data: {
+        pagination: {
+            page: number;
+            limit: number;
+            total_records: number;
+            total_pages: number;
+            has_next: boolean;
+            has_prev: boolean;
+        };
+        response: FeaturedExamsResponse;
+    };
+    message?: string;
+    status?: string;
+}

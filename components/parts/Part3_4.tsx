@@ -18,10 +18,10 @@ export default function Part3_4({ item }: Part3_4Props) {
   const optionsKeys = ['A', 'B', 'C', 'D'];
 
   return (
-    <div className="flex flex-row h-full w-full p-4 gap-4 bg-[#f0f2f5] overflow-hidden">
+    <div className="flex flex-col md:lex-row h-full w-full p-4 gap-4 bg-[#f0f2f5] overflow-y-auto">
       
       {/* CỘT TRÁI: Khu vực Hướng dẫn & Hình ảnh biểu đồ (nếu có) */}
-      <div className="w-1/2 h-full bg-white border border-gray-300 shadow-sm p-8 overflow-y-auto flex flex-col items-center">
+      <div className="w-full md:w-1/2 h-auto md:h-full bg-white border border-gray-300 shadow-sm p-6 flex flex-col items-center">
         <div className="w-full font-bold text-[#1e3a8a] text-lg mb-6">
           {group_data?.image_url 
             ? "Look at the graphic. Then listen to the audio and answer the questions." 
@@ -43,7 +43,7 @@ export default function Part3_4({ item }: Part3_4Props) {
       </div>
 
       {/* CỘT PHẢI: Khu vực 3 Câu hỏi phụ (Sub-questions) */}
-      <div className="w-1/2 h-full bg-white border border-gray-300 shadow-sm p-8 overflow-y-auto">
+      <div className="w-full md:w-1/2 h-auto md:h-full bg-white border border-gray-300 shadow-sm p-6 overflow-y-auto">
         <h3 className="text-[#1e3a8a] font-bold text-lg mb-6 border-b border-gray-200 pb-2">
           Questions
         </h3>

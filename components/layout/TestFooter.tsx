@@ -3,13 +3,11 @@
 import { useTestStore } from '@/store/useTestStore';
 
 interface TestFooterProps {
-  currentSkillCode: string;
   disableBackButton?: boolean;
   disableNextButton?: boolean;
 }
 
 export default function TestFooter({ 
-  currentSkillCode,
   disableBackButton = false,
   disableNextButton = false
 }: TestFooterProps) {
@@ -22,7 +20,6 @@ export default function TestFooter({
       <div className="flex-1 overflow-hidden mr-6 flex items-center">
         
       </div>
-      {currentSkillCode === 'READING' && (
       <div className="flex items-center space-x-2 shrink-0">
         
         {/* Nút Review (Màu xanh Navy, có icon danh sách) */}
@@ -62,7 +59,6 @@ export default function TestFooter({
           </button>
         </div>
       </div>
-      )}
     </footer>
   );
 }

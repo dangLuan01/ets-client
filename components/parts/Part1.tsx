@@ -18,33 +18,30 @@ export default function Part1({ item }: Part1Props) {
     setAnswer(question_data.question_id, optionKey, question_data.display_number);
   };
 
-  // Part 1 có 4 đáp án A, B, C, D
   const part1Options = ['A', 'B', 'C', 'D'];
 
   return (
-    // Nền tổng thể màu xám nhạt bao quanh 2 khung trắng
-    <div className="flex flex-row h-full w-full p-4 gap-4 bg-[#f0f2f5] overflow-hidden">
+    <div className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-[#f0f2f5] overflow-y-auto">
       
       {/* CỘT TRÁI: Khu vực Hình ảnh */}
-      <div className="w-1/2 h-full bg-white border border-gray-300 shadow-sm p-8 overflow-y-auto flex flex-col items-center">
+      <div className="w-full md:w-1/2 h-auto md:h-full bg-white border border-gray-200 shadow-sm p-4 md:p-6 flex flex-col items-center">
         <div className="w-full font-bold text-[#1e3a8a] text-lg mb-6">
           Select the one statement that best describes what you see in the picture.
         </div>
         
-        {/* Bức ảnh Part 1 */}
-        <div className="border border-gray-300 p-2 bg-gray-50 flex items-center justify-center w-full max-w-[500px]">
+        <div className="border border-gray-300 p-1 bg-gray-50 flex items-center justify-center w-full">
           <img 
             src={question_data.image_url} 
             alt={`Question ${order_index}`} 
-            referrerPolicy="no-referrer" // Giữ nguyên thuộc tính này để chống lỗi 403 CDN
-            className="max-h-[450px] w-auto object-contain pointer-events-none select-none"
+            referrerPolicy="no-referrer"
+            className="max-h-[300px] md:max-h-[450px] w-auto object-contain pointer-events-none select-none"
             draggable={false}
           />
         </div>
       </div>
 
       {/* CỘT PHẢI: Khu vực Câu hỏi và Chọn đáp án */}
-      <div className="w-1/2 h-full bg-white border border-gray-300 shadow-sm p-8 overflow-y-auto">
+      <div className="w-full md:w-1/2 h-auto md:h-full bg-white border border-gray-300 shadow-sm p-8 overflow-y-auto">
         <h3 className="text-[#1e3a8a] font-bold text-lg mb-4">Question</h3>
         
         {/* Tiêu đề câu hỏi (VD: 1. Question 1) */}
@@ -52,7 +49,6 @@ export default function Part1({ item }: Part1Props) {
           {order_index}. Question {order_index}
         </p>
         
-        {/* Các khung đáp án (A), (B), (C), (D) đổ dọc */}
         <div className="flex flex-col space-y-3">
           {part1Options.map((key) => (
             <label 
@@ -63,7 +59,6 @@ export default function Part1({ item }: Part1Props) {
                 transition-all duration-200
               `}
             >
-              {/* Radio button tròn */}
               <input 
                 type="radio" 
                 name={`q-${question_data.question_id}`} 
@@ -72,7 +67,6 @@ export default function Part1({ item }: Part1Props) {
                 onChange={() => handleOptionSelect(key)}
                 className="w-4 h-4 accent-[#1e3a8a] cursor-pointer"
               />
-              {/* Ký tự (A), (B), (C), (D) */}
               <span className="text-[14px] font-semibold text-gray-800">
                 ({key})
               </span>

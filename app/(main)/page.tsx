@@ -1,6 +1,12 @@
+import FeaturedExamsSlider from "@/components/FeaturedExamsSlider";
+import { examService } from "@/services/examService";
+import Link from "next/link";
+
 export const dynamic = "force-dynamic";
 
-export default function Home() {
+export default async function Home() {
+  const hotExamData = await examService.getFeaturedExams('hot', 5);
+
   return (
     <main className="container mx-auto max-w-7xl md:pt-32 p-4 md:p-6">
         
@@ -26,26 +32,7 @@ export default function Home() {
 
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
-            <div className="md:col-span-2 bg-white rounded-[2.5rem] p-6 md:p-10 border border-slate-100 relative overflow-hidden group">
-                <div className="relative z-10 space-y-4">
-                    <span className="bg-amber-100 text-amber-700 text-[10px] font-black px-3 py-1 rounded-full">ĐỀ THI HOT NHẤT</span>
-                    <h2 className="text-2xl md:text-4xl font-black">ETS TOEIC 2026 <br />Full Simulation #01</h2>
-                    <p className="text-slate-500 text-sm md:text-base max-w-sm">Mô phỏng 100% áp lực phòng thi thật với giọng đọc đa quốc gia.</p>
-                    <div className="flex items-center gap-6 pt-4">
-                        <div className="text-center">
-                            <p className="text-xl font-black">120</p>
-                            <p className="text-[10px] text-slate-400 font-bold uppercase">Phút</p>
-                        </div>
-                        <div className="w-px h-8 bg-slate-200"></div>
-                        <div className="text-center">
-                            <p className="text-xl font-black">200</p>
-                            <p className="text-[10px] text-slate-400 font-bold uppercase">Câu hỏi</p>
-                        </div>
-                        <button className="bg-indigo-600 text-white px-8 py-3 rounded-2xl font-bold ml-auto shadow-xl">THI NGAY</button>
-                    </div>
-                </div>
-                <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-indigo-50 rounded-full blur-3xl group-hover:bg-indigo-100 transition-all"></div>
-            </div>
+            <FeaturedExamsSlider featuredData={hotExamData} />
 
             <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white flex flex-col justify-between">
                 <div>
