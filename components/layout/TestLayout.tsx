@@ -77,12 +77,12 @@ export default function TestLayout({
       </main>
 
       {/* 4. FOOTER */}
-      <TestFooter 
-      currentSkillCode={currentSkillCode}
-      disableBackButton={disableBackButton}
-      disableNextButton={disableNextButton}
-      />
-      
+      {currentSkillCode === 'READING' && (
+        <TestFooter 
+        disableBackButton={disableBackButton}
+        disableNextButton={disableNextButton}
+        />
+      )}
     </div>
   );
 }

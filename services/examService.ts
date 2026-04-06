@@ -1,6 +1,6 @@
 
 // services/examService.ts
-import { ExamPayload, SubmitExamPayload } from '@/types/exam';
+import { ExamPayload, SubmitExamPayload, FeaturedExamsApiResponse, FeaturedExamsResponse } from '@/types/exam';
 import { FilterApiResponse, FilterOption } from '@/types/filter';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.vidhub.io.vn';
@@ -12,6 +12,43 @@ interface ApiResponse {
 }
 
 export const examService = {
+  /**
+   * Lấy danh sách đề thi nổi bật (hot, new...)
+   */
+  async getFeaturedExams(type: string, limit: number = 1, page: number = 1): Promise<FeaturedExamsResponse | null> {
+    try {
+      const queryParams = new URLSearchParams({
+        limit: String(limit),
+        page: String(page),
+        type: type,
+      });
+      const response = await fetch(`${API_BASE_URL}/api/v1/exams/featured?${queryParams.toString()}`, {
+        method: 'POST',
+        cache: 'no-store', 
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        console.error(`Failed to fetch featured exams (${type}): ${response.statusText}`);
+        return null;
+      }
+
+      const resJson: FeaturedExamsApiResponse = await response.json();
+
+      if (!resJson || !resJson.data || !resJson.data.response) {
+        console.error('Invalid API response structure for featured exams: Missing "data.response" payload');
+        return null;
+      }
+
+      return resJson.data.response;
+    } catch (error) {
+      console.error(`Error fetching featured exams (${type}):`, error);
+      return null;
+    }
+  },
+
   /**
    * Gọi API lấy chi tiết đề thi theo ID
    */

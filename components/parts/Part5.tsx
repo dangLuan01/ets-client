@@ -25,10 +25,10 @@ export default function Part5({ item }: Part5Props) {
   const optionsKeys = ['A', 'B', 'C', 'D'];
 
   return (
-    <div className="flex flex-row h-full w-full p-4 gap-4 bg-[#f0f2f5] overflow-hidden">
+    <div className="flex flex-col md:flex-row h-full w-full p-4 gap-4 bg-[#f0f2f5] overflow-y-auto">
       
       {/* CỘT TRÁI: Khu vực Hướng dẫn Part 5 */}
-      <div className="w-1/2 h-full bg-white border border-gray-300 shadow-sm p-8 overflow-y-auto">
+      <div className="w-full md:w-1/2 h-auto md:h-full bg-white border border-gray-300 shadow-sm p-6 flex flex-col items-center">
         <div className="font-bold text-[#1e3a8a] text-lg mb-4">
           Reading Test - Incomplete Sentences
         </div>
@@ -38,7 +38,7 @@ export default function Part5({ item }: Part5Props) {
       </div>
 
       {/* CỘT PHẢI: Khu vực Câu hỏi và Chọn đáp án */}
-      <div className="w-1/2 h-full bg-white border border-gray-300 shadow-sm p-8 overflow-y-auto">
+      <div className="w-full md:w-1/2 h-auto md:h-full bg-white border border-gray-300 shadow-sm p-6 overflow-y-auto">
         <h3 className="text-[#1e3a8a] font-bold text-lg mb-4 border-b border-gray-200 pb-2">
           Question
         </h3>

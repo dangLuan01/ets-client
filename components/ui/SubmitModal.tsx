@@ -15,6 +15,37 @@ export default function SubmitModal({ flatItemsList, isSubmitting, onSubmitTest 
   const jumpToQuestion = useTestStore((state) => state.jumpToQuestion);
   const answers = useTestStore((state) => state.answers);
 
+  // const listeningParts = useMemo(() => {
+  //   return [1, 2, 3, 4].map(partId => {
+  //     // 1. Lấy tất cả các items của Part này (kèm theo index gốc để có thể jump)
+  //     const items = flatItemsList
+  //       .map((item, index) => ({ ...item, globalIndex: index }))
+  //       .filter(item => item.partId === partId && !item.isSystemScreen);
+      
+  //     const questions: { number: number, index: number, id: number }[] = [];
+
+  //     // 2. Bóc tách từng câu hỏi (Hỗ trợ cả SINGLE và GROUP)
+  //     items.forEach(item => {
+  //       if (item.entity_type === 'SINGLE') {
+  //         questions.push({
+  //           number: item.question_data?.display_number || item.order_index,
+  //           index: item.globalIndex,
+  //           id: item.entity_id || item.question_data?.question_id
+  //         });
+  //       } else if (item.entity_type === 'GROUP') {
+  //         item.group_data?.sub_questions?.forEach((q: any) => {
+  //           questions.push({
+  //             number: q.display_number,
+  //             index: item.globalIndex,
+  //             id: q.id || q.question_id
+  //           });
+  //         });
+  //       }
+  //     });
+
+  //     return { partId, questions };
+  //   });
+  // }, [flatItemsList]);
   // Lọc và gom nhóm câu hỏi thuộc phần Reading (Part 5, 6, 7)
   const readingParts = useMemo(() => {
     return [5, 6, 7].map(partId => {
@@ -67,7 +98,7 @@ export default function SubmitModal({ flatItemsList, isSubmitting, onSubmitTest 
 
         {/* Body: Danh sách câu hỏi */}
         <div className="flex-1 overflow-y-auto p-6 bg-white">
-          
+  
           {/* Nền xanh đậm chữ Reading */}
           <div className="bg-[#0a1b3f] text-white font-bold py-3 px-6 rounded-[4px] mb-6 text-lg">
             Reading
@@ -96,8 +127,8 @@ export default function SubmitModal({ flatItemsList, isSubmitting, onSubmitTest 
                         <button
                           key={q.id}
                           onClick={() => {
-                            //jumpToQuestion(q.index);
-                            //setSubmitModalOpen(false);
+                            // jumpToQuestion(q.index);
+                            // setSubmitModalOpen(false);
                           }}
                           className={`
                             h-8 flex items-center justify-center rounded-[4px] text-[13px] font-bold transition-all
