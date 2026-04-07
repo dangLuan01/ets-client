@@ -23,8 +23,8 @@ export const examService = {
         type: type,
       });
       const response = await fetch(`${API_BASE_URL}/api/v1/exams/featured?${queryParams.toString()}`, {
-        method: 'POST',
-        cache: 'no-store', 
+        method: 'GET',
+        next: { revalidate: 10 },
         headers: {
           'Content-Type': 'application/json',
         },
@@ -57,8 +57,8 @@ export const examService = {
       // Gọi API thực tế của bạn
       // Thêm cache: 'no-store' để đảm bảo luôn lấy đề thi mới nhất, không bị cache lại
       const response = await fetch(`${API_BASE_URL}/api/v1/exams/${testId}/full-test`, {
-        method: 'POST',
-        cache: 'no-store', 
+        method: 'GET',
+        next: {revalidate: 10},
         headers: {
           'Content-Type': 'application/json',
           // 'Authorization': `Bearer ${token}` // Thêm token nếu API của bạn yêu cầu auth
@@ -124,7 +124,6 @@ export const examService = {
     try {
       const response = await fetch(`${API_BASE_URL}/api/v1/exams/filter-structure`, {
         method: 'GET',
-        cache: 'no-store', 
         headers: {
           'Content-Type': 'application/json',
         },
@@ -163,7 +162,7 @@ export const examService = {
       }
       const url = `${API_BASE_URL}/api/v1/exams/filter?${query.toString()}`;
       const response = await fetch(url, {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },

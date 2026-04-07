@@ -9,7 +9,7 @@ export const menuService = {
           // Thêm cache: 'no-store' để đảm bảo luôn lấy đề thi mới nhất, không bị cache lại
           const response = await fetch(`${API_BASE_URL}/api/v1/menus?limit=${limit}&type=${type}`, {
             method: 'GET',
-            cache: 'no-store', 
+            next: { revalidate: 300 },
             headers: {
               'Content-Type': 'application/json',
             },

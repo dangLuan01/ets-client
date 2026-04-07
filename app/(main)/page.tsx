@@ -1,6 +1,5 @@
 import FeaturedExamsSlider from "@/components/FeaturedExamsSlider";
 import { examService } from "@/services/examService";
-import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
