@@ -4,10 +4,11 @@ import React, { useMemo } from 'react';
 import { useTestStore } from '@/store/useTestStore';
 
 interface QuestionListModalProps {
+  isReviewMode?: boolean;
   flatItemsList: any[];
 }
 
-export default function QuestionListModal({ flatItemsList }: QuestionListModalProps) {
+export default function QuestionListModal({ flatItemsList, isReviewMode = false }: QuestionListModalProps) {
   const isOpen = useTestStore((state) => state.isQuestionListModalOpen);
   const setOpen = useTestStore((state) => state.setQuestionListModalOpen);
   const jumpToQuestion = useTestStore((state) => state.jumpToQuestion);
@@ -43,7 +44,12 @@ export default function QuestionListModal({ flatItemsList }: QuestionListModalPr
     });
   };
 
-  const listeningParts = useMemo(() => getPartsData([1, 2, 3, 4]), [flatItemsList]);
+
+  const listeningParts = useMemo(() => {
+    if (!isReviewMode) return []; 
+    return getPartsData([1, 2, 3, 4]); 
+  },[isReviewMode, flatItemsList])
+    
   const readingParts = useMemo(() => getPartsData([5, 6, 7]), [flatItemsList]);
 
   if (!isOpen) return null;
@@ -111,7 +117,10 @@ export default function QuestionListModal({ flatItemsList }: QuestionListModalPr
 
         {/* Body (Cuộn mượt mà) */}
         <div className="flex-1 overflow-y-auto p-6 bg-white">
-          {/* {renderSkillSection("Listening", listeningParts)} */}
+          {isReviewMode && (
+            renderSkillSection("Listening", listeningParts)
+          )}
+          
           {renderSkillSection("Reading", readingParts)}
         </div>
 

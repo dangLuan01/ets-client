@@ -25,6 +25,12 @@ interface TestState {
   setQuestionListModalOpen: (isOpen: boolean) => void;
   volume: number;
   setVolume: (vol: number) => void;
+
+  isReviewMode: boolean;
+  setReviewMode: (isReview: boolean) => void;
+
+  showExplanation: boolean;
+  setShowExplanation: (show: boolean) => void;
 }
 
 export const useTestStore = create<TestState>((set) => ({
@@ -73,4 +79,10 @@ export const useTestStore = create<TestState>((set) => ({
 
   volume: 1, // Mặc định 100% âm lượng
   setVolume: (vol) => set({ volume: vol }),
+
+  isReviewMode: false,
+  setReviewMode: (isReview) => set({ isReviewMode: isReview }),
+
+  showExplanation: false, // <-- Mặc định lúc vào thi là Tắt
+  setShowExplanation: (show) => set({ showExplanation: show }),
 }));

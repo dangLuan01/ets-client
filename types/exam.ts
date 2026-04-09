@@ -7,10 +7,14 @@ export interface ExamOption {
 
 export interface QuestionData {
   question_id: number;
+  question_text?: string;
   image_url?: string;
+  correct_answer: string;
   audio_start_ms?: number;
   audio_end_ms?: number;
   options: ExamOption;
+  explanation?: string;
+  transcript?: string;
 }
 
 export interface SingleItem {

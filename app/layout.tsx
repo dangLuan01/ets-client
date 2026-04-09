@@ -17,7 +17,7 @@ export default function RootLayout({
       <head>
         <Script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></Script>
       </head>
-      <body className="bg-slate-50 text-slate-900 pb-20 md:pb-0">
+      <body className="bg-slate-50 text-slate-900 md:pb-0">
         {children}
       </body>
     </html>

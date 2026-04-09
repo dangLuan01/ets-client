@@ -15,7 +15,13 @@ import { examService } from '@/services/examService';
 import { SubmitExamPayload } from '@/types/exam';
 import ResultScreen from './ui/ResultScreen';
 
-export default function TestEngine({ initialData }: any) {
+interface PageProps {
+  slug: string;
+  examId: string;
+  initialData: any;
+}
+
+export default function TestEngine({ initialData, slug, examId }: PageProps) {
   // 1. STATE QUẢN LÝ MÀN HÌNH BẮT ĐẦU
   const [isTestStarted, setIsTestStarted] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(7200);
@@ -117,9 +123,7 @@ export default function TestEngine({ initialData }: any) {
             {/* <h2 className="text-2xl font-bold mb-6 text-center underline font-serif">
               {currentItem.partId === 0 ? '' : `PART ${currentItem.partId}`}
             </h2> */}
-            <p className="text-[16px] leading-relaxed text-justify font-serif whitespace-pre-line">
-              {currentItem.text}
-            </p>
+            <div className="text-[16px] leading-relaxed text-justify font-serif whitespace-pre-line" dangerouslySetInnerHTML={{__html:currentItem.text}}/>
           </div>
         </div>
       );
@@ -145,7 +149,7 @@ export default function TestEngine({ initialData }: any) {
 
           <div className="w-full max-w-2xl bg-blue-50 border border-blue-200 p-4 shadow-inner">
             <p className="font-serif font-bold text-blue-900 mb-2">Explanation:</p>
-            <p className="font-serif text-blue-800">{currentItem.explanation}</p>
+            <div className="font-serif text-blue-800" dangerouslySetInnerHTML={{__html:currentItem.explanation}}/>
           </div>
         </div>
       );
@@ -331,6 +335,8 @@ export default function TestEngine({ initialData }: any) {
   if (testResult) {
     return (
       <ResultScreen 
+        slug={slug}
+        examId={examId}
         testResult={testResult} 
         onBack={() => {
           window.location.reload(); 
@@ -353,13 +359,14 @@ export default function TestEngine({ initialData }: any) {
       currentSkillCode= {currentSkillCode}
       disableBackButton={disableBackButton}
       disableNextButton={disableNextButton}
+      isReviewMode={false}
     >
       <SubmitModal 
         flatItemsList={flatItemsList} 
         onSubmitTest={handleSubmitTest}
         isSubmitting={isSubmitting}
       />
-      <QuestionListModal flatItemsList={flatItemsList} />
+      <QuestionListModal flatItemsList={flatItemsList} isReviewMode={false}/>
       {!isTestStarted ? (
         // --- GIAO DIỆN MÀN HÌNH CHỜ ---
         <div className="flex flex-col items-center justify-center h-full w-full bg-[#f0f2f5] absolute inset-0 z-20">

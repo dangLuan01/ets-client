@@ -6,6 +6,7 @@ import { examService } from '@/services/examService';
 // Định nghĩa props cho Next.js 16 App Router
 interface PageProps {
   params: Promise<{
+    slug: string;
     testId: string;
   }>;
 }
@@ -25,7 +26,7 @@ export default async function TestPage({ params }: PageProps) {
 
   // Nếu có dữ liệu, truyền xuống Client Component (TestEngine)
   return (
-    <TestEngine initialData={examData} />
+    <TestEngine initialData={examData} slug={(await params).slug} examId={(await params).testId}/>
   );
 }
 
