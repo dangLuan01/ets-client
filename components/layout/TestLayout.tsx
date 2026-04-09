@@ -17,6 +17,7 @@ interface TestLayoutProps {
   currentSkillCode?: string;
   disableBackButton?: boolean;
   disableNextButton?: boolean;
+  isReviewMode?: boolean;
 }
 
 export default function TestLayout({ 
@@ -30,7 +31,8 @@ export default function TestLayout({
   totalQuestion = 200,
   currentSkillCode = 'LISTENING',
   disableBackButton = false,
-  disableNextButton = false
+  disableNextButton = false,
+  isReviewMode = false
 }: TestLayoutProps) {
   
   return (
@@ -45,8 +47,12 @@ export default function TestLayout({
       />
 
       {/* 2. THANH AUDIO ẨN */}
+
       {audioUrl && (
-        <div className="h-1 opacity-0 pointer-events-none">
+        <div className={isReviewMode ? 
+          "w-full bg-red-50 p-2" : 
+          "h-1 opacity-0 pointer-events-none"}
+        >
           <GlobalAudioPlayer
             audioUrl={audioUrl} 
             currentAudioStartMs={currentAudioStartMs || null} 
@@ -77,7 +83,7 @@ export default function TestLayout({
       </main>
 
       {/* 4. FOOTER */}
-      {currentSkillCode === 'READING' && (
+      {(currentSkillCode === 'READING' || isReviewMode) && (
         <TestFooter 
         disableBackButton={disableBackButton}
         disableNextButton={disableNextButton}

@@ -190,11 +190,11 @@ export default function GlobalAudioPlayer({
         {isPlaying ? '⏸' : '▶'}
       </button>
 
-      {isWaiting && (
+      {/* {isWaiting && (
         <span className="text-red-600 font-bold text-xs animate-pulse min-w-[120px]">
           Time to answer! (5s)
         </span>
-      )}
+      )} */}
 
       <div className="flex-1 h-2 bg-gray-300 border border-gray-500 relative overflow-hidden pointer-events-none">
         <div 

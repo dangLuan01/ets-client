@@ -20,6 +20,8 @@ export default function Part1({ item }: Part1Props) {
 
   const part1Options = ['A', 'B', 'C', 'D'];
 
+  const isReviewMode = useTestStore((state) => state.isReviewMode);
+
   return (
     <div className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-[#f0f2f5] overflow-y-auto">
       
@@ -38,6 +40,7 @@ export default function Part1({ item }: Part1Props) {
             draggable={false}
           />
         </div>
+        
       </div>
 
       {/* CỘT PHẢI: Khu vực Câu hỏi và Chọn đáp án */}
@@ -49,29 +52,50 @@ export default function Part1({ item }: Part1Props) {
           {order_index}. Question {order_index}
         </p>
         
-        <div className="flex flex-col space-y-3">
-          {part1Options.map((key) => (
+        <div className="flex flex-col space-y-3 mt-4">
+          {part1Options.map((key) => {
+            
+            const optionText = question_data.options?.[key];
+            const isSelected = currentAnswer === key;
+            const isCorrect = question_data.correct_answer?.toUpperCase() === key;
+            let reviewBgClass = 'border-gray-300 bg-white';
+
+            if (isReviewMode) {
+              if (isCorrect) reviewBgClass = 'border-blue-500 bg-blue-50'; 
+              //else if (isSelected && !isCorrect) reviewBgClass = 'border-red-500 bg-red-50';
+            } else {
+              reviewBgClass = isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:bg-gray-50';
+            }
+            
+            return (
             <label 
               key={key} 
               className={`
                 flex items-center space-x-3 cursor-pointer p-3 border rounded-[4px]
-                ${currentAnswer === key ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:bg-gray-50'}
-                transition-all duration-200
+                ${reviewBgClass} transition-all duration-200
               `}
             >
               <input 
                 type="radio" 
                 name={`q-${question_data.question_id}`} 
                 value={key}
-                checked={currentAnswer === key}
-                onChange={() => handleOptionSelect(key)}
-                className="w-4 h-4 accent-[#1e3a8a] cursor-pointer"
+                checked={isSelected || (isReviewMode && isCorrect)}
+                onChange={() => !isReviewMode && handleOptionSelect(key)}
+                className="appearance-none w-5 h-5 rounded-full border-2 border-gray-400 bg-white 
+                  checked:bg-[#374151] checked:border-[#374151] 
+                  disabled:opacity-70 disabled:cursor-not-allowed
+                  cursor-pointer shrink-0 transition-colors duration-200"
               />
-              <span className="text-[14px] font-semibold text-gray-800">
-                ({key})
+              <span className="text-[14px] text-gray-800 leading-tight">
+                 <span className="font-semibold mr-2">({key})</span>
+                 {isReviewMode && (
+                  optionText
+                 )}
               </span>
             </label>
-          ))}
+             )
+          })}
+          
         </div>
       </div>
     </div>
