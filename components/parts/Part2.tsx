@@ -86,7 +86,7 @@ export default function Part2({ item }: Part2Props) {
             </div>
           ) : (
             // HIỂN THỊ Ở CHẾ ĐỘ THI THẬT
-            <p className="font-bold text-gray-800 text-[15px] mt-1 italic opacity-80">
+            <p className="font-bold text-gray-800 text-[15px] mt-1 opacity-80">
               Question {order_index}
             </p>
           )}

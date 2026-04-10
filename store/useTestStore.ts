@@ -5,6 +5,7 @@ interface TestState {
   answers: Record<string | number, AnswerData>;
   markedForReview: Set<number>;
   currentPart: number;
+  totalItems: number; // Tổng số items trong flatItemsList
   
   // --- THÊM MỚI ---
   currentItemIndex: number; // Theo dõi thứ tự câu hỏi đang hiển thị
@@ -12,6 +13,7 @@ interface TestState {
   setAnswer: (questionId: string | number, option: string, displayNumber: number) => void;
   toggleMarkForReview: (questionId: number) => void;
   setCurrentPart: (part: number) => void;
+  setTotalItems: (total: number) => void; // Setter cho totalItems
   
   // --- THÊM MỚI ---
   setCurrentItemIndex: (index: number) => void;
@@ -37,6 +39,7 @@ export const useTestStore = create<TestState>((set) => ({
   answers: {},
   markedForReview: new Set(),
   currentPart: 1,
+  totalItems: 0, // Khởi tạo totalItems
   currentItemIndex: 0, // Bắt đầu từ câu hỏi đầu tiên (index 0)
 
   setAnswer: (questionId, option, displayNumber) => 
@@ -55,21 +58,30 @@ export const useTestStore = create<TestState>((set) => ({
     }),
 
   setCurrentPart: (part) => set({ currentPart: part }),
+  setTotalItems: (total) => set({ totalItems: total }), // Implement setter
 
   setCurrentItemIndex: (index) => set({ currentItemIndex: index }),
 
-  // Hàm tự động nhảy câu
-  nextQuestion: () => set((state) => ({ 
-    currentItemIndex: state.currentItemIndex + 1 
-  })),
+  // Hàm tự động nhảy câu (ĐÃ CẬP NHẬT)
+  nextQuestion: () => set((state) => {
+    // Chỉ tăng nếu chưa phải là item cuối cùng
+    if (state.currentItemIndex < state.totalItems - 1) {
+      return { currentItemIndex: state.currentItemIndex + 1 };
+    }
+    // Nếu đã là item cuối cùng, không thay đổi state để tránh lỗi
+    return {}; 
+  }),
 
   prevQuestion: () => set((state) => ({ 
     currentItemIndex: Math.max(0, state.currentItemIndex - 1) 
   })),
 
-  jumpToQuestion: (index) => set({ currentItemIndex: index }),
+  jumpToQuestion: (index) => set((state) => {
+    const newIndex = Math.max(0, Math.min(index, state.totalItems - 1));
+    return { currentItemIndex: newIndex };
+  }),
 
-  resetTest: () => set({ answers: {}, markedForReview: new Set(), currentPart: 1, currentItemIndex: 0 }),
+  resetTest: () => set({ answers: {}, markedForReview: new Set(), currentPart: 1, currentItemIndex: 0, totalItems: 0 }),
 
   isSubmitModalOpen: false,
   setSubmitModalOpen: (isOpen) => set({ isSubmitModalOpen: isOpen }),
@@ -77,7 +89,7 @@ export const useTestStore = create<TestState>((set) => ({
   isQuestionListModalOpen: false,
   setQuestionListModalOpen: (isOpen) => set({ isQuestionListModalOpen: isOpen }),
 
-  volume: 1, // Mặc định 100% âm lượng
+  volume: 0.8, // Mặc định 100% âm lượng
   setVolume: (vol) => set({ volume: vol }),
 
   isReviewMode: false,

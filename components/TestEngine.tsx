@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo, useEffect, useState, useCallback } from 'react';
 import { useTestStore } from '@/store/useTestStore';
 import TestLayout from '@/components/layout/TestLayout';
 import Part1 from '@/components/parts/Part1';
@@ -24,12 +24,14 @@ interface PageProps {
 export default function TestEngine({ initialData, slug, examId }: PageProps) {
   // 1. STATE QUẢN LÝ MÀN HÌNH BẮT ĐẦU
   const [isTestStarted, setIsTestStarted] = useState(false);
-  const [remainingSeconds, setRemainingSeconds] = useState(7200);
+  const [remainingSeconds, setRemainingSeconds] = useState(initialData.total_time * 60);
   // Cờ đánh dấu xem đã reset giờ cho phần Reading chưa (chỉ reset 1 lần)
   const [hasResetForReading, setHasResetForReading] = useState(false);
   const currentItemIndex = useTestStore((state) => state.currentItemIndex);
   const setCurrentPart = useTestStore((state) => state.setCurrentPart);
   const jumpToQuestion = useTestStore((state) => state.jumpToQuestion);
+  const setTotalItems = useTestStore((state) => state.setTotalItems);
+  const resetTest = useTestStore((state) => state.resetTest);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [testResult, setTestResult] = useState<any>(null); // State lưu kết quả trả về từ API
@@ -38,7 +40,7 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
 
  // 1. HÀM FLATTEN THÔNG MINH (Xử lý mảng Skills -> Parts -> Items)
   const flatItemsList = useMemo(() => {
-  const flatList: any[] = [];
+    const flatList: any[] = [];
     
     // Duyệt qua từng Skill (LISTENING, READING)
     initialData.skills?.forEach((skill: any) => {
@@ -93,6 +95,18 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
   }, [initialData]);
 
   const currentItem = flatItemsList[currentItemIndex];
+
+  // CẬP NHẬT TỔNG SỐ CÂU VÀO STORE
+  useEffect(() => {
+    setTotalItems(flatItemsList.length);
+  }, [flatItemsList, setTotalItems]);
+  
+  // Reset trạng thái khi component unmount
+  useEffect(() => {
+    return () => {
+      resetTest();
+    }
+  }, [resetTest]);
 
   useEffect(() => {
     if (currentItem && currentItem.partId !== undefined) {
@@ -244,15 +258,62 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
     }
   };
 
+  const handleSubmitTest = useCallback(async () => {
+    // Ngăn chặn submit nhiều lần
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    const formattedAnswers: any[] = [];
+
+    // Format dữ liệu giống hệt bước trước
+    flatItemsList.forEach(item => {
+      if (!item.isSystemScreen && item.entity_type === 'SINGLE') {
+        const qId = item.entity_id || item.question_data?.question_id;
+        formattedAnswers.push({
+          question_id: qId,
+          selected_answer: answers[qId]?.option || "" 
+        });
+      } else if (!item.isSystemScreen && item.entity_type === 'GROUP') {
+        item.group_data?.sub_questions?.forEach((q: any) => {
+          const qId = q.id || q.question_id;
+          formattedAnswers.push({
+            question_id: qId,
+            selected_answer: answers[qId]?.option || "" 
+          });
+        });
+      }
+    });
+
+    const payload: SubmitExamPayload = {
+      exam_id: parseInt(examId, 10),
+      answers: formattedAnswers
+    };
+
+    try {
+      const result = await examService.submitTest(payload);
+      if (result && result.data) {
+        setTestResult(result.data);
+      } else {
+        alert("Không thể chấm điểm, dữ liệu trả về không hợp lệ!");
+      }
+    } catch (error) {
+      alert("Lỗi kết nối máy chủ khi nộp bài! Vui lòng kiểm tra lại mạng.");
+      setIsSubmitting(false); // Reset submitting state on error
+    } finally {
+      // Đặt isSubmitting về false và đóng modal sẽ được xử lý trong khối try/catch
+      // để đảm bảo chỉ xảy ra sau khi có kết quả hoặc lỗi.
+      useTestStore.getState().setSubmitModalOpen(false);
+    }
+  }, [isSubmitting, flatItemsList, answers, examId]);
+
   // 1. EFFECT ĐẾM NGƯỢC THỜI GIAN
   useEffect(() => {
-    // Chỉ đếm ngược khi đã bắt đầu thi và thời gian còn > 0
-    if (!isTestStarted || remainingSeconds <= 0) {
-      if (remainingSeconds === 0 && isTestStarted) {
-        // HẾT GIỜ: Tự động xử lý nộp bài ở đây
-        alert("Hết giờ làm bài! Hệ thống đang tự động nộp bài...");
-        // Bạn có thể gọi hàm submit ở đây ở các bước sau
-      }
+    // Chỉ đếm ngược khi test đã bắt đầu và chưa bị submit
+    if (!isTestStarted || isSubmitting) return;
+
+    if (remainingSeconds <= 0) {
+      handleSubmitTest();
       return;
     }
 
@@ -260,9 +321,8 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
       setRemainingSeconds((prev) => prev - 1);
     }, 1000);
 
-    // Dọn dẹp interval khi component unmount hoặc state thay đổi
     return () => clearInterval(timerId);
-  }, [isTestStarted, remainingSeconds]);
+  }, [isTestStarted, isSubmitting, remainingSeconds, handleSubmitTest]);
 
   // 2. EFFECT KIỂM TRA VÀ RESET GIỜ KHI SANG READING
   useEffect(() => {
@@ -282,54 +342,6 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
     
     // Thêm số 0 đằng trước nếu nhỏ hơn 10 (VD: 9 -> 09)
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  };
-
-  const handleSubmitTest = async () => {
-    setIsSubmitting(true);
-
-    const formattedAnswers: any[] = [];
-
-    // Format dữ liệu giống hệt bước trước
-    flatItemsList.forEach(item => {
-      if (item.entity_type === 'SINGLE') {
-        const qId = item.entity_id || item.question_data?.question_id;
-        formattedAnswers.push({
-          question_id: qId,
-          selected_answer: answers[qId]?.option || "" 
-        });
-      } else if (item.entity_type === 'GROUP') {
-        item.group_data?.sub_questions?.forEach((q: any) => {
-          const qId = q.id || q.question_id;
-          formattedAnswers.push({
-            question_id: qId,
-            selected_answer: answers[qId]?.option || "" 
-          });
-        });
-      }
-    });
-
-    // 2. Tạo Payload với Type chuẩn
-    const payload: SubmitExamPayload = {
-      exam_id: initialData.id || initialData.exam_id || 1,
-      //time_taken: timeElapsedRef.current,
-      answers: formattedAnswers
-    };
-
-    // 3. Gọi qua Tầng Service thay vì dùng Fetch trực tiếp
-    try {
-      const result = await examService.submitTest(payload);
-
-      if (result && result.data) {
-        setTestResult(result.data); // Hiển thị UI bảng điểm
-      } else {
-        alert("Không thể chấm điểm, dữ liệu trả về không hợp lệ!");
-      }
-    } catch (error) {
-      alert("Lỗi kết nối máy chủ khi nộp bài! Vui lòng kiểm tra lại mạng.");
-    } finally {
-      setIsSubmitting(false);
-      useTestStore.getState().setSubmitModalOpen(false);
-    }
   };
 
   if (testResult) {
