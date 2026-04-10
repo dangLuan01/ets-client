@@ -20,7 +20,8 @@ export default function PracticeEngine({ initialData }: PracticeEngineProps) {
   const currentItemIndex = useTestStore((state) => state.currentItemIndex);
   const setReviewMode = useTestStore((state) => state.setReviewMode);
   const setShowExplanation = useTestStore((state) => state.setShowExplanation);
-
+  const setTotalItems = useTestStore((state) => state.setTotalItems);
+  const resetTest = useTestStore((state) => state.resetTest);
   // 1. QUẢN LÝ VÒNG ĐỜI CỦA CHẾ ĐỘ LUYỆN TẬP
   useEffect(() => {
     // Bật chế độ Review ngay khi vào trang Luyện tập
@@ -62,9 +63,21 @@ export default function PracticeEngine({ initialData }: PracticeEngineProps) {
   const currentItem = flatItemsList[currentItemIndex];
   const currentSkillCode = currentItem?.skillCode || 'LISTENING';
 
+   // CẬP NHẬT TỔNG SỐ CÂU VÀO STORE
+  useEffect(() => {
+    setTotalItems(flatItemsList.length);
+  }, [flatItemsList, setTotalItems]);
+  
+  // Reset trạng thái khi component unmount
+  useEffect(() => {
+    return () => {
+      resetTest();
+    }
+  }, [resetTest]);
+
   // 3. HÀM ĐIỀU PHỐI GIAO DIỆN TỪNG PART
   const renderCurrentPart = () => {
-    if (!currentItem) return <div className="p-8 text-center text-gray-500">Đang tải dữ liệu...</div>;
+    if (!currentItem) return <div className="p-8 text-center text-gray-500">The End</div>;
     
     // Tái sử dụng 100% các Component hiển thị câu hỏi cũ
     switch (currentItem.partId) {
