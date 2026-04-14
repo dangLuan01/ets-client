@@ -56,7 +56,7 @@ export default function Part5({ item }: Part5Props) {
         
         {/* Nội dung câu hỏi (Ví dụ: 101. Mr. Smith _______ the meeting yesterday.) */}
         <div className="mb-6">
-          <p className="text-gray-800 text-[16px] leading-relaxed">
+          <p className="font-semibold text-gray-900 text-[16px] leading-relaxed">
             {displayNumber}. {question_data?.question_text}
           </p>
         </div>
@@ -95,7 +95,7 @@ export default function Part5({ item }: Part5Props) {
                             disabled:opacity-70 disabled:cursor-not-allowed
                             cursor-pointer shrink-0 transition-colors duration-200"
                 />
-                <span className="text-[15px] text-gray-800">
+                <span className="font-medium text-[15px] text-gray-900">
                   <span className="font-semibold mr-2">({key})</span>
                   {optionText}
                 </span>

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from 'next/navigation';
 import { examService } from "@/services/examService";
 import { FilterOption } from "@/types/filter";
 
@@ -66,14 +67,20 @@ const ExamListRow = ({ exam }: { exam: ExamListItem }) => {
 }
 
 const KhoDeThiPage = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [filterPreset, setFilterPreset] = useState<string>('all');
   const [filters, setFilters] = useState<FilterOption[]>([]);
   const [examList, setExamList] = useState<ExamListItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [search, setSearch] = useState('');
-  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
-  const [page, setPage] = useState(1);
+  
+  const [search, setSearch] = useState(searchParams.get('search') || '');
+  const [selectedCategories, setSelectedCategories] = useState<number[]>(
+    searchParams.getAll('category').map(Number) || []
+  );
+  const [page, setPage] = useState(Number(searchParams.get('page')) || 1);
+  
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -88,18 +95,25 @@ const KhoDeThiPage = () => {
   }, []);
 
   useEffect(() => {
+    const params = new URLSearchParams();
+    if (search) params.set('search', search);
+    selectedCategories.forEach(id => params.append('category', String(id)));
+    if (page > 1) params.set('page', String(page));
+    
+    router.push(`?${params.toString()}`, { scroll: false });
+
     const fetchExams = async () => {
       setIsLoading(true);
       try {
-        const params: any = {
+        const apiParams: any = {
           limit,
           page,
           search,
         };
         if (selectedCategories.length > 0) {
-          params.category_id = selectedCategories;
+          apiParams.category_id = selectedCategories;
         }
-        const res = await examService.filterExams(params);
+        const res = await examService.filterExams(apiParams);
         setExamList(res?.data?.response || []);
         setTotalPages(res?.data?.pagination?.total_pages || 1);
       } catch (e) {
@@ -109,7 +123,7 @@ const KhoDeThiPage = () => {
       }
     };
     fetchExams();
-  }, [limit, page, search, selectedCategories]);
+  }, [search, selectedCategories, page, limit, router]);
 
   const filterPresets = [
     { id: 'all', label: '📚 Tất cả đề', icon: 'fa-th' },
@@ -293,6 +307,5 @@ const KhoDeThiPage = () => {
     );
 }
 
-export const dynamic = "force-dynamic";
 
 export default KhoDeThiPage;

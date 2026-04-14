@@ -36,7 +36,7 @@ export default function Part7({ item }: Part7Props) {
               alt="Reading Passage" 
               referrerPolicy="no-referrer"
               // Bỏ max-w để ảnh bành trướng tối đa theo chiều rộng cột, giúp thí sinh dễ đọc chữ nhỏ
-              className="w-full h-auto object-contain pointer-events-none select-none border border-gray-300 p-1 bg-gray-50 shadow-sm"
+              className="w-full h-auto object-contain pointer-events-none select-none p-1"
               draggable={false}
             />
           </div>
@@ -74,8 +74,8 @@ export default function Part7({ item }: Part7Props) {
             return (
               <div key={qId} className="flex flex-col">
                 {/* Tiêu đề câu hỏi: Hiển thị nổi bật nội dung câu hỏi (VD: What is the main purpose of the email?) */}
-                <p className="font-bold text-gray-800 mb-4 text-[16px] leading-relaxed">
-                  {q.display_number}. <span className="font-semibold text-gray-700">{q.question_text}</span>
+                <p className="font-semibold text-gray-900 mb-4 text-[16px] leading-relaxed">
+                  {q.display_number}. {q.question_text}
                 </p>
                 
                 {/* Các đáp án (A), (B), (C), (D) */}
@@ -112,8 +112,8 @@ export default function Part7({ item }: Part7Props) {
                             disabled:opacity-70 disabled:cursor-not-allowed
                             cursor-pointer shrink-0 transition-colors duration-200"
                         />
-                        <span className="text-[15px] text-gray-800 leading-tight">
-                          <span className="font-bold text-gray-600 mr-2">({key})</span>
+                        <span className="font-medium text-[15px] text-gray-900 leading-tight">
+                          <span className="mr-2">({key})</span>
                           {optionText}
                         </span>
                       </label>

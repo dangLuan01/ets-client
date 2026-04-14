@@ -70,7 +70,7 @@ export default function Part3_4({ item }: Part3_4Props) {
             return (
               <div key={q.question_id} className="flex flex-col">
                 {/* Tiêu đề câu hỏi */}
-                <p className="font-bold text-gray-800 mb-4 text-[15px]">
+                <p className="font-semibold text-gray-900 mb-4 text-[16px]">
                   {q.display_number}. {q.question_text}
                 </p>
                 
@@ -109,8 +109,8 @@ export default function Part3_4({ item }: Part3_4Props) {
                             cursor-pointer shrink-0 transition-colors duration-200"
                         />
                         <div className="flex flex-col">
-                          <span className="text-[14px] text-gray-800 leading-tight">
-                            <span className="font-semibold mr-2">({key})</span>
+                          <span className="font-medium text-[15px] text-gray-900 leading-tight">
+                            <span className="mr-2">({key})</span>
                             {optionText}
                           </span>
                         </div>

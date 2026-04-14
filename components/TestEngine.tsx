@@ -133,11 +133,8 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
     if (currentItem.isSystemScreen && currentItem.screenType === 'DIRECTION') {
       return (
         <div className="flex flex-col items-center justify-center h-full p-10 bg-white overflow-y-auto">
-          <div className="max-w-3xl border-2 border-gray-400 p-8 shadow-sm bg-[#fafafa] w-full">
-            {/* <h2 className="text-2xl font-bold mb-6 text-center underline font-serif">
-              {currentItem.partId === 0 ? '' : `PART ${currentItem.partId}`}
-            </h2> */}
-            <div className="text-[16px] leading-relaxed text-justify font-serif whitespace-pre-line" dangerouslySetInnerHTML={{__html:currentItem.text}}/>
+          <div className="max-w-4xl p-8 shadow-2xs w-full">
+            <div className="text-[17px] leading-relaxed text-justify font-serif whitespace-pre-line" dangerouslySetInnerHTML={{__html:currentItem.text}}/>
           </div>
         </div>
       );
@@ -146,24 +143,31 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
     // UI CHO MÀN HÌNH VÍ DỤ (Thường ở Part 1)
     if (currentItem.isSystemScreen && currentItem.screenType === 'EXAMPLE') {
       return (
-        <div className="flex flex-col items-center justify-start h-full p-8 bg-white overflow-y-auto">
-          <div className="w-full max-w-4xl mb-6 pb-2 border-b-2 border-gray-300">
-            <h2 className="text-lg font-bold font-sans">Example</h2>
-            {/* <p className="text-sm italic text-gray-600 whitespace-pre-line">{currentItem.text}</p> */}
+        <div className="flex flex-col items-center h-full px-6 py-10 bg-gray-50 overflow-y-auto">
+          {/* Title */}
+          <div className="w-full max-w-3xl mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 tracking-tight">
+              Example
+            </h2>
+            <div className="mt-2 h-[1px] bg-gray-200" />
           </div>
-          
-          <div className="border-4 border-gray-800 p-2 bg-gray-100 shadow-sm mb-6">
+          {/* Image */}
+          <div className="w-full max-w-3xl mb-10 flex justify-center">
             <img 
               src={currentItem.image_url} 
-              alt="Example" 
+              alt="Example"
               referrerPolicy="no-referrer"
-              className="max-h-[300px] w-auto object-contain pointer-events-none select-none" 
+              className="max-h-[280px] w-auto object-contain rounded-md pointer-events-none select-none"
             />
           </div>
-
-          <div className="w-full max-w-2xl bg-blue-50 border border-blue-200 p-4 shadow-inner">
-            <p className="font-serif font-bold text-blue-900 mb-2">Explanation:</p>
-            <div className="font-serif text-blue-800" dangerouslySetInnerHTML={{__html:currentItem.explanation}}/>
+          {/* Explanation */}
+          <div className="w-full max-w-2xl">
+            <p className="text-sm font-medium text-gray-500 mb-3 tracking-wide uppercase">
+              Explanation
+            </p>
+            <div className="text-gray-800 leading-relaxed font-serif text-[15px] border-l-4 border-gray-300 pl-4">
+              <div dangerouslySetInnerHTML={{ __html: currentItem.explanation }} />
+            </div>
           </div>
         </div>
       );

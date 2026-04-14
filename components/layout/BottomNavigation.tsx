@@ -4,9 +4,10 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const navItems = [
-  { href: '/', label: 'Trang chủ', icon: 'fa-house' },
+  // { href: '/', label: 'Trang chủ', icon: 'fa-house' },
   { href: '/kho-de-thi', label: 'Đề thi', icon: 'fa-book-open' },
   { href: '/lo-trinh', label: 'Thống kê', icon: 'fa-chart-pie' },
+  { href: '/bai-viet', label: 'Bài viết', icon: 'fa-pen-to-square' },
   { href: '/cong-dong', label: 'Cá nhân', icon: 'fa-user' },
 ];
 
@@ -21,10 +22,11 @@ const BottomNavigation = () => {
           <span className="text-[10px] font-bold">{item.label}</span>
         </Link>
       ))}
-
+      <Link href={'/'}>
       <div className="bg-indigo-600 w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-200 -mt-8 border-4 border-slate-50">
-        <i className="fas fa-play text-sm"></i>
+        <i className="fas fa-house text-sm"></i>
       </div>
+      </Link>
 
       {navItems.slice(2, 4).map((item) => (
         <Link href={item.href} key={item.href} className={`flex flex-col items-center gap-1 ${pathname === item.href ? 'text-indigo-600' : 'text-slate-400'}`}>
