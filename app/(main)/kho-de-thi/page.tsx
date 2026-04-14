@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { examService } from "@/services/examService";
 import { FilterOption } from "@/types/filter";
@@ -66,7 +66,7 @@ const ExamListRow = ({ exam }: { exam: ExamListItem }) => {
   );
 }
 
-const KhoDeThiPage = () => {
+const KhoDeThiPageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -307,5 +307,18 @@ const KhoDeThiPage = () => {
     );
 }
 
+const KhoDeThiPage = () => {
+  return (
+    <Suspense fallback={
+        <main className="container mx-auto max-w-7xl md:pt-32 p-4 md:p-6">
+            <div className="flex justify-center items-center min-h-[400px]">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+            </div>
+        </main>
+    }>
+      <KhoDeThiPageContent />
+    </Suspense>
+  )
+}
 
 export default KhoDeThiPage;
