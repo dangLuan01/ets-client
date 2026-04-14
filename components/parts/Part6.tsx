@@ -29,7 +29,7 @@ export default function Part6({ item }: Part6Props) {
         
         {/* Logic hiển thị linh hoạt: Ưu tiên Ảnh -> Sau đó mới đến Text */}
         {group_data?.image_url ? (
-          <div className="border border-gray-300 p-1 bg-gray-50 flex items-center justify-center w-full max-w-[900px] mt-2">
+          <div className="flex items-center justify-center w-full max-w-[900px]">
             <img 
               src={group_data.image_url} 
               alt="Passage" 
@@ -72,8 +72,8 @@ export default function Part6({ item }: Part6Props) {
             return (
               <div key={qId} className="flex flex-col">
                 {/* Tiêu đề câu hỏi (Ví dụ: 131.) */}
-                <p className="font-bold text-gray-800 mb-4 text-[16px]">
-                  {q.display_number}. <span className="font-bold">Question {q.display_number}</span>
+                <p className="font-semibold text-gray-900 mb-4 text-[16px]">
+                  {q.display_number}. Question {q.display_number}
                 </p>
                 
                 {/* Các đáp án (A), (B), (C), (D) */}
@@ -110,7 +110,7 @@ export default function Part6({ item }: Part6Props) {
                             disabled:opacity-70 disabled:cursor-not-allowed
                             cursor-pointer shrink-0 transition-colors duration-200"
                         />
-                        <span className="text-[15px] text-gray-800 leading-tight">
+                        <span className="font-medium text-[15px] text-gray-800 leading-tight">
                           <span className="font-semibold mr-2">({key})</span>
                           {optionText}
                         </span>

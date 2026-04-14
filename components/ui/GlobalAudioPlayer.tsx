@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { useTestStore } from '@/store/useTestStore';
 import Hls from 'hls.js';
+import { Play, Pause } from 'lucide-react';
 
 interface GlobalAudioPlayerProps {
   audioUrl: string;
@@ -170,38 +171,33 @@ export default function GlobalAudioPlayer({
   };
 
   return (
-    <div className="bg-[#e0e0e0] border-y-2 border-gray-400 p-2 flex items-center space-x-4 shadow-sm w-full">
+    <div className="w-full flex items-center gap-3 px-3 py-2 bg-white border-b border-gray-200">
       <audio
-        id="global-audio-player"
-        ref={audioRef} 
-        //src={audioUrl}
-        preload="auto"
-        onTimeUpdate={handleTimeUpdate}
-        onEnded={() => setIsPlaying(false)}
-        onError={handleAudioError}
-        controlsList="nodownload noplaybackrate" 
-        onContextMenu={(e) => e.preventDefault()}
-      />
-
+            id="global-audio-player"
+            ref={audioRef} 
+            preload="auto"
+            onTimeUpdate={handleTimeUpdate}
+            onEnded={() => setIsPlaying(false)}
+            onError={handleAudioError}
+            controlsList="nodownload noplaybackrate" 
+            onContextMenu={(e) => e.preventDefault()}
+          />
       <button 
         onClick={togglePlay}
-        className="w-10 h-8 bg-gray-300 hover:bg-gray-400 border border-gray-500 shadow-[1px_1px_0px_rgba(0,0,0,0.5)] active:shadow-none active:translate-y-px flex items-center justify-center font-bold text-sm"
+        className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition"
       >
-        {isPlaying ? '⏸' : '▶'}
+        <span className="text-sm">
+          {isPlaying ? <Pause size={16} /> : <Play size={16} />}
+        </span>
       </button>
 
-      {/* {isWaiting && (
-        <span className="text-red-600 font-bold text-xs animate-pulse min-w-[120px]">
-          Time to answer! (5s)
-        </span>
-      )} */}
-
-      <div className="flex-1 h-2 bg-gray-300 border border-gray-500 relative overflow-hidden pointer-events-none">
+      <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
         <div 
-          className="h-full bg-blue-600 transition-all duration-200"
+          className="h-full bg-gray-800 transition-all duration-200"
           style={{ width: `${progress}%` }}
         />
       </div>
+
     </div>
   );
 }

@@ -33,7 +33,7 @@ export default function FeaturedExamsSlider({ featuredData }: FeaturedExamsSlide
         speed={800}
         pagination={{ clickable: true }}
         autoplay={{
-          delay: 3000,
+          delay: 2500,
           disableOnInteraction: false,
         }}
         loop={true}
@@ -44,7 +44,7 @@ export default function FeaturedExamsSlider({ featuredData }: FeaturedExamsSlide
             <div className="bg-white rounded-[2.5rem] p-6 md:p-10 border border-slate-100 relative overflow-hidden group h-full">
               <div className="relative z-10 space-y-4">
                 <span className="bg-amber-100 text-amber-700 text-[10px] font-black px-3 py-1 rounded-full">{featuredData.name}</span>
-                <h2 className="text-2xl md:text-4xl font-black min-h-[100px]" dangerouslySetInnerHTML={{ __html: exam.title.replace(/ #/g, ' <br />#') }}></h2>
+                <h2 className="text-2xl md:text-4xl font-black min-h-[100px]">{exam.title} <br />Full Simulation</h2>
                 <p className="text-slate-500 text-sm md:text-base max-w-sm">{featuredData.description}</p>
                 <div className="flex items-center gap-6 pt-4">
                     <div className="text-center">

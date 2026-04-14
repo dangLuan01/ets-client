@@ -1,6 +1,7 @@
 'use client';
 
 import { useTestStore } from '@/store/useTestStore';
+import { ChevronRight } from 'lucide-react';
 
 interface TestFooterProps {
   disableBackButton?: boolean;
@@ -53,6 +54,7 @@ export default function TestFooter({
             className="px-5 py-2 h-[40px] bg-[#1e3a8a] hover:bg-[#152b69] disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed text-white font-bold rounded-[4px] shadow-sm transition-colors flex items-center"
           >
             Next
+            
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-4 h-4 ml-1">
               <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
             </svg>

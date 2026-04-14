@@ -1,10 +1,13 @@
 import FeaturedExamsSlider from "@/components/FeaturedExamsSlider";
+import SortFilter from "@/components/SortFilter";
 import { examService } from "@/services/examService";
+import { menuService } from "@/services/menuService";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const hotExamData = await examService.getFeaturedExams('hot', 5);
+  const sortFilter = await menuService.getMenu(5, "sort-filter");
 
   return (
     <main className="container mx-auto max-w-7xl md:pt-32 p-4 md:p-6">
@@ -21,11 +24,7 @@ export default async function Home() {
 
         <section className="mb-10">
             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-                <button className="whitespace-nowrap bg-indigo-600 text-white px-6 py-2 rounded-full font-bold shadow-lg shadow-indigo-100 text-sm">Tất cả đề thi</button>
-                <button className="whitespace-nowrap bg-white text-slate-600 px-6 py-2 rounded-full font-bold border border-slate-200 text-sm">Bộ ETS 2026</button>
-                <button className="whitespace-nowrap bg-white text-slate-600 px-6 py-2 rounded-full font-bold border border-slate-200 text-sm">Mini Test</button>
-                <button className="whitespace-nowrap bg-white text-slate-600 px-6 py-2 rounded-full font-bold border border-slate-200 text-sm">Phần nghe</button>
-                <button className="whitespace-nowrap bg-white text-slate-600 px-6 py-2 rounded-full font-bold border border-slate-200 text-sm">Phần đọc</button>
+                <SortFilter sortFilter={sortFilter}/>
             </div>
         </section>
 
@@ -84,7 +83,7 @@ export default async function Home() {
         <section className="mt-16">
             <div className="flex justify-between items-center mb-6">
                 <h3 className="text-2xl font-black">Thảo luận mới nhất</h3>
-                <a href="#" className="text-indigo-600 text-xs font-bold uppercase">Tham gia Group</a>
+                <a href="https://discord.gg/gpyCRrKF" target="__blank" className="text-indigo-600 text-xs font-bold uppercase">Tham gia Group</a>
             </div>
             <div className="space-y-4">
                 <div className="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm">

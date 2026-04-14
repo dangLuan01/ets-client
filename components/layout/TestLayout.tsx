@@ -50,7 +50,7 @@ export default function TestLayout({
 
       {audioUrl && (
         <div className={isReviewMode ? 
-          "w-full bg-red-50 p-2" : 
+          "w-full p-2" : 
           "h-1 opacity-0 pointer-events-none"}
         >
           <GlobalAudioPlayer

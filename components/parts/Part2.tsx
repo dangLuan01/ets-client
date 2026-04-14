@@ -86,7 +86,7 @@ export default function Part2({ item }: Part2Props) {
             </div>
           ) : (
             // HIỂN THỊ Ở CHẾ ĐỘ THI THẬT
-            <p className="font-bold text-gray-800 text-[15px] mt-1 opacity-80">
+            <p className="font-semibold text-gray-900 text-[16px] mt-1 opacity-80">
               Question {order_index}
             </p>
           )}
@@ -126,8 +126,8 @@ export default function Part2({ item }: Part2Props) {
                   disabled:opacity-70 disabled:cursor-not-allowed
                   cursor-pointer shrink-0 transition-colors duration-200"
               />
-               <span className="text-[14px] text-gray-800 leading-tight">
-                 <span className="font-semibold mr-2">({key})</span>
+               <span className="font-semibold text-[15px] text-gray-800 leading-tight">
+                 <span className="mr-2">({key})</span>
                  {isReviewMode && (
                   optionText
                  )}

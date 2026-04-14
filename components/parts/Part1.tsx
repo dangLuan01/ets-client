@@ -31,7 +31,7 @@ export default function Part1({ item }: Part1Props) {
           Select the one statement that best describes what you see in the picture.
         </div>
         
-        <div className="border border-gray-300 p-1 bg-gray-50 flex items-center justify-center w-full">
+        <div className="p-1 flex items-center justify-center w-full">
           <img 
             src={question_data.image_url} 
             alt={`Question ${order_index}`} 
@@ -48,7 +48,7 @@ export default function Part1({ item }: Part1Props) {
         <h3 className="text-[#1e3a8a] font-bold text-lg mb-4">Question</h3>
         
         {/* Tiêu đề câu hỏi (VD: 1. Question 1) */}
-        <p className="font-bold text-gray-800 mb-6 text-[15px]">
+        <p className="font-semibold text-gray-900 mb-6 text-[16px]">
           {order_index}. Question {order_index}
         </p>
         
