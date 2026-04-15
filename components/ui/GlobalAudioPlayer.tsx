@@ -171,7 +171,7 @@ export default function GlobalAudioPlayer({
   };
 
   return (
-    <div className="w-full flex items-center gap-3 px-3 py-2 bg-white border-b border-gray-200">
+    <div className="w-full flex items-center gap-3 px-3 py-1 bg-white border-b border-gray-200">
       <audio
             id="global-audio-player"
             ref={audioRef} 

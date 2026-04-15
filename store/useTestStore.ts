@@ -89,7 +89,7 @@ export const useTestStore = create<TestState>((set) => ({
   isQuestionListModalOpen: false,
   setQuestionListModalOpen: (isOpen) => set({ isQuestionListModalOpen: isOpen }),
 
-  volume: 0.8, // Mặc định 100% âm lượng
+  volume: 0.8, // Mặc định 80% âm lượng
   setVolume: (vol) => set({ volume: vol }),
 
   isReviewMode: false,

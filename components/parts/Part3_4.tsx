@@ -24,8 +24,8 @@ export default function Part3_4({ item }: Part3_4Props) {
     <div className="flex flex-col lg:flex-row h-full w-full p-2 lg:p-4 gap-4 bg-[#f0f2f5] overflow-hidden">
       
       {/* CỘT TRÁI: Khu vực Hướng dẫn & Hình ảnh biểu đồ (nếu có) */}
-      <div className="w-full md:w-1/2 h-auto md:h-full bg-white border border-gray-300 shadow-sm p-6 flex flex-col items-center overflow-y-auto">
-        <div className="w-full font-bold text-[#1e3a8a] text-lg mb-6">
+      <div className="w-full md:w-1/2 h-auto md:h-full bg-white border border-gray-300 shadow-sm p-2 lg:p-8 flex flex-col items-center overflow-y-auto">
+        <div className="w-full font-bold text-[#1e3a8a] text-lg mb-4">
           {group_data?.image_url 
             ? "Look at the graphic. Then listen to the audio and answer the questions." 
             : "Listen to the audio and answer the questions."}
@@ -33,7 +33,7 @@ export default function Part3_4({ item }: Part3_4Props) {
         
         {/* Chỉ hiển thị khung ảnh nếu câu hỏi nhóm này có ảnh (Graphic questions) */}
         {group_data?.image_url && (
-          <div className="border border-gray-300 p-2 bg-gray-50 flex items-center justify-center w-full max-w-[500px]">
+          <div className="p-2 flex items-center justify-center w-full max-w-[500px]">
             <img 
               src={group_data.image_url} 
               alt="Graphic" 
@@ -45,12 +45,12 @@ export default function Part3_4({ item }: Part3_4Props) {
         )}
         {isReviewMode && showExplanation && (group_data.explanation || group_data.transcript) && (
           <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-            <h4 className="font-bold text-yellow-800 text-sm mb-2">Transcript & Translate:</h4>
+            <h4 className="font-bold text-yellow-800 text-sm mb-2">Lời giải:</h4>
             {group_data.transcript && (
-              <div className="text-sm text-gray-700 mb-2 border-b border-yellow-200 pb-2" dangerouslySetInnerHTML={{ __html: group_data.transcript}}/>
+              <div className="text-base text-gray-700 mb-2 border-b border-yellow-200 pb-2" dangerouslySetInnerHTML={{ __html: group_data.transcript}}/>
             )}
             {group_data.explanation && (
-              <div className="text-sm text-gray-800" dangerouslySetInnerHTML={{ __html: group_data.explanation}}/>            
+              <div className="text-base text-gray-800" dangerouslySetInnerHTML={{ __html: group_data.explanation}}/>            
             )}
           </div>
         )}
