@@ -28,28 +28,25 @@ export default function Part5({ item }: Part5Props) {
   const showExplanation = useTestStore((state) => state.showExplanation);
 
   return (
-    <div className="flex flex-col md:flex-row h-full w-full p-4 gap-4 bg-[#f0f2f5] overflow-y-auto">
+    <div className="flex flex-col md:flex-row h-full w-full p-4 gap-4 bg-[#f0f2f5] overflow-hidden">
       
       {/* CỘT TRÁI: Khu vực Hướng dẫn Part 5 */}
-      <div className="w-full md:w-1/2 h-auto md:h-full bg-white border border-gray-300 shadow-sm p-6 flex flex-col items-center">
+      <div className="w-full md:w-1/2 h-auto md:h-full bg-white border border-gray-300 shadow-sm p-4 flex flex-col items-center overflow-y-auto">
         <div className="font-bold text-[#1e3a8a] text-lg mb-4">
           Incomplete Sentences
         </div>
-        <p className="text-gray-700 text-[15px] leading-relaxed">
-          <strong>Directions:</strong> A word or phrase is missing in each of the sentences. Four answer choices are given below each sentence. Select the best answer to complete the sentence.
-        </p>
         {isReviewMode && showExplanation && (question_data.explanation || question_data.transcript) && (
-          <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-            <h4 className="font-bold text-yellow-800 text-sm mb-2">Explanation:</h4>
+          <div className="p-2 bg-yellow-50 border border-yellow-200 rounded-md">
+            <h4 className="font-bold text-yellow-800 text-sm mb-2">Lời giải:</h4>
             {question_data.explanation && (
-              <div className="text-sm text-gray-800" dangerouslySetInnerHTML={{__html:question_data.explanation}} />
+              <div className="text-base text-gray-800" dangerouslySetInnerHTML={{__html:question_data.explanation}} />
             )}
           </div>
         )}
       </div>
 
       {/* CỘT PHẢI: Khu vực Câu hỏi và Chọn đáp án */}
-      <div className="w-full md:w-1/2 h-auto md:h-full bg-white border border-gray-300 shadow-sm p-6 overflow-y-auto">
+      <div className="w-full md:w-1/2 h-auto md:h-full bg-white border border-gray-300 shadow-sm p-4 overflow-y-auto">
         <h3 className="text-[#1e3a8a] font-bold text-lg mb-4 border-b border-gray-200 pb-2">
           Question
         </h3>

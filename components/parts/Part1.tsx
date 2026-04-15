@@ -21,6 +21,7 @@ export default function Part1({ item }: Part1Props) {
   const part1Options = ['A', 'B', 'C', 'D'];
 
   const isReviewMode = useTestStore((state) => state.isReviewMode);
+  const showExplanation = useTestStore((state) => state.showExplanation);
 
   return (
     <div className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-[#f0f2f5] overflow-y-auto">
@@ -44,7 +45,7 @@ export default function Part1({ item }: Part1Props) {
       </div>
 
       {/* CỘT PHẢI: Khu vực Câu hỏi và Chọn đáp án */}
-      <div className="w-full md:w-1/2 h-auto md:h-full bg-white border border-gray-300 shadow-sm p-8 overflow-y-auto">
+      <div className="w-full md:w-1/2 h-auto md:h-full bg-white border border-gray-300 shadow-sm p-4 md:p-6 overflow-y-auto">
         <h3 className="text-[#1e3a8a] font-bold text-lg mb-4">Question</h3>
         
         {/* Tiêu đề câu hỏi (VD: 1. Question 1) */}
@@ -88,14 +89,21 @@ export default function Part1({ item }: Part1Props) {
               />
               <span className="text-[14px] text-gray-800 leading-tight">
                  <span className="font-semibold mr-2">({key})</span>
-                 {isReviewMode && (
+                 {isReviewMode && showExplanation && (
                   optionText
                  )}
               </span>
             </label>
              )
           })}
-          
+          {isReviewMode && showExplanation && question_data.explanation && (
+            <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md ">
+              <h4 className="font-bold text-yellow-800 text-sm mb-2">Lời giải:</h4>
+              {question_data.explanation && (
+                <div className="text-base text-gray-700 mb-2 border-b border-yellow-200 pb-2" dangerouslySetInnerHTML={{__html: question_data.explanation}}/>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

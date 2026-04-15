@@ -30,13 +30,14 @@ export default function Part7({ item }: Part7Props) {
         
         {/* Hiển thị Hình ảnh (Thường dùng cho Part 7 vì format phức tạp) */}
         {group_data?.image_url ? (
-          <div className="w-full flex justify-center mt-2">
+          <div className="items-center justify-center w-full max-w-[900px]">
             <img 
               src={group_data.image_url}
               alt="Reading Passage" 
               referrerPolicy="no-referrer"
+              
               // Bỏ max-w để ảnh bành trướng tối đa theo chiều rộng cột, giúp thí sinh dễ đọc chữ nhỏ
-              className="w-full h-auto object-contain pointer-events-none select-none p-1"
+              className="min-w-[600px] md:min-w-full h-auto object-contain pointer-events-none select-none"
               draggable={false}
             />
           </div>
@@ -49,12 +50,12 @@ export default function Part7({ item }: Part7Props) {
 
         {isReviewMode && showExplanation && (group_data.explanation || group_data.transcript) && (
           <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md ">
-            <h4 className="font-bold text-yellow-800 text-sm mb-2">Translate:</h4>
+            <h4 className="font-bold text-yellow-800 text-sm mb-2">Lời giải:</h4>
             {group_data.transcript && (
-              <div className="text-sm text-gray-700 mb-2 border-b border-yellow-200 pb-2" dangerouslySetInnerHTML={{ __html: group_data.transcript}}/>
+              <div className="text-base text-gray-700 mb-2 border-b border-yellow-200 pb-2" dangerouslySetInnerHTML={{ __html: group_data.transcript}}/>
             )}
             {group_data.explanation && (
-              <div className="text-sm text-gray-800" dangerouslySetInnerHTML={{ __html: group_data.explanation}}/>            
+              <div className="text-base text-gray-800" dangerouslySetInnerHTML={{ __html: group_data.explanation}}/>            
             )}
           </div>
         )}
@@ -119,13 +120,20 @@ export default function Part7({ item }: Part7Props) {
                       </label>
                     );
                   })}
+                  {isReviewMode && showExplanation && q.explanation && (
+                    <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md ">
+                      <h4 className="font-bold text-yellow-800 text-sm mb-2">Lời giải:</h4>
+                      {q.explanation && (
+                        <div className="text-base text-gray-700 mb-2 border-b border-yellow-200 pb-2" dangerouslySetInnerHTML={{__html: q.explanation}}/>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             );
           })}
         </div>
       </div>
-
     </div>
   );
 }

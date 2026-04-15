@@ -52,7 +52,7 @@ export default function TestHeader({
       
       {/* Ở giữa: Tiêu đề bài thi */}
       <div className="text-center px-2">
-        <h1 className="font-semibold text-sm md:text-lg tracking-wide truncate">{headerTitle}</h1>
+        <h1 className="hidden md:block font-semibold text-sm md:text-lg tracking-wide truncate">{headerTitle}</h1>
       </div>
 
       {/* Góc phải: Thanh công cụ */}
@@ -65,7 +65,7 @@ export default function TestHeader({
             className="flex items-center space-x-2 sm:space-x-3 bg-gray-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border border-gray-200 cursor-pointer select-none active:bg-gray-100 transition-colors"
           >
             {/* 2. RESPONSIVE TEXT: Rút gọn thành "Lời giải" trên mobile, "Hiển thị lời giải" trên tablet/PC */}
-            <span className="text-xs sm:text-sm font-bold text-gray-600">
+            <span className="text-xs sm:text-sm font-bold text-gray-600 whitespace-nowrap">
               <span className="hidden sm:inline">Hiển thị </span>Lời giải
             </span>
             
