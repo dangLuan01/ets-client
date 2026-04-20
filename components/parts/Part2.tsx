@@ -48,7 +48,7 @@ export default function Part2({ item }: Part2Props) {
     <div className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-[#f0f2f5] overflow-y-auto">
       
       {/* CỘT TRÁI: Khu vực Hướng dẫn / Hình ảnh */}
-      <div className="flex-1 bg-white border border-gray-200 shadow-sm p-4 md:p-6 flex flex-col items-center">
+      <div className="flex-1 bg-white border border-gray-200 shadow-sm p-4 md:p-6 flex flex-col items-stretch">
         <div className="w-full font-bold text-[#1e3a8a] text-lg mb-6">
           Select the best response to the question.
         </div>

@@ -81,7 +81,7 @@ const KhoDeThiPageContent = () => {
   );
   const [page, setPage] = useState(Number(searchParams.get('page')) || 1);
   
-  const [limit] = useState(10);
+  const [limit] = useState(12);
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {

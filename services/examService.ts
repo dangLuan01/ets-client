@@ -153,7 +153,7 @@ export const examService = {
    */
   async filterExams(params: { limit?: number; page?: number; search?: string; category_id?: number[] }) {
     try {
-      const query = new URLSearchParams();
+      const query = new URLSearchParams();      
       if (params.search !== undefined) query.append('search', params.search);
       if (params.limit !== undefined) query.append('limit', String(params.limit));
       if (params.page !== undefined) query.append('page', String(params.page));
