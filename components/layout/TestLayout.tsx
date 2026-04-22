@@ -18,6 +18,7 @@ interface TestLayoutProps {
   disableBackButton?: boolean;
   disableNextButton?: boolean;
   isReviewMode?: boolean;
+  isTestStarted?:boolean;
 }
 
 export default function TestLayout({ 
@@ -32,7 +33,8 @@ export default function TestLayout({
   currentSkillCode = 'LISTENING',
   disableBackButton = false,
   disableNextButton = false,
-  isReviewMode = false
+  isReviewMode = false,
+  isTestStarted = false
 }: TestLayoutProps) {
   
   return (
@@ -83,8 +85,8 @@ export default function TestLayout({
       </main>
 
       {/* 4. FOOTER */}
-      {(currentSkillCode === 'READING' || isReviewMode) && (
-        <TestFooter 
+      {(currentSkillCode === 'READING' || isReviewMode) && isTestStarted &&(
+        <TestFooter
         disableBackButton={disableBackButton}
         disableNextButton={disableNextButton}
         />
