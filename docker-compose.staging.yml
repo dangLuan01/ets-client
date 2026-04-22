@@ -1,7 +1,7 @@
 services:
   web:
     build:
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.staging
     container_name: client_app_ets
     env_file: .env
     expose:
