@@ -1,0 +1,20 @@
+services:
+  web:
+    build:
+      dockerfile: Dockerfile.prod
+    container_name: client_app_ets_prod
+    env_file: .env
+    expose:
+      - "3001"
+    environment:
+      - VIRTUAL_HOST=toiecviet.com
+      - LETSENCRYPT_HOST=toiecviet.com
+      - LETSENCRYPT_EMAIL=ml2673572@gmail.com
+      - VIRTUAL_PORT=3001
+    networks:
+      - app-network
+    restart: unless-stopped
+networks:
+  app-network:
+    external: true
+    name: app-network
