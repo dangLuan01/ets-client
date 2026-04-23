@@ -32,11 +32,14 @@ export default function Part5({ item }: Part5Props) {
       
       {/* CỘT TRÁI: Khu vực Hướng dẫn Part 5 */}
       <div className="w-full md:w-1/2 h-auto md:h-full bg-white border border-gray-300 shadow-sm p-4 flex flex-col items-stretch overflow-y-auto">
+        {!isReviewMode && (
         <div className="font-bold text-[#1e3a8a] text-lg mb-4">
           Incomplete Sentences
         </div>
+        )}
+        
         {isReviewMode && showExplanation && (question_data.explanation || question_data.transcript) && (
-        <div className="mt-5 bg-white border border-gray-200 border-l-4 border-l-[#1e3a8a] rounded-r-md shadow-sm overflow-hidden animate-fade-in">
+        <div className="mt-5 bg-white border border-gray-200 border-l-4 border-l-[#1e3a8a] rounded-r-md shadow-sm animate-fade-in">
           <div className="bg-blue-50/50 px-4 py-2 border-b border-gray-100 flex items-center">
             <span className="text-blue-600 mr-2">💡</span>
             <span className="font-bold text-[#1e3a8a] text-[14px] uppercase tracking-wide">

@@ -25,12 +25,13 @@ export default function Part3_4({ item }: Part3_4Props) {
       
       {/* CỘT TRÁI: Khu vực Hướng dẫn & Hình ảnh biểu đồ (nếu có) */}
       <div className="w-full md:w-1/2 h-auto md:h-full bg-white border border-gray-300 shadow-sm p-2 lg:p-8 flex flex-col items-center overflow-y-auto">
+        {!isReviewMode && (
         <div className="w-full font-bold text-[#1e3a8a] text-lg mb-4">
           {group_data?.image_url 
             ? "Look at the graphic. Then listen to the audio and answer the questions." 
             : "Listen to the audio and answer the questions."}
         </div>
-        
+        )}
         {/* Chỉ hiển thị khung ảnh nếu câu hỏi nhóm này có ảnh (Graphic questions) */}
         {group_data?.image_url && (
           <div className="p-2 flex items-center justify-center w-full max-w-[500px]">
