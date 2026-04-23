@@ -1,6 +1,8 @@
+import ShareButtons from '@/components/ui/ShareButtons';
+import TableOfContents from '@/components/ui/TableOfContents';
 import { postService } from '@/services/postService';
 import { formatDateVN } from '@/utils/helper';
-
+import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const dynamic = "force-dynamic";
@@ -11,15 +13,56 @@ interface PageProps {
   }>;
 }
 
+async function getPostData(slug: string) {
+    return await postService.getPostDetail(slug);
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { slug } = await params;
+    const detailPostData = await getPostData(slug);
+    const postUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/bai-viet/${slug}`;
+
+    return {
+        title: detailPostData?.name,
+        description: detailPostData?.summary || 'Bài viết chi tiết từ ETS TEST',
+        alternates: {
+            canonical: postUrl,
+        },
+        openGraph: {
+            title: detailPostData?.name,
+            description: detailPostData?.summary || 'Bài viết chi tiết từ ETS TEST',
+            url: postUrl,
+            type: 'article',
+            siteName: 'ETS TEST',
+            images: [
+                {
+                    url: detailPostData?.thumbnail_url || '',
+                    width: 800,
+                    height: 600,
+                    alt: detailPostData?.name,
+                },
+            ],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: detailPostData?.name,
+            description: detailPostData?.summary || 'Bài viết chi tiết từ ETS TEST',
+            images: [detailPostData?.thumbnail_url || ''],
+        },
+    };
+}
+
 const BaiVietPage = async ({params}: PageProps) => {
-    const { slug } = await params    
+    const { slug } = await params;
     
-    const detailPostData = await postService.getPostDetail(slug);
+    const detailPostData = await getPostData(slug);
+    const postUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/bai-viet/${slug}`;
+
     return (
     <main className="max-w-7xl mx-auto px-4 md:px-6 md:pt-32 p-4 md:p-6">
         <header className="max-w-4xl mx-auto text-center mb-12">
             <nav className="flex justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-indigo-600 mb-6">
-                <Link href={'/bai-viet'}>Mẹo thi TOEIC</Link> <span className="text-slate-300">/</span> <span className="text-slate-400">Kỹ năng {detailPostData?.tags[0].name}</span>
+                <Link href={'/bai-viet'}>Mẹo thi TOEIC</Link> <span className="text-slate-300">/</span> <span className="text-slate-400">Kỹ năng {detailPostData?.tags?.[0].name}</span>
             </nav>
             <h1 className="text-3xl md:text-5xl font-black tracking-tighter leading-[1.1] mb-8">
                 {detailPostData?.name}
@@ -43,20 +86,11 @@ const BaiVietPage = async ({params}: PageProps) => {
                 <div className="space-y-10">
                     <div>
                         <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6">Mục lục bài viết</h5>
-                        <ul className="space-y-4 text-sm font-bold text-slate-500">
-                            <li className="hover:text-indigo-600 transition cursor-pointer text-indigo-600">1. Skimming là gì?</li>
-                            <li className="hover:text-indigo-600 transition cursor-pointer">2. Kỹ thuật Scanning</li>
-                            <li className="hover:text-indigo-600 transition cursor-pointer">3. Áp dụng vào Part 7</li>
-                            <li className="hover:text-indigo-600 transition cursor-pointer">4. Lỗi sai thường gặp</li>
-                        </ul>
+                        <TableOfContents htmlContent={detailPostData?.content || ''} />
                     </div>
                     <div>
                         <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6">Chia sẻ</h5>
-                        <div className="flex flex-col gap-3">
-                            <button className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-indigo-600 hover:text-white transition"><i className="fab fa-facebook-f"></i></button>
-                            <button className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-indigo-600 hover:text-white transition"><i className="fab fa-twitter"></i></button>
-                            <button className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-indigo-600 hover:text-white transition"><i className="fas fa-link"></i></button>
-                        </div>
+                        <ShareButtons url={postUrl} title={detailPostData?.name || ''} />
                     </div>
                 </div>
             </aside>

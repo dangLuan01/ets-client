@@ -14,10 +14,15 @@ const navItems = [
 const BottomNavigation = () => {
   const pathname = usePathname();
 
+  const isActive = (slug?: string) => {
+    if (!slug) return false;
+    return pathname === slug || pathname.startsWith(slug + '/');
+  };
+
   return (
     <nav className="md:hidden fixed bottom-0 w-full bg-white/90 backdrop-blur-lg border-t border-slate-100 px-6 py-3 flex justify-between items-center safe-area-bottom z-50">
       {navItems.slice(0, 2).map((item) => (
-        <Link href={item.href} key={item.href} className={`flex flex-col items-center gap-1 ${pathname === item.href ? 'text-indigo-600' : 'text-slate-400'}`}>
+        <Link href={item.href} key={item.href} className={`flex flex-col items-center gap-1 ${isActive(item.href) ? 'text-indigo-600' : 'text-slate-400'}`}>
           <i className={`fas ${item.icon} text-lg`}></i>
           <span className="text-[10px] font-bold">{item.label}</span>
         </Link>
@@ -29,7 +34,7 @@ const BottomNavigation = () => {
       </Link>
 
       {navItems.slice(2, 4).map((item) => (
-        <Link href={item.href} key={item.href} className={`flex flex-col items-center gap-1 ${pathname === item.href ? 'text-indigo-600' : 'text-slate-400'}`}>
+        <Link href={item.href} key={item.href} className={`flex flex-col items-center gap-1 ${isActive(item.href) ? 'text-indigo-600' : 'text-slate-400'}`}>
           <i className={`fas ${item.icon} text-lg`}></i>
           <span className="text-[10px] font-bold">{item.label}</span>
         </Link>

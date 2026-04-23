@@ -44,13 +44,18 @@ export default function Part3_4({ item }: Part3_4Props) {
           </div>
         )}
         {isReviewMode && showExplanation && (group_data.explanation || group_data.transcript) && (
-          <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-            <h4 className="font-bold text-yellow-800 text-sm mb-2">Lời giải:</h4>
+          <div className="mt-6 bg-white border border-gray-200 border-l-4 border-l-[#059669] rounded-r-md shadow-sm animate-fade-in">
+            <div className="bg-green-50/50 px-4 py-2 border-b border-gray-100 flex items-center">
+              <span className="text-green-600 mr-2">🌐</span>
+              <span className="font-bold text-[#059669] text-[14px] uppercase tracking-wide">
+                Transcript
+              </span>
+            </div>
             {group_data.transcript && (
-              <div className="text-base text-gray-700 mb-2 border-b border-yellow-200 pb-2" dangerouslySetInnerHTML={{ __html: group_data.transcript}}/>
+              <div className="p-4 text-[14px] text-gray-700 leading-relaxed text-justify" dangerouslySetInnerHTML={{ __html: group_data.transcript}}/>
             )}
             {group_data.explanation && (
-              <div className="text-base text-gray-800" dangerouslySetInnerHTML={{ __html: group_data.explanation}}/>            
+              <div className="p-4 text-[14px] text-gray-700 leading-relaxed text-justify" dangerouslySetInnerHTML={{ __html: group_data.explanation}}/>
             )}
           </div>
         )}

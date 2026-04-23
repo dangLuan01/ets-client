@@ -54,7 +54,6 @@ export default function PracticeEngine({ initialData }: PracticeEngineProps) {
         
       });
     });
-   
     
     return list;
   }, [initialData]);
