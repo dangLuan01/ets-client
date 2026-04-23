@@ -45,7 +45,6 @@ export default function Part6({ item }: Part6Props) {
         )}
 
         {isReviewMode && showExplanation && (group_data.explanation || group_data.transcript) && (
-          
           <div className="mt-6 bg-white border border-gray-200 border-l-4 border-l-[#059669] rounded-r-md shadow-sm animate-fade-in">
             <div className="bg-green-50/50 px-4 py-2 border-b border-gray-100 flex items-center">
               <span className="text-green-600 mr-2">🌐</span>

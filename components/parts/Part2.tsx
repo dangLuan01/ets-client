@@ -49,12 +49,14 @@ export default function Part2({ item }: Part2Props) {
       
       {/* CỘT TRÁI: Khu vực Hướng dẫn / Hình ảnh */}
       <div className="flex-1 bg-white border border-gray-200 shadow-sm p-4 md:p-6 flex flex-col items-stretch">
+        {!isReviewMode && (
         <div className="w-full font-bold text-[#1e3a8a] text-lg mb-6">
           Select the best response to the question.
         </div>
+        )}
+        
         {isReviewMode && showExplanation && (question_data.explanation || question_data.transcript) && (
-          
-        <div className="mt-5 bg-white border border-gray-200 border-l-4 border-l-[#1e3a8a] rounded-r-md shadow-sm overflow-hidden animate-fade-in">
+        <div className="mt-5 bg-white border border-gray-200 border-l-4 border-l-[#1e3a8a] rounded-r-md shadow-sm animate-fade-in">
           <div className="bg-blue-50/50 px-4 py-2 border-b border-gray-100 flex items-center">
             <span className="text-blue-600 mr-2">🌐</span>
             <span className="font-bold text-[#1e3a8a] text-[14px] uppercase tracking-wide">
