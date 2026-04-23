@@ -2,9 +2,21 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 
+const siteUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}`;
+
 export const metadata: Metadata = {
-  title: "Thi Thử Tiếng Anh | Mobile-First UI 2026",
-  description: "Trang web thi thử tiếng anh ETS",
+  
+  title: {
+    default: "Toeic Việt",
+    template: "%s | ToeicViet"
+  },
+  alternates: {
+    canonical: siteUrl
+  },
+  robots: {
+    index: true,
+    follow: true,
+  }
 };
 
 export default function RootLayout({

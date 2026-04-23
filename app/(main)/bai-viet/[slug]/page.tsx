@@ -2,6 +2,7 @@ import ShareButtons from '@/components/ui/ShareButtons';
 import TableOfContents from '@/components/ui/TableOfContents';
 import { postService } from '@/services/postService';
 import { formatDateVN } from '@/utils/helper';
+import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const dynamic = "force-dynamic";
@@ -12,10 +13,49 @@ interface PageProps {
   }>;
 }
 
+async function getPostData(slug: string) {
+    return await postService.getPostDetail(slug);
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { slug } = await params;
+    const detailPostData = await getPostData(slug);
+    const postUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/bai-viet/${slug}`;
+
+    return {
+        title: detailPostData?.name,
+        description: detailPostData?.summary || 'Bài viết chi tiết từ ETS TEST',
+        alternates: {
+            canonical: postUrl,
+        },
+        openGraph: {
+            title: detailPostData?.name,
+            description: detailPostData?.summary || 'Bài viết chi tiết từ ETS TEST',
+            url: postUrl,
+            type: 'article',
+            siteName: 'ETS TEST',
+            images: [
+                {
+                    url: detailPostData?.thumbnail_url || '',
+                    width: 800,
+                    height: 600,
+                    alt: detailPostData?.name,
+                },
+            ],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: detailPostData?.name,
+            description: detailPostData?.summary || 'Bài viết chi tiết từ ETS TEST',
+            images: [detailPostData?.thumbnail_url || ''],
+        },
+    };
+}
+
 const BaiVietPage = async ({params}: PageProps) => {
-    const { slug } = await params    
+    const { slug } = await params;
     
-    const detailPostData = await postService.getPostDetail(slug);
+    const detailPostData = await getPostData(slug);
     const postUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/bai-viet/${slug}`;
 
     return (

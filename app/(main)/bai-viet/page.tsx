@@ -3,6 +3,34 @@ import Link from 'next/link';
 import { Post } from '@/types/post';
 import BlogContainer from '@/components/BlogContainer';
 import { tagService } from '@/services/tagService';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'Mẹo thi TOEIC - Bí kíp và kinh nghiệm luyện thi',
+    description: 'Tổng hợp các bài viết, mẹo thi TOEIC, và kinh nghiệm luyện thi được cập nhật mới nhất từ ETS TEST.',
+    alternates: {
+        canonical: 'https://etstest.com/bai-viet',
+    },
+    openGraph: {
+        title: 'Mẹo thi TOEIC - Bí kíp và kinh nghiệm luyện thi',
+        description: 'Tổng hợp các bài viết, mẹo thi TOEIC, và kinh nghiệm luyện thi được cập nhật mới nhất từ ETS TEST.',
+        url: 'https://etstest.com/bai-viet',
+        images: [
+            {
+                url: 'https://i.pravatar.cc/800x600?u=etstest-bai-viet',
+                width: 800,
+                height: 600,
+                alt: 'Mẹo thi TOEIC - ETS TEST',
+            },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Mẹo thi TOEIC - Bí kíp và kinh nghiệm luyện thi',
+        description: 'Tổng hợp các bài viết, mẹo thi TOEIC, và kinh nghiệm luyện thi được cập nhật mới nhất từ ETS TEST.',
+        images: ['https://i.pravatar.cc/800x600?u=etstest-bai-viet'],
+    },
+};
 
 export const dynamic = "force-dynamic";
 
