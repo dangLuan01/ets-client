@@ -15,7 +15,7 @@ const BlogPage = async () => {
         <main className="container mx-auto max-w-7xl md:pt-32 p-4 md:p-6">
             <header className="mb-10 mt-4">
                 <nav className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 flex gap-2">
-                    <a href="#">Trang chủ</a> <span>/</span> <span className="text-indigo-600">Blog bí kíp</span>
+                    <Link href="/">Trang chủ</Link> <span>/</span> <span className="text-indigo-600">Blog bí kíp</span>
                 </nav>
                 <h1 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
                     Thư viện <span className="text-indigo-600 text-gradient">Kiến thức</span>

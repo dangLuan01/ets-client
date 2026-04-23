@@ -2,12 +2,16 @@ import FeaturedExamsSlider from "@/components/FeaturedExamsSlider";
 import SortFilter from "@/components/SortFilter";
 import { examService } from "@/services/examService";
 import { menuService } from "@/services/menuService";
+import { postService } from "@/services/postService";
+import { formatDateVN } from "@/utils/helper";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const hotExamData = await examService.getFeaturedExams('hot', 5);
   const sortFilter = await menuService.getMenu(5, "sort-filter");
+  const postViewCount = await postService.getPost(3, 1, "view_count", "")
 
   return (
     <main className="container mx-auto max-w-7xl md:pt-32 p-4 md:p-6">
@@ -104,53 +108,25 @@ export default async function Home() {
         <section className="mt-16">
             <div className="flex justify-between items-center mb-6">
                 <h3 className="text-2xl font-black">Bài viết & Tips</h3>
-                <a href="#" className="text-indigo-600 text-xs font-bold uppercase">Xem tất cả</a>
+                <Link href="/bai-viet" className="text-indigo-600 text-xs font-bold uppercase">Xem tất cả</Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white rounded-[2rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="h-40 bg-gradient-to-br from-indigo-400 to-indigo-600 relative overflow-hidden">
-                        <div className="absolute inset-0 opacity-10"><i className="fas fa-book text-8xl absolute -right-10 -bottom-10 text-white"></i></div>
-                    </div>
-                    <div className="p-5">
-                        <div className="flex items-center gap-2 mb-2">
-                            <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">TIPS</span>
-                            <span className="text-[10px] text-slate-400">2 ngày trước</span>
+                {postViewCount?.response?.map((post, index) => (
+                    <div key={index} className="bg-white rounded-[2rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                        <div className={`h-40 bg-gradient-to-br  ${index === 0 ? 'from-indigo-400 to-indigo-600': index === 1 ? 'from-purple-400 to-purple-600' : 'from-amber-400 to-amber-600'} relative overflow-hidden`}>
+                            <div className="absolute inset-0 opacity-10"><i className={`fas ${index === 0 ? 'fa-book': index === 1 ? 'fa-headphones' : 'fa-lightbulb'} text-8xl absolute -right-10 -bottom-10 text-white`}></i></div>
                         </div>
-                        <h4 className="font-black text-sm mb-2">5 Kỹ thuật làm nhanh Part 5</h4>
-                        <p className="text-xs text-slate-500 mb-4">Cách giải quyết các câu hỏi ngữ pháp mà đa số thí sinh bỏ qua...</p>
-                        <a href="#" className="text-indigo-600 text-xs font-bold hover:text-indigo-700">Đọc thêm →</a>
-                    </div>
-                </div>
-
-                <div className="bg-white rounded-[2rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="h-40 bg-gradient-to-br from-purple-400 to-purple-600 relative overflow-hidden">
-                        <div className="absolute inset-0 opacity-10"><i className="fas fa-headphones text-8xl absolute -right-10 -bottom-10 text-white"></i></div>
-                    </div>
-                    <div className="p-5">
-                        <div className="flex items-center gap-2 mb-2">
-                            <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-full">CHIẾN THUẬT</span>
-                            <span className="text-[10px] text-slate-400">4 ngày trước</span>
+                        <div className="p-5">
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className={`text-xs font-bold ${index === 0 ? 'text-indigo-600 bg-indigo-50': index === 1 ? 'text-purple-600 bg-purple-50' : 'text-amber-600 bg-amber-50'} px-2 py-1 rounded-full uppercase`}>{post.tags[0].name}</span>
+                                <span className="text-[10px] text-slate-400">{formatDateVN(post.updated_at)}</span>
+                            </div>
+                            <h4 className="font-black text-sm mb-2">{post.name}</h4>
+                            <p className="text-xs text-slate-500 mb-4">{post.summary}</p>
+                            <Link href={`/bai-viet/${post.slug}`} className={`${index === 0 ? 'text-indigo-600 hover:text-indigo-700': index === 1 ? 'text-purple-600 hover:text-purple-700' : 'text-amber-600 hover:text-amber-700'} text-xs font-bold`}>Đọc thêm →</Link>
                         </div>
-                        <h4 className="font-black text-sm mb-2">Bí kíp luyện Listening hiệu quả</h4>
-                        <p className="text-xs text-slate-500 mb-4">Phương pháp luyện nghe giúp cải thiện điểm Part 1, 2, 3, 4 nhanh chóng...</p>
-                        <a href="#" className="text-purple-600 text-xs font-bold hover:text-purple-700">Đọc thêm →</a>
                     </div>
-                </div>
-
-                <div className="bg-white rounded-[2rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="h-40 bg-gradient-to-br from-amber-400 to-amber-600 relative overflow-hidden">
-                        <div className="absolute inset-0 opacity-10"><i className="fas fa-lightbulb text-8xl absolute -right-10 -bottom-10 text-white"></i></div>
-                    </div>
-                    <div className="p-5">
-                        <div className="flex items-center gap-2 mb-2">
-                            <span className="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-full">KINH NGHIỆM</span>
-                            <span className="text-[10px] text-slate-400">1 tuần trước</span>
-                        </div>
-                        <h4 className="font-black text-sm mb-2">Từ 550 lên 800 trong 3 tháng</h4>
-                        <p className="text-xs text-slate-500 mb-4">Chia sẻ hành trình học tập thành công của anh Minh và bí quyết của anh...</p>
-                        <a href="#" className="text-amber-600 text-xs font-bold hover:text-amber-700">Đọc thêm →</a>
-                    </div>
-                </div>
+                ))}
             </div>
         </section>
 

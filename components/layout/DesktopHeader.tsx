@@ -10,6 +10,11 @@ interface Props {
 }
 
 const DesktopHeader = ({ navLinks }: Props) => {
+  const isActive = (slug?: string) => {
+    if (!slug) return false;
+    return pathname === slug || pathname.startsWith(slug + '/');
+  };
+  
   const pathname = usePathname();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
@@ -36,7 +41,7 @@ const DesktopHeader = ({ navLinks }: Props) => {
                   {link.slug ? (
                     <Link 
                       href={link.slug} 
-                      className={pathname === link.slug ? 'text-indigo-600' : 'hover:text-indigo-600 transition-colors'}
+                      className={isActive(link.slug) ? 'text-indigo-600' : 'hover:text-indigo-600 transition-colors'}
                     >
                       {link.name}
                     </Link>
