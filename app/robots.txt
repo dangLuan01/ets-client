@@ -1,0 +1,5 @@
+User-Agent: *
+Allow: /
+Disallow: /private/
+ 
+Sitemap: https://toiecviet.com/sitemap.xml
