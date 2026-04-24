@@ -97,8 +97,7 @@ const BaiVietPage = async ({params}: PageProps) => {
 
             <div className="lg:w-3/4 max-w-3xl">
                 <article className="article-content" dangerouslySetInnerHTML={{__html: detailPostData?.content || ''}} />
-                   
-
+    
                 <div className="mt-20 p-8 bg-slate-50 rounded-[2.5rem] flex items-center gap-6 border border-slate-100">
                     <img src="https://i.pravatar.cc/100?u=author" className="w-20 h-20 rounded-full grayscale"/>
                     <div>
