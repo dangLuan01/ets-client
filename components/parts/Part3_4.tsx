@@ -90,6 +90,7 @@ export default function Part3_4({ item }: Part3_4Props) {
                     let reviewBgClass = 'border-gray-300 bg-white';
                     if (isReviewMode) {
                       if (isCorrect) reviewBgClass = 'border-blue-500 bg-blue-50'; 
+                      else if (isSelected && !isCorrect) reviewBgClass = 'border-red-500 bg-red-50';
                     } else {
                       reviewBgClass = isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:bg-gray-50';
                     }

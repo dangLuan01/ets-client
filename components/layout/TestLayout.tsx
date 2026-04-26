@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import GlobalAudioPlayer from '../ui/GlobalAudioPlayer';
 import TestHeader from './TestHeader';
 import TestFooter from './TestFooter';
+import { useRouter } from 'next/navigation';
 
 interface TestLayoutProps {
   children: ReactNode;
@@ -19,6 +20,7 @@ interface TestLayoutProps {
   disableNextButton?: boolean;
   isReviewMode?: boolean;
   isTestStarted?:boolean;
+  currentItem?: any;
 }
 
 export default function TestLayout({ 
@@ -34,8 +36,10 @@ export default function TestLayout({
   disableBackButton = false,
   disableNextButton = false,
   isReviewMode = false,
-  isTestStarted = false
+  isTestStarted = false,
+  currentItem
 }: TestLayoutProps) {
+   const router = useRouter();
   
   return (
     <div className="flex flex-col h-screen w-full bg-[#f0f2f5] text-black select-none font-sans overflow-hidden">
@@ -46,6 +50,9 @@ export default function TestLayout({
         currentQuestionNumber={currentQuestionNumber} 
         timeLeft={timeLeft}
         totalQuestion={totalQuestion}
+        onBack={() => {
+          router.push('/');
+        }} 
       />
 
       {/* 2. THANH AUDIO ẨN */}
@@ -59,6 +66,7 @@ export default function TestLayout({
             audioUrl={audioUrl} 
             currentAudioStartMs={currentAudioStartMs || null} 
             currentAudioEndMs={currentAudioEndMs || null} 
+            currentSkillCode={currentSkillCode}
           />
         </div>
       )}
@@ -89,6 +97,7 @@ export default function TestLayout({
         <TestFooter
         disableBackButton={disableBackButton}
         disableNextButton={disableNextButton}
+        currentItem={currentItem}
         />
       )}
     </div>

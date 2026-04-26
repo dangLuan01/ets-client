@@ -14,6 +14,7 @@ import QuestionListModal from './ui/QuestionListModal';
 import { examService } from '@/services/examService';
 import { SubmitExamPayload } from '@/types/exam';
 import ResultScreen from './ui/ResultScreen';
+import { useRouter } from 'next/navigation';
 
 interface PageProps {
   slug: string;
@@ -22,6 +23,7 @@ interface PageProps {
 }
 
 export default function TestEngine({ initialData, slug, examId }: PageProps) {
+  const router = useRouter();
   // 1. STATE QUẢN LÝ MÀN HÌNH BẮT ĐẦU
   const [isTestStarted, setIsTestStarted] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(initialData.total_time * 60);
@@ -36,7 +38,6 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [testResult, setTestResult] = useState<any>(null); // State lưu kết quả trả về từ API
   const answers = useTestStore((state) => state.answers);
-
 
  // 1. HÀM FLATTEN THÔNG MINH (Xử lý mảng Skills -> Parts -> Items)
   const flatItemsList = useMemo(() => {
@@ -100,14 +101,6 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
   useEffect(() => {
     setTotalItems(flatItemsList.length);
   }, [flatItemsList, setTotalItems]);
-  
-  // Reset trạng thái khi component unmount
-  useEffect(() => {
-    return () => {
-      resetTest();
-    }
-  }, [resetTest]);
-
   useEffect(() => {
     if (currentItem && currentItem.partId !== undefined) {
       setCurrentPart(currentItem.partId);
@@ -232,8 +225,10 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
   const disableBackButton = currentItemIndex === 0 || (currentSkillCode === 'READING' && prevItem?.skillCode === 'LISTENING');
 
   const disableNextButton = currentItemIndex === flatItemsList.length - 1;
-
+  
   const handleStartTest = () => {
+    resetTest();
+    setTotalItems(flatItemsList.length);
     // Ngay khoảnh khắc người dùng click chuột, ta "tóm" lấy thẻ audio và ép nó phát!
     // Trình duyệt sẽ cấp quyền Autoplay vĩnh viễn cho thẻ này trong phiên làm việc.
     const audioEl = document.getElementById('global-audio-player') as HTMLAudioElement;
@@ -347,7 +342,6 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
     // Thêm số 0 đằng trước nếu nhỏ hơn 10 (VD: 9 -> 09)
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
-
   if (testResult) {
     return (
       <ResultScreen 
@@ -355,7 +349,7 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
         examId={examId}
         testResult={testResult} 
         onBack={() => {
-          window.location.reload(); 
+          router.push('/');
         }} 
       />
     );
@@ -377,6 +371,7 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
       disableNextButton={disableNextButton}
       isReviewMode={false}
       isTestStarted={isTestStarted}
+      currentItem={currentItem}
     >
       <SubmitModal 
         flatItemsList={flatItemsList} 

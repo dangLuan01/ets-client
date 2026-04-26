@@ -9,10 +9,11 @@ interface GlobalAudioPlayerProps {
   audioUrl: string;
   currentAudioStartMs: number | null;
   currentAudioEndMs: number | null;
+  currentSkillCode?: string;
 }
 
 export default function GlobalAudioPlayer({ 
-  audioUrl, currentAudioStartMs, currentAudioEndMs 
+  audioUrl, currentAudioStartMs, currentAudioEndMs, currentSkillCode 
 }: GlobalAudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -112,7 +113,7 @@ export default function GlobalAudioPlayer({
     
     setProgress((currentMs / durationMs) * 100);
 
-    if (currentAudioEndMs && currentMs >= currentAudioEndMs && !isWaiting) {
+    if (currentSkillCode === 'LISTENING' && currentAudioEndMs && currentMs >= currentAudioEndMs && !isWaiting) {
       audioRef.current.pause();
       setIsPlaying(false);
       setIsWaiting(true);
