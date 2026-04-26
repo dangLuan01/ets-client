@@ -100,14 +100,6 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
   useEffect(() => {
     setTotalItems(flatItemsList.length);
   }, [flatItemsList, setTotalItems]);
-  
-  // Reset trạng thái khi component unmount
-  useEffect(() => {
-    return () => {
-      resetTest();
-    }
-  }, [resetTest]);
-
   useEffect(() => {
     if (currentItem && currentItem.partId !== undefined) {
       setCurrentPart(currentItem.partId);
@@ -232,8 +224,10 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
   const disableBackButton = currentItemIndex === 0 || (currentSkillCode === 'READING' && prevItem?.skillCode === 'LISTENING');
 
   const disableNextButton = currentItemIndex === flatItemsList.length - 1;
-
+  
   const handleStartTest = () => {
+    resetTest();
+    setTotalItems(flatItemsList.length);
     // Ngay khoảnh khắc người dùng click chuột, ta "tóm" lấy thẻ audio và ép nó phát!
     // Trình duyệt sẽ cấp quyền Autoplay vĩnh viễn cho thẻ này trong phiên làm việc.
     const audioEl = document.getElementById('global-audio-player') as HTMLAudioElement;

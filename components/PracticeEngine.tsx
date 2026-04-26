@@ -21,9 +21,10 @@ export default function PracticeEngine({ initialData }: PracticeEngineProps) {
   const setReviewMode = useTestStore((state) => state.setReviewMode);
   const setShowExplanation = useTestStore((state) => state.setShowExplanation);
   const setTotalItems = useTestStore((state) => state.setTotalItems);
-  const resetTest = useTestStore((state) => state.resetTest);
+  const setCurrentItemIndex = useTestStore((state) => state.setCurrentItemIndex);
   // 1. QUẢN LÝ VÒNG ĐỜI CỦA CHẾ ĐỘ LUYỆN TẬP
   useEffect(() => {
+    setCurrentItemIndex(0);
     // Bật chế độ Review ngay khi vào trang Luyện tập
     setReviewMode(true);
     // Mặc định ẩn giải thích để học viên tự suy nghĩ trước
@@ -34,7 +35,7 @@ export default function PracticeEngine({ initialData }: PracticeEngineProps) {
       setReviewMode(false);
       setShowExplanation(false);
     };
-  }, [setReviewMode, setShowExplanation]);
+  }, [setReviewMode, setShowExplanation, setCurrentItemIndex]);
 
   // 2. LOGIC TRẢI PHẲNG (FLAT) DỮ LIỆU JSON THÀNH MẢNG 1 CHIỀU
   // Dùng useMemo để tối ưu hiệu suất, chỉ tính toán lại khi initialData thay đổi
@@ -66,13 +67,6 @@ export default function PracticeEngine({ initialData }: PracticeEngineProps) {
   useEffect(() => {
     setTotalItems(flatItemsList.length);
   }, [flatItemsList, setTotalItems]);
-  
-  // Reset trạng thái khi component unmount
-  useEffect(() => {
-    return () => {
-      resetTest();
-    }
-  }, [resetTest]);
 
   // 3. HÀM ĐIỀU PHỐI GIAO DIỆN TỪNG PART
   const renderCurrentPart = () => {

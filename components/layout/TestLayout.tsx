@@ -61,6 +61,7 @@ export default function TestLayout({
             audioUrl={audioUrl} 
             currentAudioStartMs={currentAudioStartMs || null} 
             currentAudioEndMs={currentAudioEndMs || null} 
+            currentSkillCode={currentSkillCode}
           />
         </div>
       )}
