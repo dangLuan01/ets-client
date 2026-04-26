@@ -1,6 +1,7 @@
 'use client';
 
 import { useTestStore } from "@/store/useTestStore";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 interface TestHeaderProps {
@@ -8,15 +9,17 @@ interface TestHeaderProps {
   currentQuestionNumber: number | string;
   timeLeft: string;
   totalQuestion: number;
+  onBack: () => void;
 }
 
 export default function TestHeader({ 
   headerTitle, 
   currentQuestionNumber, 
   timeLeft,
-  totalQuestion
+  totalQuestion,
+  onBack
 }: TestHeaderProps) {
-
+  const router = useRouter();
   const setSubmitModalOpen = useTestStore((state) => state.setSubmitModalOpen);
   const volume = useTestStore((state) => state.volume);
   const setVolume = useTestStore((state) => state.setVolume);
@@ -43,13 +46,22 @@ export default function TestHeader({
   return (
     <header className="grid grid-cols-3 items-center bg-[#0a1b3f] text-white px-2 md:px-4 py-2 shrink-0 h-[60px] shadow-md z-10">
       
-      {/* Góc trái: Logo */}
-      <div className="flex justify-start">
-        <div className="bg-white rounded-[4px] px-3 py-1 flex items-center justify-center h-10 w-auto md:w-[100px]">
-          <span className="text-[#0a1b3f] font-extrabold italic text-lg md:text-xl leading-none">ETS</span>
+      {isReviewMode ? (
+        <button 
+          onClick={onBack}
+          className="flex items-center justify-center w-8 h-8 rounded-full border border-white hover:bg-white/20 transition-colors text-white"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+        </button>
+      ): (
+        <div className="flex justify-start">
+          <div className="bg-white rounded-[4px] px-3 py-1 flex items-center justify-center h-10 w-auto md:w-[100px]">
+            <span className="text-[#0a1b3f] font-extrabold italic text-lg md:text-xl leading-none">ETS</span>
+          </div>
         </div>
-      </div>
-      
+      )}
       {/* Ở giữa: Tiêu đề bài thi */}
       <div className="text-center px-2">
         <h1 className="hidden md:block font-semibold text-sm md:text-lg tracking-wide truncate">{headerTitle}</h1>

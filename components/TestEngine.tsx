@@ -14,6 +14,7 @@ import QuestionListModal from './ui/QuestionListModal';
 import { examService } from '@/services/examService';
 import { SubmitExamPayload } from '@/types/exam';
 import ResultScreen from './ui/ResultScreen';
+import { useRouter } from 'next/navigation';
 
 interface PageProps {
   slug: string;
@@ -22,6 +23,7 @@ interface PageProps {
 }
 
 export default function TestEngine({ initialData, slug, examId }: PageProps) {
+  const router = useRouter();
   // 1. STATE QUẢN LÝ MÀN HÌNH BẮT ĐẦU
   const [isTestStarted, setIsTestStarted] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(initialData.total_time * 60);
@@ -36,7 +38,6 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [testResult, setTestResult] = useState<any>(null); // State lưu kết quả trả về từ API
   const answers = useTestStore((state) => state.answers);
-
 
  // 1. HÀM FLATTEN THÔNG MINH (Xử lý mảng Skills -> Parts -> Items)
   const flatItemsList = useMemo(() => {
@@ -341,7 +342,6 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
     // Thêm số 0 đằng trước nếu nhỏ hơn 10 (VD: 9 -> 09)
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
-
   if (testResult) {
     return (
       <ResultScreen 
@@ -349,7 +349,7 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
         examId={examId}
         testResult={testResult} 
         onBack={() => {
-          window.location.reload(); 
+          router.push('/');
         }} 
       />
     );

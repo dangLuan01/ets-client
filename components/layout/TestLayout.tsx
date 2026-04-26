@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import GlobalAudioPlayer from '../ui/GlobalAudioPlayer';
 import TestHeader from './TestHeader';
 import TestFooter from './TestFooter';
+import { useRouter } from 'next/navigation';
 
 interface TestLayoutProps {
   children: ReactNode;
@@ -38,6 +39,7 @@ export default function TestLayout({
   isTestStarted = false,
   currentItem
 }: TestLayoutProps) {
+   const router = useRouter();
   
   return (
     <div className="flex flex-col h-screen w-full bg-[#f0f2f5] text-black select-none font-sans overflow-hidden">
@@ -48,6 +50,9 @@ export default function TestLayout({
         currentQuestionNumber={currentQuestionNumber} 
         timeLeft={timeLeft}
         totalQuestion={totalQuestion}
+        onBack={() => {
+          router.push('/');
+        }} 
       />
 
       {/* 2. THANH AUDIO ẨN */}
