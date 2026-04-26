@@ -119,6 +119,7 @@ export default function PracticeEngine({ initialData }: PracticeEngineProps) {
       disableNextButton={currentItemIndex === flatItemsList.length - 1}
       isReviewMode={true}
       isTestStarted={true}
+      currentItem={currentItem}
     >
       {/* Modal danh sách 200 câu hỏi (Dùng chung với thi thật) */}
       <QuestionListModal flatItemsList={flatItemsList} isReviewMode={true}/>

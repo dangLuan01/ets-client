@@ -377,6 +377,7 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
       disableNextButton={disableNextButton}
       isReviewMode={false}
       isTestStarted={isTestStarted}
+      currentItem={currentItem}
     >
       <SubmitModal 
         flatItemsList={flatItemsList} 

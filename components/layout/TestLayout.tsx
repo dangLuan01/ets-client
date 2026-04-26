@@ -19,6 +19,7 @@ interface TestLayoutProps {
   disableNextButton?: boolean;
   isReviewMode?: boolean;
   isTestStarted?:boolean;
+  currentItem?: any;
 }
 
 export default function TestLayout({ 
@@ -34,7 +35,8 @@ export default function TestLayout({
   disableBackButton = false,
   disableNextButton = false,
   isReviewMode = false,
-  isTestStarted = false
+  isTestStarted = false,
+  currentItem
 }: TestLayoutProps) {
   
   return (
@@ -89,6 +91,7 @@ export default function TestLayout({
         <TestFooter
         disableBackButton={disableBackButton}
         disableNextButton={disableNextButton}
+        currentItem={currentItem}
         />
       )}
     </div>

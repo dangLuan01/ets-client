@@ -13,6 +13,7 @@ export default function QuestionListModal({ flatItemsList, isReviewMode = false 
   const setOpen = useTestStore((state) => state.setQuestionListModalOpen);
   const jumpToQuestion = useTestStore((state) => state.jumpToQuestion);
   const answers = useTestStore((state) => state.answers);
+  const markedForReview = useTestStore((state) => state.markedForReview);
 
   // Hàm gom nhóm câu hỏi theo mảng Part truyền vào
   const getPartsData = (partNumbers: number[]) => {
@@ -72,6 +73,10 @@ export default function QuestionListModal({ flatItemsList, isReviewMode = false 
               <div className="grid grid-cols-8 sm:grid-cols-10 gap-2 pl-5">
                 {part.questions.map((q: any) => {
                   const isAnswered = !!answers[q.id];
+                  const item = flatItemsList[q.index];
+                  const isGroup = item.entity_type === 'GROUP';
+                  const markId = isGroup ? item.entity_id : q.id;
+                  const isMarked = markedForReview.has(markId);
                   return (
                     <button
                       key={q.id}
@@ -82,8 +87,8 @@ export default function QuestionListModal({ flatItemsList, isReviewMode = false 
                       className={`
                         h-8 flex items-center justify-center rounded-[4px] text-[13px] font-bold transition-all
                         ${isAnswered 
-                          ? 'bg-[#1e3a8a] text-white border border-[#1e3a8a] shadow-sm' // Nút màu Xanh Navy (Đã làm)
-                          : 'bg-[#e9ecef] text-gray-600 hover:bg-gray-300'} // Xám (Chưa làm)
+                          ? `text-white border ${isMarked ? 'bg-[#f28322] border-[#f28322] hover:bg-[#d97017]' : 'bg-[#1e3a8a] border-[#1e3a8a]'} shadow-sm`
+                          : `${isMarked ? 'bg-[#f28322] text-white hover:bg-[#d97017]' : 'bg-[#e9ecef] text-gray-600 hover:bg-gray-300'}`}
                       `}
                     >
                       {q.number}

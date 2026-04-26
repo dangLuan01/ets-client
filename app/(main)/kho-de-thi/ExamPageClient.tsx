@@ -34,7 +34,7 @@ interface ExamPageClientProps {
 const ExamCard = ({ exam }: { exam: ExamListItem }) => {
   return (
     <div className="bg-white rounded-2xl border border-slate-200/80 hover:shadow-xl hover:shadow-indigo-100/50 transition-all duration-300 group">
-      <div className="relative rounded-t-2xl overflow-hidden aspect-[16/10]">
+      <div className="relative rounded-t-2xl overflow-hidden aspect-[16/9]">
         <img 
           src={exam.thumbnail} 
           alt={exam.title} 
