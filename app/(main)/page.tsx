@@ -9,13 +9,12 @@ import Link from "next/link";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const hotExamData = await examService.getFeaturedExams('hot', 5);
-  const sortFilter = await menuService.getMenu(5, "sort-filter");
-  const postViewCount = await postService.getPost(3, 1, "view_count", "")
+  const hotExamData     = await examService.getFeaturedExams('hot', 5);
+  const sortFilter      = await menuService.getMenu(5, "sort-filter");
+  const postViewCount   = await postService.getPost(3, 1, "view_count", "");
 
   return (
     <main className="container mx-auto max-w-7xl md:pt-32 p-4 md:p-6">
-        
         <section className="mb-10">
             <h1 className="text-3xl md:text-6xl font-black leading-tight mb-4">
                 Hôm nay bạn muốn <br className="hidden md:block" /> đạt bao nhiêu <span className="text-indigo-600">TOEIC?</span>
