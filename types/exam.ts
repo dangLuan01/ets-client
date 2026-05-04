@@ -75,7 +75,7 @@ export interface SubmitAnswer {
 }
 
 export interface SubmitExamPayload {
-  exam_id: number;
+  exam_slug: string;
   answers: SubmitAnswer[];
 }
 

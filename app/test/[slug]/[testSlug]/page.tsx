@@ -7,17 +7,17 @@ import { examService } from '@/services/examService';
 interface PageProps {
   params: Promise<{
     slug: string;
-    testId: string;
+    testSlug: string;
   }>;
 }
 
 export default async function TestPage({ params }: PageProps) {
   // Trong Next.js 16, params là một Promise, chúng ta cần await nó
   const resolvedParams = await params;
-  const { testId, slug } = resolvedParams;
+  const { testSlug, slug } = resolvedParams;
 
   // Gọi Service để lấy dữ liệu (Chạy hoàn toàn trên Server)
-  const examData = await examService.getExamById(testId);
+  const examData = await examService.getExamBySlug(testSlug);
   
   // Nếu API trả về null (lỗi hoặc không tìm thấy đề), điều hướng sang trang 404
   if (!examData) {
@@ -26,7 +26,7 @@ export default async function TestPage({ params }: PageProps) {
 
   // Nếu có dữ liệu, truyền xuống Client Component (TestEngine)
   return (
-    <TestEngine initialData={examData} slug={slug} examId={testId}/>
+    <TestEngine initialData={examData} slug={slug} examSlug={testSlug}/>
   );
 }
 

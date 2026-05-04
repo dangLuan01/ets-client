@@ -1,7 +1,7 @@
-
 // services/examService.ts
 import { ExamPayload, SubmitExamPayload, FeaturedExamsApiResponse, FeaturedExamsResponse } from '@/types/exam';
 import { FilterApiResponse, FilterOption } from '@/types/filter';
+import apiClient from '@/utils/apiClient';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.vidhub.io.vn';
 
@@ -24,10 +24,7 @@ export const examService = {
       });
       const response = await fetch(`${API_BASE_URL}/api/v1/exams/featured?${queryParams.toString()}`, {
         method: 'GET',
-        next: { revalidate: 10 },
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        next: { revalidate: 900 },
       });
 
       if (!response.ok) {
@@ -52,37 +49,24 @@ export const examService = {
   /**
    * Gọi API lấy chi tiết đề thi theo ID
    */
-  async getExamById(testId: string): Promise<ExamPayload | null> {
+  async getExamBySlug(examSlug: string): Promise<ExamPayload | null> {
     try {
-      // Gọi API thực tế của bạn
-      // Thêm cache: 'no-store' để đảm bảo luôn lấy đề thi mới nhất, không bị cache lại
-      const response = await fetch(`${API_BASE_URL}/api/v1/exams/${testId}/full-test`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/exams/slug/${examSlug}/full-test`, {
         method: 'GET',
         next: {revalidate: 10},
-        headers: {
-          'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${token}` // Thêm token nếu API của bạn yêu cầu auth
-        },
       });
 
       if (!response.ok) {
-        console.error(`Failed to fetch exam ${testId}: ${response.statusText}`);
+        console.error(`Failed to fetch exam ${examSlug}: ${response.statusText}`);
         return null;
       }
 
-    // Parse JSON từ response
       const resJson: ApiResponse = await response.json();
-      // BƯỚC BÓC TÁCH: Kiểm tra xem có field 'data' không
       if (!resJson || !resJson.data) {
         console.error('Invalid API response structure: Missing "data" payload');
         return null;
       }
       
-      // BƯỚC BẢO MẬT: Nếu API của bạn có trả về 'correct_answer', 
-      // bạn NÊN dùng một hàm ở đây để map() qua toàn bộ mảng data 
-      // và xóa trường 'correct_answer' đi trước khi return data.
-      // (Giả sử API hiện tại chưa trả đáp án hoặc đã ẩn rồi thì cứ return thẳng)
-
       return resJson.data;
     } catch (error) {
       console.error('Error fetching exam:', error);
@@ -93,17 +77,11 @@ export const examService = {
   // Hàm nộp bài thi
   submitTest: async (payload: SubmitExamPayload) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/exams/calculate/score`, {
+      const response = await apiClient(`/api/v1/exams/calculate/score`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // Bạn có thể thêm Authorization Token ở đây sau này:
-          // 'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
         body: JSON.stringify(payload),
       });
 
-      // Bắt lỗi HTTP (400, 500...)
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -113,7 +91,7 @@ export const examService = {
       
     } catch (error) {
       console.error("[examService] Error submitting test:", error);
-      throw error; // Ném lỗi ra ngoài để UI Component tự xử lý hiển thị
+      throw error;
     }
   },
 
@@ -124,9 +102,7 @@ export const examService = {
     try {
       const response = await fetch(`${API_BASE_URL}/api/v1/exams/filter-structure`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        next: {revalidate: 900},
       });
 
       if (!response.ok) {
@@ -163,9 +139,7 @@ export const examService = {
       const url = `${API_BASE_URL}/api/v1/exams/filter?${query.toString()}`;
       const response = await fetch(url, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        next: {revalidate: 30},
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

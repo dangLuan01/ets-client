@@ -8,10 +8,7 @@ export const tagService = {
           // Gọi API thực tế của bạn
           const response = await fetch(`${API_BASE_URL}/api/v1/client/tag/get-all?limit=${limit}&page=${page}`, {
             method: 'GET',
-            next: { revalidate: 5 },
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            next: { revalidate: 900 }, // apiClient does not support this
           });
     
           if (!response.ok) {

@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 interface ExamListItem {
   id: number;
   title: string;
+  slug: string;
   cert_slug: string;
   year: number;
   total_time: number;
@@ -50,7 +51,7 @@ const ExamCard = ({ exam }: { exam: ExamListItem }) => {
           <span><i className="far fa-clock mr-1 text-indigo-500"></i> {exam.total_time} phút</span>
           <span><i className="far fa-question-circle mr-1 text-indigo-500"></i> {exam.total_question} câu</span>
         </div>
-        <Link href={`/test/${exam.cert_slug}/${exam.id}`}>
+        <Link href={`/test/${exam.cert_slug}/${exam.slug}`}>
           <button className="w-full font-bold py-3 rounded-lg transition-all duration-300 bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white">
             Vào thi ngay
           </button>

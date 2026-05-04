@@ -4,15 +4,15 @@ import { notFound } from 'next/navigation';
 
 interface PageProps {
   params: Promise<{
-    testId: string;
+    testSlug: string;
   }>;
 }
 
 export default async function PracticePage({ params }:PageProps  ) {
     const resolvedParams = await params;
-    const { testId } = resolvedParams;
+    const { testSlug } = resolvedParams;
 
-    const examData = await examService.getExamById(testId);
+    const examData = await examService.getExamBySlug(testSlug);
     if (!examData) {
         notFound();
     }

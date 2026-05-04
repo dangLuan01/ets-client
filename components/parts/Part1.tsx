@@ -28,9 +28,11 @@ export default function Part1({ item }: Part1Props) {
       
       {/* CỘT TRÁI: Khu vực Hình ảnh */}
       <div className="w-full md:w-1/2 h-auto md:h-full bg-white border border-gray-200 shadow-sm p-4 md:p-6 flex flex-col items-center">
-        <div className="w-full font-bold text-[#1e3a8a] text-lg mb-6">
-          Select the one statement that best describes what you see in the picture.
-        </div>
+        {!isReviewMode && (
+          <div className="w-full font-bold text-[#1e3a8a] text-lg mb-6">
+            Select the one statement that best describes what you see in the picture.
+          </div>
+        )}
         
         <div className="p-1 flex items-center justify-center w-full">
           <img 

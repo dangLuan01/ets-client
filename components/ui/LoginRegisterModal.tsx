@@ -2,39 +2,35 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
+import { register, login, getMe } from "@/services/authService";
+import { validateEmail, validatePassword, validateTarget, validateUsername } from "@/utils/helper";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const LoginRegisterModal = ({
   onClose,
 }: {
   onClose: () => void;
 }) => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [agree, setAgree] = useState(false);
+  const [isLogin, setIsLogin]             = useState(true);
+  const [username, setUsername]           = useState("");
+  const [email, setEmail]                 = useState("");
+  const [password, setPassword]           = useState("");
+  const [target, setTarget]               = useState(990);
+  const [agree, setAgree]                 = useState(false);
   const [usernameError, setUsernameError] = useState("");
-  const [emailError, setEmailError] = useState("");
+  const [emailError, setEmailError]       = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [agreeError, setAgreeError] = useState("");
+  const [targetError, setTargetError]     = useState("");
+  const [agreeError, setAgreeError]       = useState("");
+  const [apiError, setApiError]           = useState("");
+  const setTokens                         = useAuthStore((state) => state.setTokens);
+  const setUser                           = useAuthStore((state) => state.setUser);
 
-  const validateEmail = (email: string) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-  };
-
-  const validatePassword = (password: string) => {
-    return password.length >= 8;
-  };
-
-  const validateUsername = (username: string) => {
-    return username.length > 0;
-  };
-
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setEmailError("");
     setPasswordError("");
+    setApiError("");
 
     let hasError = false;
     if (!validateEmail(email)) {
@@ -47,17 +43,38 @@ const LoginRegisterModal = ({
     }
 
     if (!hasError) {
-      console.log("Login", { email, password });
-      onClose();
+      try {
+        const loginResponse = await login({ email, password });
+       
+        const { access_token, refresh_token } = loginResponse.data;
+        
+        // Store tokens first
+        setTokens(access_token, refresh_token);
+        
+        // Then, fetch user information
+        const meResponse = await getMe();
+        setUser(meResponse.data);
+
+        onClose();
+      } catch (error) {
+        if (error instanceof Error) {
+          setApiError(error.message);
+        } else {
+          setApiError("Đã có lỗi xảy ra.  Kiểm tra lại thông tin.");
+        }
+      }
     }
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setUsernameError("");
     setEmailError("");
     setPasswordError("");
     setAgreeError("");
+    setTargetError("");
+    setApiError("");
 
     let hasError = false;
     if (!validateUsername(username)) {
@@ -81,9 +98,22 @@ const LoginRegisterModal = ({
       hasError = true;
     }
 
+    if (!validateTarget(target)) {
+      setTargetError("Mục tiêu phải từ 10 đến 990.")
+      hasError = true;
+    }
+
     if (!hasError) {
-      console.log("Register", { username, email, password });
-      onClose();
+      try {
+        await register({ username, email, password, target });
+        setIsLogin(true);
+      } catch (error) {
+        if (error instanceof Error) {
+          setApiError(error.message);
+        } else {
+          setApiError("Đã có lỗi xảy ra.");
+        }
+      }
     }
   };
 
@@ -111,14 +141,14 @@ const LoginRegisterModal = ({
 
           <div className="relative z-10 space-y-6">
             <span className="bg-white/20 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest backdrop-blur-sm">
-              Cộng đồng 2M+ học viên
+              Cộng đồng 9K+ học viên
             </span>
             <h2 className="text-4xl font-black leading-tight">
               Đột phá điểm số <br />
               ngay hôm nay.
             </h2>
             <p className="text-indigo-100 text-sm leading-relaxed">
-              Truy cập kho đề thi ETS 2024, phân tích AI chuyên sâu và lộ trình cá nhân hóa hoàn toàn miễn phí.
+              Truy cập kho đề thi ETS 2026, phân tích AI chuyên sâu và lộ trình cá nhân hóa hoàn toàn miễn phí.
             </p>
           </div>
 
@@ -152,6 +182,7 @@ const LoginRegisterModal = ({
 
           {isLogin ? (
             <form onSubmit={handleLogin} className="space-y-6">
+              {apiError && <p className="text-red-500 text-sm text-center font-bold">{apiError}</p>}
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">
@@ -159,7 +190,7 @@ const LoginRegisterModal = ({
                   </label>
                   <input
                     type="email"
-                    placeholder="Ví dụ: hi@thithu.vn"
+                    placeholder="Ví dụ: hi@toiecviet.com"
                     className={`w-full bg-slate-50 border-2 ${emailError ? 'border-red-500' : 'border-transparent'} px-5 py-4 rounded-2xl text-sm outline-none transition-all focus:bg-white focus:border-indigo-600 focus:shadow-sm`}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -171,9 +202,9 @@ const LoginRegisterModal = ({
                     <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">
                       Mật khẩu
                     </label>
-                    <a href="#" className="text-xs font-bold text-indigo-600 hover:underline">
+                    {/* <a href="#" className="text-xs font-bold text-indigo-600 hover:underline">
                       Quên mật khẩu?
-                    </a>
+                    </a> */}
                   </div>
                   <div className="relative">
                     <input
@@ -187,6 +218,7 @@ const LoginRegisterModal = ({
                   </div>
                    {passwordError && <p className="text-red-500 text-xs mt-1 px-1">{passwordError}</p>}
                 </div>
+                
               </div>
               <button
                 type="submit"
@@ -194,7 +226,7 @@ const LoginRegisterModal = ({
               >
                 ĐĂNG NHẬP
               </button>
-              <div className="relative flex items-center justify-center mt-8 mb-6">
+              {/* <div className="relative flex items-center justify-center mt-8 mb-6">
                 <div className="w-full border-t border-slate-100"></div>
                 <span className="absolute bg-white px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                   Hoặc tiếp tục với
@@ -207,14 +239,15 @@ const LoginRegisterModal = ({
                 <button type="button" className="flex items-center justify-center gap-3 bg-slate-50 py-3.5 rounded-2xl font-bold text-sm text-slate-700 hover:bg-slate-100 border border-slate-100 transition">
                   <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" className="w-5 h-5" alt="Facebook" /> Facebook
                 </button>
-              </div>
+              </div> */}
             </form>
           ) : (
             <form onSubmit={handleRegister} className="space-y-6">
+               {apiError && <p className="text-red-500 text-sm text-center font-bold">{apiError}</p>}
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">
-                    Họ và tên
+                    Tên người dùng
                   </label>
                   <input
                     type="text"
@@ -231,7 +264,7 @@ const LoginRegisterModal = ({
                   </label>
                   <input
                     type="email"
-                    placeholder="hi@thithu.vn"
+                    placeholder="hi@toiecviet.com"
                     className={`w-full bg-slate-50 border-2 ${emailError ? 'border-red-500' : 'border-transparent'} px-5 py-4 rounded-2xl text-sm outline-none transition-all focus:bg-white focus:border-indigo-600 focus:shadow-sm`}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -250,6 +283,19 @@ const LoginRegisterModal = ({
                     onChange={(e) => setPassword(e.target.value)}
                   />
                   {passwordError && <p className="text-red-500 text-xs mt-1 px-1">{passwordError}</p>}
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">
+                    Mục tiêu điểm
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="Nhập mục tiêu đạt điểm của bạn"
+                    className={`w-full bg-slate-50 border-2 ${targetError ? 'border-red-500' : 'border-transparent'} px-5 py-4 rounded-2xl text-sm outline-none transition-all focus:bg-white focus:border-indigo-600 focus:shadow-sm`}
+                    value={target}
+                    onChange={(e) => setTarget(Number(e.target.value))}
+                  />
+                  {targetError && <p className="text-red-500 text-xs mt-1 px-1">{targetError}</p>}
                 </div>
               </div>
 

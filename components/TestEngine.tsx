@@ -18,11 +18,11 @@ import { useRouter } from 'next/navigation';
 
 interface PageProps {
   slug: string;
-  examId: string;
+  examSlug: string;
   initialData: any;
 }
 
-export default function TestEngine({ initialData, slug, examId }: PageProps) {
+export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
   const router = useRouter();
   // 1. STATE QUẢN LÝ MÀN HÌNH BẮT ĐẦU
   const [isTestStarted, setIsTestStarted] = useState(false);
@@ -285,7 +285,7 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
     });
 
     const payload: SubmitExamPayload = {
-      exam_id: parseInt(examId, 10),
+      exam_slug: examSlug,
       answers: formattedAnswers
     };
 
@@ -304,7 +304,7 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
       // để đảm bảo chỉ xảy ra sau khi có kết quả hoặc lỗi.
       useTestStore.getState().setSubmitModalOpen(false);
     }
-  }, [isSubmitting, flatItemsList, answers, examId]);
+  }, [isSubmitting, flatItemsList, answers, examSlug]);
 
   // 1. EFFECT ĐẾM NGƯỢC THỜI GIAN
   useEffect(() => {
@@ -346,7 +346,7 @@ export default function TestEngine({ initialData, slug, examId }: PageProps) {
     return (
       <ResultScreen 
         slug={slug}
-        examId={examId}
+        examSlug={examSlug}
         testResult={testResult} 
         onBack={() => {
           router.push('/');
