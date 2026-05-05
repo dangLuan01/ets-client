@@ -15,6 +15,7 @@ import { examService } from '@/services/examService';
 import { SubmitExamPayload } from '@/types/exam';
 import ResultScreen from './ui/ResultScreen';
 import { useRouter } from 'next/navigation';
+import { AttemptPayload } from '@/types/attempt';
 
 interface PageProps {
   slug: string;
@@ -25,19 +26,20 @@ interface PageProps {
 export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
   const router = useRouter();
   // 1. STATE QUẢN LÝ MÀN HÌNH BẮT ĐẦU
-  const [isTestStarted, setIsTestStarted] = useState(false);
-  const [remainingSeconds, setRemainingSeconds] = useState(initialData.total_time * 60);
+  const [isTestStarted, setIsTestStarted]           = useState(false);
+  const [remainingSeconds, setRemainingSeconds]     = useState(initialData.total_time * 60);
+  const [attemptId, setAttemptId]                   = useState<number>(0);
   // Cờ đánh dấu xem đã reset giờ cho phần Reading chưa (chỉ reset 1 lần)
   const [hasResetForReading, setHasResetForReading] = useState(false);
-  const currentItemIndex = useTestStore((state) => state.currentItemIndex);
-  const setCurrentPart = useTestStore((state) => state.setCurrentPart);
-  const jumpToQuestion = useTestStore((state) => state.jumpToQuestion);
-  const setTotalItems = useTestStore((state) => state.setTotalItems);
-  const resetTest = useTestStore((state) => state.resetTest);
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [testResult, setTestResult] = useState<any>(null); // State lưu kết quả trả về từ API
-  const answers = useTestStore((state) => state.answers);
+  const currentItemIndex                            = useTestStore((state) => state.currentItemIndex);
+  const setCurrentPart                              = useTestStore((state) => state.setCurrentPart);
+  const jumpToQuestion                              = useTestStore((state) => state.jumpToQuestion);
+  const setTotalItems                               = useTestStore((state) => state.setTotalItems);
+  const resetTest                                   = useTestStore((state) => state.resetTest);
+  const [isStart, setIsStart]                       = useState(false);
+  const [isSubmitting, setIsSubmitting]             = useState(false);
+  const [testResult, setTestResult]                 = useState<any>(null); // State lưu kết quả trả về từ API
+  const answers                                     = useTestStore((state) => state.answers);
 
  // 1. HÀM FLATTEN THÔNG MINH (Xử lý mảng Skills -> Parts -> Items)
   const flatItemsList = useMemo(() => {
@@ -226,7 +228,10 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
 
   const disableNextButton = currentItemIndex === flatItemsList.length - 1;
   
-  const handleStartTest = () => {
+  const handleStartTest = async () => {
+    if (isStart) return
+    setIsStart(true)
+    
     resetTest();
     setTotalItems(flatItemsList.length);
     // Ngay khoảnh khắc người dùng click chuột, ta "tóm" lấy thẻ audio và ép nó phát!
@@ -237,9 +242,19 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
         console.warn("Unlock audio ngầm thất bại, nhưng không sao.");
       });
     }
-    
-    // Đổi state để giao diện nhảy vào Câu 1
-    setIsTestStarted(true);
+    try {
+
+      const payload: AttemptPayload = {
+        exam_slug: examSlug,
+      };
+
+      const attemptId = await examService.storeUserAttempt(payload)
+      setAttemptId(attemptId)
+      // Đổi state để giao diện nhảy vào Câu 1
+      setIsTestStarted(true);
+    } catch (error) {
+      setIsStart(false);
+    }
   };
 
   // HÀM DEBUG: NHẢY THẲNG ĐẾN READING
@@ -285,6 +300,7 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
     });
 
     const payload: SubmitExamPayload = {
+      attempt_id: attemptId,
       exam_slug: examSlug,
       answers: formattedAnswers
     };
@@ -304,7 +320,7 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
       // để đảm bảo chỉ xảy ra sau khi có kết quả hoặc lỗi.
       useTestStore.getState().setSubmitModalOpen(false);
     }
-  }, [isSubmitting, flatItemsList, answers, examSlug]);
+  }, [isSubmitting, flatItemsList, answers, examSlug, attemptId]);
 
   // 1. EFFECT ĐẾM NGƯỢC THỜI GIAN
   useEffect(() => {

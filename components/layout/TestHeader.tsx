@@ -1,7 +1,6 @@
 'use client';
 
 import { useTestStore } from "@/store/useTestStore";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 interface TestHeaderProps {
@@ -19,7 +18,6 @@ export default function TestHeader({
   totalQuestion,
   onBack
 }: TestHeaderProps) {
-  const router = useRouter();
   const setSubmitModalOpen = useTestStore((state) => state.setSubmitModalOpen);
   const volume = useTestStore((state) => state.volume);
   const setVolume = useTestStore((state) => state.setVolume);

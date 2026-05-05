@@ -1,4 +1,5 @@
 // services/examService.ts
+import { AttemptPayload } from '@/types/attempt';
 import { ExamPayload, SubmitExamPayload, FeaturedExamsApiResponse, FeaturedExamsResponse } from '@/types/exam';
 import { FilterApiResponse, FilterOption } from '@/types/filter';
 import apiClient from '@/utils/apiClient';
@@ -88,6 +89,27 @@ export const examService = {
 
       const result = await response.json();
       return result;
+      
+    } catch (error) {
+      console.error("[examService] Error submitting test:", error);
+      throw error;
+    }
+  },
+
+  // Store User Attempt
+  storeUserAttempt: async (payload: AttemptPayload) => {
+    try {
+      const response = await apiClient(`/api/v1/exams/user-attempt/store`, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      return result.data;
       
     } catch (error) {
       console.error("[examService] Error submitting test:", error);
