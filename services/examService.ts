@@ -1,6 +1,6 @@
 // services/examService.ts
 import { AttemptPayload } from '@/types/attempt';
-import { ExamPayload, SubmitExamPayload, FeaturedExamsApiResponse, FeaturedExamsResponse } from '@/types/exam';
+import { ExamPayload, SubmitExamPayload, FeaturedExamsApiResponse, FeaturedExamsResponse, UserAnswerPayload } from '@/types/exam';
 import { FilterApiResponse, FilterOption } from '@/types/filter';
 import apiClient from '@/utils/apiClient';
 
@@ -114,6 +114,24 @@ export const examService = {
     } catch (error) {
       console.error("[examService] Error submitting test:", error);
       throw error;
+    }
+  },
+
+  // Store User Answer
+  storeUserAnswer: async (payload: UserAnswerPayload) => {
+    try {
+      const response = await apiClient(`/api/v1/exams/user-answer/store`, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        // Log error without throwing to prevent interrupting user flow
+        console.error(`[examService] HTTP error storing user answer! Status: ${response.status}`);
+      }
+    } catch (error) {
+      // Log error without throwing
+      console.error("[examService] Error in storeUserAnswer:", error);
     }
   },
 

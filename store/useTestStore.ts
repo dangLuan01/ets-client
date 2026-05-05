@@ -1,5 +1,6 @@
 import { AnswerData } from '@/types/exam';
 import { create } from 'zustand';
+import { examService } from '@/services/examService';
 
 interface TestState {
   answers: Record<string | number, AnswerData>;
@@ -9,11 +10,16 @@ interface TestState {
   
   // --- THÊM MỚI ---
   currentItemIndex: number; // Theo dõi thứ tự câu hỏi đang hiển thị
-  
+  attemptId: number | null; // ID của lần làm bài, dùng để lưu tiến trình
+  debounceTimers: Record<string | number, NodeJS.Timeout>; // Lưu các bộ đếm debounce
+  testStartTime: number | null; // Thời điểm bắt đầu làm bài (timestamp)
+
   setAnswer: (questionId: string | number, option: string, displayNumber: number) => void;
   toggleMarkForReview: (questionId: number) => void;
   setCurrentPart: (part: number) => void;
   setTotalItems: (total: number) => void; // Setter cho totalItems
+  setAttemptId: (id: number) => void; // Setter cho attemptId
+  setTestStartTime: (time: number) => void; // Setter cho thời gian bắt đầu
   
   // --- THÊM MỚI ---
   setCurrentItemIndex: (index: number) => void;
@@ -35,20 +41,62 @@ interface TestState {
   setShowExplanation: (show: boolean) => void;
 }
 
-export const useTestStore = create<TestState>((set) => ({
+export const useTestStore = create<TestState>((set, get) => ({
   answers: {},
   markedForReview: new Set(),
   currentPart: 1,
   totalItems: 0, // Khởi tạo totalItems
   currentItemIndex: 0, // Bắt đầu từ câu hỏi đầu tiên (index 0)
+  attemptId: null,
+  debounceTimers: {},
+  testStartTime: null,
 
-  setAnswer: (questionId, option, displayNumber) => 
-    set((state) => ({
-      answers: { 
-        ...state.answers, 
-        [questionId]: { option, displayNumber }
-      }
-    })),
+  setAttemptId: (id) => set({ attemptId: id }),
+  setTestStartTime: (time) => set({ testStartTime: time }),
+
+  setAnswer: (questionId, option, displayNumber) => {
+    const { attemptId, debounceTimers, answers, testStartTime } = get();
+
+    // Xóa bộ đếm thời gian cũ của câu hỏi này (nếu có)
+    if (debounceTimers[questionId]) {
+      clearTimeout(debounceTimers[questionId]);
+    }
+
+    // Cập nhật ngay lập tức giao diện người dùng
+    set({
+      answers: {
+        ...answers,
+        [questionId]: { option, displayNumber },
+      },
+    });
+
+    // Nếu không có attemptId (chưa bắt đầu thi), không làm gì cả
+    if (!attemptId) {
+      console.warn("Attempt ID not set. Cannot save progress.");
+      return;
+    }
+
+    // Tạo một bộ đếm thời gian mới
+    const newTimer = setTimeout(() => {
+      const currentTime = new Date().getTime();
+      const timeSpent = testStartTime ? Math.round((currentTime - testStartTime) / 1000) : 0;
+      // Sau 2 giây, gửi câu trả lời lên server
+      examService.storeUserAnswer({
+        attempt_id: attemptId,
+        question_id: Number(questionId), // Đảm bảo questionId là số
+        selected_answer: option,
+        time_spent_sec: timeSpent
+      });
+    }, 2000); // 2 giây
+
+    // Lưu ID của bộ đếm mới
+    set({
+      debounceTimers: {
+        ...debounceTimers,
+        [questionId]: newTimer,
+      },
+    });
+  },
 
   toggleMarkForReview: (questionId) => 
     set((state) => {
@@ -81,7 +129,16 @@ export const useTestStore = create<TestState>((set) => ({
     return { currentItemIndex: newIndex };
   }),
 
-  resetTest: () => set({ answers: {}, markedForReview: new Set(), currentPart: 1, currentItemIndex: 0, totalItems: 0 }),
+  resetTest: () => set({ 
+    answers: {}, 
+    markedForReview: new Set(), 
+    currentPart: 1, 
+    currentItemIndex: 0, 
+    totalItems: 0,
+    attemptId: null, // Reset cả attemptId
+    debounceTimers: {}, // Xóa timers
+    testStartTime: null,
+  }),
 
   isSubmitModalOpen: false,
   setSubmitModalOpen: (isOpen) => set({ isSubmitModalOpen: isOpen }),

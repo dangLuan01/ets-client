@@ -80,6 +80,13 @@ export interface SubmitExamPayload {
   answers: SubmitAnswer[];
 }
 
+export interface UserAnswerPayload {
+  attempt_id: number;
+  question_id: number;
+  selected_answer: string;
+  time_spent_sec: number;
+}
+
 export interface FeaturedExam {
     id: number;
     title: string;

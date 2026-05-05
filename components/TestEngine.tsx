@@ -234,6 +234,7 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
     
     resetTest();
     setTotalItems(flatItemsList.length);
+    useTestStore.getState().setTestStartTime(new Date().getTime());
     // Ngay khoảnh khắc người dùng click chuột, ta "tóm" lấy thẻ audio và ép nó phát!
     // Trình duyệt sẽ cấp quyền Autoplay vĩnh viễn cho thẻ này trong phiên làm việc.
     const audioEl = document.getElementById('global-audio-player') as HTMLAudioElement;
@@ -250,6 +251,7 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
 
       const attemptId = await examService.storeUserAttempt(payload)
       setAttemptId(attemptId)
+      useTestStore.getState().setAttemptId(attemptId); // Cập nhật ID vào store để dùng cho việc lưu câu trả lời
       // Đổi state để giao diện nhảy vào Câu 1
       setIsTestStarted(true);
     } catch (error) {
