@@ -1,5 +1,4 @@
-'use client';
-
+"use client"
 import { useMemo, useEffect, useState, useCallback } from 'react';
 import { useTestStore } from '@/store/useTestStore';
 import TestLayout from '@/components/layout/TestLayout';
@@ -15,7 +14,8 @@ import { examService } from '@/services/examService';
 import { SubmitExamPayload } from '@/types/exam';
 import ResultScreen from './ui/ResultScreen';
 import { useRouter } from 'next/navigation';
-import { AttemptPayload } from '@/types/attempt';
+import { useAuthStore } from '@/store/useAuthStore';
+import { AttemptPayload, ResumedAttempt, ResumedAttemptData } from '@/types/attempt';
 
 interface PageProps {
   slug: string;
@@ -23,19 +23,26 @@ interface PageProps {
   initialData: any;
 }
 
-export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
+export default function TestEngine({ initialData, slug, examSlug }: PageProps) {  
   const router = useRouter();
+  const { accessToken } = useAuthStore();
   // 1. STATE QUẢN LÝ MÀN HÌNH BẮT ĐẦU
   const [isTestStarted, setIsTestStarted]           = useState(false);
   const [remainingSeconds, setRemainingSeconds]     = useState(initialData.total_time * 60);
   const [attemptId, setAttemptId]                   = useState<number>(0);
   // Cờ đánh dấu xem đã reset giờ cho phần Reading chưa (chỉ reset 1 lần)
   const [hasResetForReading, setHasResetForReading] = useState(false);
+
+  // State for resume functionality
+  const [resumableAttempt, setResumableAttempt]     = useState<ResumedAttempt | null>(null);
+  const [isCheckingResume, setIsCheckingResume]     = useState(true);
+
   const currentItemIndex                            = useTestStore((state) => state.currentItemIndex);
   const setCurrentPart                              = useTestStore((state) => state.setCurrentPart);
   const jumpToQuestion                              = useTestStore((state) => state.jumpToQuestion);
   const setTotalItems                               = useTestStore((state) => state.setTotalItems);
   const resetTest                                   = useTestStore((state) => state.resetTest);
+  const setResumedAttempt                           = useTestStore((state) => state.setResumedAttempt);
   const [isStart, setIsStart]                       = useState(false);
   const [isSubmitting, setIsSubmitting]             = useState(false);
   const [testResult, setTestResult]                 = useState<any>(null); // State lưu kết quả trả về từ API
@@ -97,12 +104,88 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
     return flatList;
   }, [initialData]);
 
+  // --- RESUME LOGIC ---
+  useEffect(() => {
+    const checkResumableAttempt = async () => {
+      setIsCheckingResume(true);
+      try {
+        const resumeData: ResumedAttemptData = await examService.resumeAttempt(examSlug);
+        if (resumeData && resumeData.has_active_attempt && resumeData.attempt) {
+          setAttemptId(resumeData.attempt.id);
+          setResumableAttempt(resumeData.attempt);
+        }
+      } catch (error) {
+        // Silently fail, don't block the user
+        console.error("Error checking for resumable attempt:", error);
+      } finally {
+        setIsCheckingResume(false);
+      }
+    };
+
+    if (accessToken) {
+      checkResumableAttempt();
+    } else {
+      // If user is a guest, don't check for resume
+      setIsCheckingResume(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accessToken, examSlug]); // Run only once on mount
+
+  const handleResumeTest = () => {
+    if (!resumableAttempt) return;
+
+    const { attempt } = { attempt: resumableAttempt };
+
+    // 1. Restore store state
+    setResumedAttempt(attempt, flatItemsList);
+    
+    // 2. Find the index of the last viewed question
+    let lastQuestionIndex = 0;
+    for (let i = 0; i < flatItemsList.length; i++) {
+      const item = flatItemsList[i];
+      if (item.isSystemScreen) continue;
+      
+      if (item.entity_type === 'SINGLE' && (item.question_data?.question_id === attempt.last_viewed_question_id || item.entity_id === attempt.last_viewed_question_id)) {
+        lastQuestionIndex = i;
+        break;
+      } else if (item.entity_type === 'GROUP') {
+        const subQuestion = item.group_data?.sub_questions?.find((sq: any) => sq.question_id === attempt.last_viewed_question_id);
+        if (subQuestion) {
+          lastQuestionIndex = i;
+          break;
+        }
+      }
+    }
+
+    // 3. Jump to the question
+    jumpToQuestion(lastQuestionIndex);
+
+    // 4. Update timer
+    const lastQuestion = flatItemsList[lastQuestionIndex];
+    if (lastQuestion && lastQuestion.skillCode === 'READING') {
+      const readingTime = 4500; // 75 minutes
+      const timeSpent = attempt.time_spent_sec;
+      const listeningSection = flatItemsList.find(i => i.skillCode === 'LISTENING');
+      const approxListeningTime = listeningSection ? (initialData.total_time * 60 - readingTime) : 0;
+      const timeSpentOnReading = Math.max(0, timeSpent - approxListeningTime);
+
+      setRemainingSeconds(readingTime - timeSpentOnReading);
+      setHasResetForReading(true);
+    } else {
+      setRemainingSeconds(initialData.total_time * 60 - attempt.time_spent_sec);
+    }
+
+    // 5. Start the test UI
+    setIsTestStarted(true);
+  };
+
   const currentItem = flatItemsList[currentItemIndex];
 
   // CẬP NHẬT TỔNG SỐ CÂU VÀO STORE
   useEffect(() => {
     setTotalItems(flatItemsList.length);
   }, [flatItemsList, setTotalItems]);
+
   useEffect(() => {
     if (currentItem && currentItem.partId !== undefined) {
       setCurrentPart(currentItem.partId);
@@ -228,36 +311,67 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
 
   const disableNextButton = currentItemIndex === flatItemsList.length - 1;
   
-  const handleStartTest = async () => {
-    if (isStart) return
-    setIsStart(true)
-    
-    resetTest();
-    setTotalItems(flatItemsList.length);
-    useTestStore.getState().setTestStartTime(new Date().getTime());
-    // Ngay khoảnh khắc người dùng click chuột, ta "tóm" lấy thẻ audio và ép nó phát!
-    // Trình duyệt sẽ cấp quyền Autoplay vĩnh viễn cho thẻ này trong phiên làm việc.
-    const audioEl = document.getElementById('global-audio-player') as HTMLAudioElement;
-    if (audioEl) {
-      audioEl.play().catch(() => {
-        console.warn("Unlock audio ngầm thất bại, nhưng không sao.");
-      });
-    }
-    try {
-
-      const payload: AttemptPayload = {
-        exam_slug: examSlug,
-      };
-
-      const attemptId = await examService.storeUserAttempt(payload)
-      setAttemptId(attemptId)
-      useTestStore.getState().setAttemptId(attemptId); // Cập nhật ID vào store để dùng cho việc lưu câu trả lời
-      // Đổi state để giao diện nhảy vào Câu 1
-      setIsTestStarted(true);
-    } catch (error) {
-      setIsStart(false);
-    }
-  };
+    const handleStartTest = async () => {
+  
+      if (isStart) return
+  
+      setIsStart(true)
+  
+      resetTest();
+  
+      setTotalItems(flatItemsList.length);
+  
+      useTestStore.getState().setTestStartTime(new Date().getTime());
+  
+      // Ngay khoảnh khắc người dùng click chuột, ta "tóm" lấy thẻ audio và ép nó phát!
+  
+      // Trình duyệt sẽ cấp quyền Autoplay vĩnh viễn cho thẻ này trong phiên làm việc.
+  
+      const audioEl = document.getElementById('global-audio-player') as HTMLAudioElement;
+  
+      if (audioEl) {
+  
+        audioEl.play().catch(() => {
+  
+          console.warn("Unlock audio ngầm thất bại, nhưng không sao.");
+  
+        });
+  
+      }
+  
+      try {
+  
+        // Chỉ lưu attempt nếu user đã đăng nhập
+  
+        if (accessToken) {
+  
+          const payload: AttemptPayload = {
+  
+            exam_slug: examSlug,
+  
+          };
+  
+          const attemptId = await examService.storeUserAttempt(payload)
+  
+          setAttemptId(attemptId)
+  
+          useTestStore.getState().setAttemptId(attemptId); // Cập nhật ID vào store để dùng cho việc lưu câu trả lời
+  
+        }
+  
+        // Đổi state để giao diện nhảy vào Câu 1 cho cả guest và user
+  
+        setIsTestStarted(true);
+  
+      } catch (error) {
+  
+        console.error("Error starting test:", error);
+  
+        setIsStart(false);
+  
+      }
+  
+    };
 
   // HÀM DEBUG: NHẢY THẲNG ĐẾN READING
   const handleSkipToReading = () => {
@@ -414,20 +528,29 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
               </ul>
             </div>
 
-            {/* Gọi hàm handleStartTest khi click */}
-            <button
-              onClick={handleStartTest}
-              className="bg-[#f28322] hover:bg-[#d97017] transition-colors text-white font-bold py-3 px-10 rounded-[6px] shadow-md text-lg"
-            >
-              Let's Go
-            </button>
-            {/* NÚT DÀNH CHO DEVELOPER (Xóa đi khi đưa lên Production) */}
-              {/* <button
-                onClick={handleSkipToReading}
-                className="bg-gray-800 hover:bg-black transition-colors text-white font-bold py-2 px-6 rounded-[6px] shadow-sm text-sm border-2 border-dashed border-gray-400 w-full max-w-[300px]"
-              >
-                🚀 Skip to Reading (Debug)
-              </button> */}
+            <div className="flex justify-center items-center gap-4">
+              {isCheckingResume ? (
+                <p>Checking for active session...</p>
+              ) : (
+                <>
+                  {resumableAttempt && (
+                    <button
+                      onClick={handleResumeTest}
+                      className="bg-green-600 hover:bg-green-700 transition-colors text-white font-bold py-3 px-10 rounded-[6px] shadow-md text-lg"
+                    >
+                      Resume
+                    </button>
+                  )}
+                  <button
+                    onClick={handleStartTest}
+                    className="bg-[#f28322] hover:bg-[#d97017] transition-colors text-white font-bold py-3 px-10 rounded-[6px] shadow-md text-lg"
+                  >
+                    {resumableAttempt ? 'Start New' : "Let's Go"}
+                  </button>
+                </>
+              )}
+            </div>
+
           </div>
         </div>
       ) : (

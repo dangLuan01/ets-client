@@ -191,4 +191,26 @@ export const examService = {
       throw error;
     }
   },
+
+  // Resume an active attempt
+  resumeAttempt: async (examSlug: string) => {
+    try {
+      const response = await apiClient(`/api/v1/exams/resume/${examSlug}`, {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        console.warn('User guest');
+        return null;
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error('[examService] Error resuming attempt:', error);
+      // It's okay to fail here, we'll just start a new test
+      return null;
+    }
+  },
 };

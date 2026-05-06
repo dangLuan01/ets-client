@@ -1,3 +1,4 @@
+import { ResumedAttempt } from '@/types/attempt';
 import { AnswerData } from '@/types/exam';
 import { create } from 'zustand';
 import { examService } from '@/services/examService';
@@ -20,6 +21,7 @@ interface TestState {
   setTotalItems: (total: number) => void; // Setter cho totalItems
   setAttemptId: (id: number) => void; // Setter cho attemptId
   setTestStartTime: (time: number) => void; // Setter cho thời gian bắt đầu
+  setResumedAttempt: (attempt: ResumedAttempt, flatItemsList: any[]) => void;
   
   // --- THÊM MỚI ---
   setCurrentItemIndex: (index: number) => void;
@@ -53,6 +55,50 @@ export const useTestStore = create<TestState>((set, get) => ({
 
   setAttemptId: (id) => set({ attemptId: id }),
   setTestStartTime: (time) => set({ testStartTime: time }),
+
+  setResumedAttempt: (attempt, flatItemsList) => {
+    // 1. Map question ID to its display number for quick lookup
+    const questionDisplayNumberMap: Record<string, number> = {};
+    flatItemsList.forEach(item => {
+      if (item.isSystemScreen) return;
+
+      if (item.entity_type === 'SINGLE') {
+        const qId = item.question_data?.question_id || item.entity_id;
+        const displayNum = item.question_data?.display_number;
+        if (qId && displayNum) {
+          questionDisplayNumberMap[qId] = displayNum;
+        }
+      } else if (item.entity_type === 'GROUP') {
+        item.group_data?.sub_questions?.forEach((sub: any) => {
+          const qId = sub.question_id;
+          const displayNum = sub.display_number;
+          if (qId && displayNum) {
+            questionDisplayNumberMap[qId] = displayNum;
+          }
+        });
+      }
+    });
+
+    // 2. Reconstruct the answers object
+    const newAnswers: Record<string | number, AnswerData> = {};
+    for (const questionId in attempt.answers) {
+      const option = attempt.answers[questionId];
+      const displayNumber = questionDisplayNumberMap[questionId];
+      if (displayNumber !== undefined) {
+        newAnswers[questionId] = { option, displayNumber };
+      }
+    }
+
+    // 3. Calculate the new start time
+    const newTestStartTime = new Date().getTime() - (attempt.time_spent_sec * 1000);
+
+    // 4. Set the state
+    set({
+      attemptId: attempt.id,
+      answers: newAnswers,
+      testStartTime: newTestStartTime,
+    });
+  },
 
   setAnswer: (questionId, option, displayNumber) => {
     const { attemptId, debounceTimers, answers, testStartTime } = get();
