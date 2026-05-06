@@ -25,24 +25,24 @@ export default function Part2({ item }: Part2Props) {
   const isReviewMode = useTestStore((state) => state.isReviewMode);
   const showExplanation = useTestStore((state) => state.showExplanation);
 
-  const highlightQuestionKeywords = (text: string) => {
-    if (!text) return "Chưa có transcript câu hỏi";
+  // const highlightQuestionKeywords = (text: string) => {
+  //   if (!text) return "Chưa có transcript câu hỏi";
     
-    // Biểu thức chính quy (Regex) tìm các từ để hỏi kinh điển của TOEIC Part 2
-    const regex = /\b(Who|What|When|Where|Why|How|Whose|Which|Is|Are|Do|Does|Did|Can|Could|Should|Would)\b/gi;
+  //   // Biểu thức chính quy (Regex) tìm các từ để hỏi kinh điển của TOEIC Part 2
+  //   const regex = /\b(Who|What|When|Where|Why|How|Whose|Which|Is|Are|Do|Does|Did|Can|Could|Should|Would)\b/gi;
     
-    // Cắt chuỗi và bọc thẻ <span> vào các từ khóa
-    const parts = text.split(regex);
-    return parts.map((part, i) => 
-      regex.test(part) ? (
-        <span key={i} className="text-red-600 font-extrabold bg-red-100 px-1 rounded">
-          {part}
-        </span>
-      ) : (
-        part
-      )
-    );
-  };
+  //   // Cắt chuỗi và bọc thẻ <span> vào các từ khóa
+  //   const parts = text.split(regex);
+  //   return parts.map((part, i) => 
+  //     regex.test(part) ? (
+  //       <span key={i} className="text-red-600 font-extrabold bg-red-100 px-1 rounded">
+  //         {part}
+  //       </span>
+  //     ) : (
+  //       part
+  //     )
+  //   );
+  // };
 
   return (
     <div className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-[#f0f2f5] overflow-y-auto">
@@ -81,9 +81,8 @@ export default function Part2({ item }: Part2Props) {
           {isReviewMode && showExplanation ? (
             // HIỂN THỊ Ở CHẾ ĐỘ PRACTICE / GIẢI ĐỀ
             <div className="inline-block bg-blue-50 border border-blue-200 text-[#1e3a8a] px-4 py-2.5 rounded-lg font-medium text-[15px] shadow-sm">
-              <span className="mr-2">💬</span> 
               {/* Gọi hàm highlight để bôi đỏ từ khóa */}
-              {highlightQuestionKeywords(question_data?.question_text || '')}
+              {question_data?.question_text || ''}
             </div>
           ) : (
             // HIỂN THỊ Ở CHẾ ĐỘ THI THẬT

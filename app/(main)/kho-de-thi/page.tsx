@@ -3,6 +3,8 @@ import { Suspense } from 'react';
 import ExamPageClient from './ExamPageClient';
 import { examService } from '@/services/examService';
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://toiecviet.com';
+
 // Force dynamic rendering - required for useSearchParams
 export const dynamic = 'force-dynamic';
 
@@ -10,12 +12,12 @@ export const metadata: Metadata = {
     title: 'Kho đề thi TOEIC online miễn phí - Full ETS 2023, 2024, 2025',
     description: 'Luyện thi TOEIC online với hàng ngàn câu hỏi có đáp án và giải thích chi tiết, bám sát cấu trúc đề thi TOEIC thật.',
     alternates: {
-        canonical: 'https://etstest.com/kho-de-thi',
+        canonical: SITE_URL + '/kho-de-thi',
     },
     openGraph: {
         title: 'Kho đề thi TOEIC online miễn phí - Full ETS 2023, 2024, 2025',
         description: 'Luyện thi TOEIC online với hàng ngàn câu hỏi có đáp án và giải thích chi tiết, bám sát cấu trúc đề thi TOEIC thật.',
-        url: 'https://etstest.com/kho-de-thi',
+        url: SITE_URL + '/kho-de-thi',
         images: [
             {
                 url: 'https://i.pravatar.cc/800x600?u=etstest-kho-de-thi',

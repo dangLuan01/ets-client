@@ -4,7 +4,7 @@ import Link from "next/link";
 
 interface ResultScreenProps {
   slug: string;
-  examId: string;
+  examSlug: string;
   testResult: {
     total_score: number;
     raw_score?: {
@@ -19,7 +19,7 @@ interface ResultScreenProps {
   onBack: () => void;
 }
 
-export default function ResultScreen({ testResult, onBack, slug, examId }: ResultScreenProps) {  
+export default function ResultScreen({ testResult, onBack, slug, examSlug }: ResultScreenProps) {  
   
   const totalPercent = (testResult.total_score / 990) * 100;
   const listeningPercent = ((testResult.scaled_score?.listening || 0) / 495) * 100;
@@ -146,8 +146,8 @@ export default function ResultScreen({ testResult, onBack, slug, examId }: Resul
 
       {/* FOOTER */}
       <footer className="h-[70px] bg-[#d5d7db] flex justify-center items-center shrink-0 w-full shadow-[0_-2px_10px_rgba(0,0,0,0.1)]">
-        <Link href={`/practice/${slug}/${examId}`}>
-        <button 
+        <Link href={`/practice/${slug}/${examSlug}`}>
+        <button
           // onClick={onBack}
           className="px-10 py-2 bg-[#1b4382] hover:bg-[#122e5a] text-white font-bold rounded-[4px] shadow-sm transition-colors text-[15px]"
         >

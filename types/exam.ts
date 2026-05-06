@@ -75,8 +75,16 @@ export interface SubmitAnswer {
 }
 
 export interface SubmitExamPayload {
-  exam_id: number;
+  attempt_id: number;
+  exam_slug: string;
   answers: SubmitAnswer[];
+}
+
+export interface UserAnswerPayload {
+  attempt_id: number;
+  question_id: number;
+  selected_answer: string;
+  time_spent_sec: number;
 }
 
 export interface FeaturedExam {

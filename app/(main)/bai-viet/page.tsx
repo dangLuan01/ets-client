@@ -5,16 +5,18 @@ import BlogContainer from '@/components/BlogContainer';
 import { tagService } from '@/services/tagService';
 import { Metadata } from 'next';
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://toiecviet.com';
+
 export const metadata: Metadata = {
     title: 'Mẹo thi TOEIC - Bí kíp và kinh nghiệm luyện thi',
     description: 'Tổng hợp các bài viết, mẹo thi TOEIC, và kinh nghiệm luyện thi được cập nhật mới nhất từ ETS TEST.',
     alternates: {
-        canonical: 'https://etstest.com/bai-viet',
+        canonical: SITE_URL + '/bai-viet',
     },
     openGraph: {
         title: 'Mẹo thi TOEIC - Bí kíp và kinh nghiệm luyện thi',
         description: 'Tổng hợp các bài viết, mẹo thi TOEIC, và kinh nghiệm luyện thi được cập nhật mới nhất từ ETS TEST.',
-        url: 'https://etstest.com/bai-viet',
+        url: SITE_URL + '/bai-viet',
         images: [
             {
                 url: 'https://i.pravatar.cc/800x600?u=etstest-bai-viet',

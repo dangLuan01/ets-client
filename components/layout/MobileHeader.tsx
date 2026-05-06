@@ -5,7 +5,6 @@ const MobileHeader = () => {
         <span className="text-xl font-extrabold tracking-tighter">Toiecviet<span className="text-indigo-600">.com</span></span>
         <div className="flex gap-4">
             <i className="fas fa-search text-slate-400 text-lg"></i>
-            <i className="far fa-bell text-slate-400 text-lg"></i>
         </div>
     </div>
   );
