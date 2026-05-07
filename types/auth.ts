@@ -1,6 +1,7 @@
 export interface LoginData {
   email?: string;
   password?: string;
+  token: string;
 }
 
 export interface RegisterData {
@@ -8,6 +9,7 @@ export interface RegisterData {
   email?: string;
   password?: string;
   target?: number;
+  token: string;
 }
 
 export interface LoginResponse {

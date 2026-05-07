@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
-import { Menu } from '@/types/menu';
-import LoginRegisterModal from '@/components/ui/LoginRegisterModal';
-import { useAuthStore } from '@/store/useAuthStore';
 import { logout } from '@/services/authService';
+import { useAuthStore } from '@/store/useAuthStore';
+import { Menu } from '@/types/menu';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import LoginRegisterModal from '@/components/ui/LoginRegisterModal';
 
 interface Props {
   navLinks: Menu[];

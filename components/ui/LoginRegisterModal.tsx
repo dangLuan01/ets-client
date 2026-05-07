@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { register, login, getMe } from "@/services/authService";
 import { validateEmail, validatePassword, validateTarget, validateUsername } from "@/utils/helper";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -17,6 +18,7 @@ const LoginRegisterModal = ({
   const [password, setPassword]           = useState("");
   const [target, setTarget]               = useState(990);
   const [agree, setAgree]                 = useState(false);
+  const [token, setToken]                 = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [emailError, setEmailError]       = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -44,7 +46,7 @@ const LoginRegisterModal = ({
 
     if (!hasError) {
       try {
-        const loginResponse = await login({ email, password });
+        const loginResponse = await login({ email, password, token });
        
         const { access_token, refresh_token } = loginResponse.data;
         
@@ -105,7 +107,7 @@ const LoginRegisterModal = ({
 
     if (!hasError) {
       try {
-        await register({ username, email, password, target });
+        await register({ username, email, password, target, token });
         setIsLogin(true);
       } catch (error) {
         if (error instanceof Error) {
@@ -220,6 +222,10 @@ const LoginRegisterModal = ({
                 </div>
                 
               </div>
+              <Turnstile
+                siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                onSuccess={setToken}
+              />
               <button
                 type="submit"
                 className="w-full bg-slate-900 text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-indigo-600 transition-colors"
@@ -322,6 +328,11 @@ const LoginRegisterModal = ({
                   {agreeError && <p className="text-red-500 text-xs mt-1">{agreeError}</p>}
                 </div>
               </div>
+
+              <Turnstile
+                siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                onSuccess={setToken}
+              />
 
               <button
                 type="submit"

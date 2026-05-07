@@ -513,9 +513,9 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
       <QuestionListModal flatItemsList={flatItemsList} isReviewMode={false}/>
       {!isTestStarted ? (
         // --- GIAO DIỆN MÀN HÌNH CHỜ ---
-        <div className="flex flex-col items-center justify-center h-full w-full bg-[#f0f2f5] absolute inset-0 z-20">
-          <div className="bg-white p-12 rounded-[8px] shadow-lg text-center max-w-xl border-t-8 border-[#0a1b3f]">
-            <h1 className="text-3xl font-bold text-[#0a1b3f] mb-2">TOIEC VIET</h1>
+        <div className="flex flex-col items-center justify-center h-full w-full bg-[#f0f2f5] absolute inset-0">
+          <div className="bg-white p-6 sm:p-12 rounded-[8px] shadow-lg text-center max-w-xl border-t-8 border-[#0a1b3f]">
+            <h1 className="text-3xl font-bold text-[#0a1b3f] mb-2">BÀI THI</h1>
             <h2 className="text-xl font-semibold text-gray-700 mb-8">
               {initialData.title || "Listening & Reading Test"}
             </h2>
@@ -528,25 +528,47 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
               </ul>
             </div>
 
-            <div className="flex justify-center items-center gap-4">
-              {isCheckingResume ? (
-                <p>Checking for active session...</p>
-              ) : (
+           <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 w-full">
+            {isCheckingResume ? (
+              // HIỆU ỨNG LOADING CHUYÊN NGHIỆP
+              <div className="flex items-center space-x-3 text-[#0a1b3f] font-medium py-3">
+                <svg className="animate-spin h-6 w-6 text-[#f28322]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Đang kiểm tra dữ liệu...</span>
+              </div>
+            ) : (
                 <>
-                  {resumableAttempt && (
+                  {resumableAttempt ? (
+                    // TRƯỜNG HỢP 1: CÓ BÀI ĐANG LÀM DỞ
+                    <>
+                      <button
+                        onClick={handleResumeTest}
+                        className="w-full sm:w-auto order-1 sm:order-2 bg-[#0a1b3f] hover:bg-[#152b69] transition-colors text-white font-bold py-3 sm:py-2.5 px-6 sm:px-10 rounded-[6px] shadow-md text-[15px] sm:text-[16px] flex items-center justify-center whitespace-nowrap"
+                      >
+                        Tiếp tục làm bài
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-4 h-4 ml-2 shrink-0">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                      </button>
+
+                      <button
+                        onClick={handleStartTest}
+                        className="w-full sm:w-auto order-2 sm:order-1 bg-white border-2 border-[#f28322] text-[#f28322] hover:bg-orange-50 transition-colors font-bold py-3 sm:py-2.5 px-6 rounded-[6px] shadow-sm text-[15px] whitespace-nowrap"
+                      >
+                        Làm mới (Xóa bài cũ)
+                      </button>
+                    </>
+                  ) : (
+                    // TRƯỜNG HỢP 2: BẮT ĐẦU MỚI HOÀN TOÀN
                     <button
-                      onClick={handleResumeTest}
-                      className="bg-green-600 hover:bg-green-700 transition-colors text-white font-bold py-3 px-10 rounded-[6px] shadow-md text-lg"
+                      onClick={handleStartTest}
+                      className="bg-[#f28322] hover:bg-[#d97017] transition-colors text-white font-bold py-3 px-14 rounded-[6px] shadow-md text-[16px] uppercase tracking-wider"
                     >
-                      Resume
+                      Bắt đầu thi
                     </button>
                   )}
-                  <button
-                    onClick={handleStartTest}
-                    className="bg-[#f28322] hover:bg-[#d97017] transition-colors text-white font-bold py-3 px-10 rounded-[6px] shadow-md text-lg"
-                  >
-                    {resumableAttempt ? 'Start New' : "Let's Go"}
-                  </button>
                 </>
               )}
             </div>
