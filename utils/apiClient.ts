@@ -61,7 +61,9 @@ const apiClient = async (url: string, options: RequestInit = {}) => {
 
   const response = await fetch(`${API_BASE_URL}${url}`, options);
 
+  // Nếu vẫn nhận 401, thử refresh lần nữa
   if (response.status === 401) {
+    console.warn('🔄 Received 401, attempting to refresh token...');
     const newAccessToken = await handleRefreshToken();
     if (typeof newAccessToken === 'string') {
         const newHeaders = new Headers(options.headers);
