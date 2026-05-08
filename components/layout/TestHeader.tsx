@@ -26,10 +26,10 @@ export default function TestHeader({
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const volumeRef = useRef<HTMLDivElement>(null);
 
+  const isPracticeMode = useTestStore((state) => state.isPracticeMode);
   const isReviewMode = useTestStore((state) => state.isReviewMode);
   const showExplanation = useTestStore((state) => state.showExplanation);
   const setShowExplanation = useTestStore((state) => state.setShowExplanation);
-
   // Tự động đóng thanh âm lượng khi click ra ngoài
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -68,7 +68,7 @@ export default function TestHeader({
       {/* Góc phải: Thanh công cụ */}
       <div className="flex items-center justify-end space-x-1 md:space-x-3">
         {/* CÔNG TẮC CHỈ HIỆN Ở CHẾ ĐỘ LUYỆN TẬP */}
-        {isReviewMode && (
+        {(isReviewMode || isPracticeMode) && (
           <div 
             // 1. CHUYỂN ONCLICK RA KHUNG NGOÀI: Bấm vào đâu trong vùng này cũng gạt được công tắc
             onClick={() => setShowExplanation(!showExplanation)}
@@ -90,7 +90,7 @@ export default function TestHeader({
               <span 
                 className={`inline-block w-3.5 sm:w-4 h-3.5 sm:h-4 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
                   showExplanation 
-                    ? 'translate-x-4 sm:translate-x-6' // Dịch chuyển ít hơn trên mobile vì nút ngắn lại
+                    ? 'translate-x-4 sm:translate-x-6'
                     : 'translate-x-1'
                 }`} 
               />

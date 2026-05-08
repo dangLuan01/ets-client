@@ -39,7 +39,7 @@ export default function TestLayout({
   isTestStarted = false,
   currentItem
 }: TestLayoutProps) {
-   const router = useRouter();
+  const router = useRouter();
   
   return (
     <div className="flex flex-col h-screen w-full bg-[#f0f2f5] text-black select-none font-sans overflow-hidden">

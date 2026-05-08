@@ -19,7 +19,9 @@ export default function TestFooter({
   const markedForReview = useTestStore((state) => state.markedForReview);
   const toggleMarkForReview = useTestStore((state) => state.toggleMarkForReview);
   const isReviewMode = useTestStore((state) => state.isReviewMode);
-  
+  const isPracticeMode = useTestStore((state) => state.isPracticeMode);
+  const setShowExplanation = useTestStore((state) => state.setShowExplanation);
+
   // Lấy ID câu hỏi (linh hoạt cho cả câu đơn và câu nhóm)
   const questionId = currentItem?.entity_type === 'SINGLE'
   ? currentItem.question_data?.question_id
@@ -33,10 +35,18 @@ export default function TestFooter({
     }
   };
 
+  const handleNextQuestion = () => {
+    if (isPracticeMode) {
+      setShowExplanation(false);  
+    }
+    
+    nextQuestion();
+  }
+
   return (
     <footer className="shrink-0 z-10 w-full bg-white border-t border-gray-300 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] px-4 py-2 flex items-center justify-between">
       <div className="flex-1 overflow-hidden mr-6 flex items-center">
-      {!currentItem?.isSystemScreen && !isReviewMode && (
+      {!currentItem?.isSystemScreen && !isReviewMode && !isPracticeMode &&(
           <label htmlFor="mark-for-review" className="flex items-center cursor-pointer">
               <input
                 type="checkbox"
@@ -84,7 +94,7 @@ export default function TestFooter({
             Back
           </button>
           <button
-            onClick={nextQuestion}
+            onClick={handleNextQuestion}
             disabled={disableNextButton}
             className="px-5 py-2 h-[35px] lg:h-[40px] bg-[#1e3a8a] hover:bg-[#152b69] disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed text-white font-bold rounded-[4px] shadow-sm transition-colors flex items-center"
           >

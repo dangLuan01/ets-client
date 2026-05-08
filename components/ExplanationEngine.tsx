@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTestStore } from '@/store/useTestStore';
 import TestLayout from '@/components/layout/TestLayout';
 import Part1 from '@/components/parts/Part1';
@@ -10,7 +10,6 @@ import Part5 from '@/components/parts/Part5';
 import Part6 from '@/components/parts/Part6';
 import Part7 from '@/components/parts/Part7';
 import QuestionListModal from '@/components/ui/QuestionListModal';
-import { formatTime } from '@/utils/helper';
 
 interface ExplanationEngineProps {
   initialData: any; // Dữ liệu đề thi (gồm cả đáp án đúng và giải thích)
@@ -19,8 +18,6 @@ interface ExplanationEngineProps {
 export default function ExplanationEngine({ initialData }: ExplanationEngineProps) {
   // LẤY STATE TỪ STORE CHUNG
   const currentItemIndex = useTestStore((state) => state.currentItemIndex);
-  const [remainingSeconds, setRemainingSeconds] = useState(initialData.total_time * 60);
-  const setPracticeMode = useTestStore((state) => state.setPracticeMode);
   const setReviewMode = useTestStore((state) => state.setReviewMode);
   const setShowExplanation = useTestStore((state) => state.setShowExplanation);
   const setTotalItems = useTestStore((state) => state.setTotalItems);
@@ -28,20 +25,15 @@ export default function ExplanationEngine({ initialData }: ExplanationEngineProp
   // 1. QUẢN LÝ VÒNG ĐỜI CỦA CHẾ ĐỘ LUYỆN TẬP
   useEffect(() => {
     setCurrentItemIndex(0);
-    setPracticeMode(true);
     // Bật chế độ Review ngay khi vào trang Luyện tập
-    setReviewMode(false);
+    setReviewMode(true);
     // Mặc định ẩn giải thích để học viên tự suy nghĩ trước
-    setShowExplanation(false); 
+    setShowExplanation(true); 
 
-    const timerId = setInterval(() => {
-      setRemainingSeconds((prev) => prev - 1);
-    }, 1000);
     // Dọn dẹp: Tắt chế độ Review khi thoát khỏi trang này (để không ảnh hưởng trang Thi thật)
     return () => {
-        setReviewMode(false);
-        setShowExplanation(false);
-        clearInterval(timerId);
+      setReviewMode(false);
+      setShowExplanation(false);
     };
   }, [setReviewMode, setShowExplanation, setCurrentItemIndex]);
 
@@ -102,9 +94,9 @@ export default function ExplanationEngine({ initialData }: ExplanationEngineProp
   return (
     <TestLayout
       // --- CẤU HÌNH HEADER ---
-      timeLeft={formatTime(remainingSeconds)} // Thay thế đồng hồ đếm ngược
+      timeLeft="Đáp án chi tiết" // Thay thế đồng hồ đếm ngược
       totalQuestion={initialData.total_question || 200}
-      headerTitle={`${initialData.title || 'TOEIC Test'} - Practice`}
+      headerTitle={`${initialData.title || 'TOEIC Test'} - Explanation`}
       currentQuestionNumber={currentItemIndex + 1}
       currentSkillCode={currentSkillCode}
       
@@ -119,7 +111,7 @@ export default function ExplanationEngine({ initialData }: ExplanationEngineProp
       disableBackButton={currentItemIndex === 0} 
       // Khóa nút Next nếu đang ở câu cuối cùng
       disableNextButton={currentItemIndex === flatItemsList.length - 1}
-      isReviewMode={false}
+      isReviewMode={true}
       isTestStarted={true}
       currentItem={currentItem}
     >

@@ -39,6 +39,9 @@ interface TestState {
   isReviewMode: boolean;
   setReviewMode: (isReview: boolean) => void;
 
+  isPracticeMode: boolean;
+  setPracticeMode: (isPractice: boolean) => void;
+
   showExplanation: boolean;
   setShowExplanation: (show: boolean) => void;
 }
@@ -197,6 +200,9 @@ export const useTestStore = create<TestState>((set, get) => ({
 
   isReviewMode: false,
   setReviewMode: (isReview) => set({ isReviewMode: isReview }),
+
+  isPracticeMode: false,
+  setPracticeMode: (isPractice) => set({ isPracticeMode: isPractice }),
 
   showExplanation: false, // <-- Mặc định lúc vào thi là Tắt
   setShowExplanation: (show) => set({ showExplanation: show }),

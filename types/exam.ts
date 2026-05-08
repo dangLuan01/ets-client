@@ -88,8 +88,8 @@ export interface UserAnswerPayload {
 }
 
 export interface FeaturedExam {
-    id: number;
     title: string;
+    slug: string;
     year: number;
     total_time: number;
     total_question: number;
