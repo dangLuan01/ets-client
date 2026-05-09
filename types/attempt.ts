@@ -25,3 +25,34 @@ export interface ResumeApiResponse {
   message: string;
   status: string;
 }
+
+export interface AttemptResponse {
+  title: string,
+  exam_slug: string,
+  exam_type: string,
+  total_question: number,
+  total_answer: number,
+  start_time: string,
+  end_time?: string,
+  total_score: number,
+  listening_score: number,
+  reading_score: number,
+  time_spent_sec: number,
+  status: number
+}
+
+export interface AttemptApiResponse {
+    data: {
+        pagination: {
+            page: number;
+            limit: number;
+            total_records: number;
+            total_pages: number;
+            has_next: boolean;
+            has_prev: boolean;
+        };
+        response: AttemptResponse[];
+    };
+    message?: string;
+    status?: string;
+}

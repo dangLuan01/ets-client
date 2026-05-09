@@ -9,17 +9,17 @@ interface PageProps {
 }
 
 export default async function PracticePage({ params }:PageProps  ) {
-    const resolvedParams = await params;
-    const { testSlug } = resolvedParams;
+    const resolvedParams    = await params;
+    const { testSlug }      = resolvedParams;
 
     const examData = await examService.getExamBySlug(testSlug);
-    if (!examData) {
+    if (!examData || examData.exam_type !== 'PRACTICE') {
         notFound();
     }
     
     return (
         <main className="w-full h-screen overflow-hidden">
-            <PracticeEngine initialData={examData} />
+            <PracticeEngine initialData={examData} examSlug={testSlug}/>
         </main>
     );
 }

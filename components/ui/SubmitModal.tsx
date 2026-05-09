@@ -9,7 +9,7 @@ interface SubmitModalProps {
   isSubmitting: boolean;
 }
 
-export default function SubmitModal({ flatItemsList, isSubmitting, onSubmitTest }: SubmitModalProps) {
+export default function SubmitModal({ flatItemsList, isSubmitting, onSubmitTest }: SubmitModalProps) {  
   const isSubmitModalOpen = useTestStore((state) => state.isSubmitModalOpen);
   const setSubmitModalOpen = useTestStore((state) => state.setSubmitModalOpen);
   const jumpToQuestion = useTestStore((state) => state.jumpToQuestion);

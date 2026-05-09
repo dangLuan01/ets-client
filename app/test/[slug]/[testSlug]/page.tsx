@@ -20,7 +20,7 @@ export default async function TestPage({ params }: PageProps) {
   const examData = await examService.getExamBySlug(testSlug);
   
   // Nếu API trả về null (lỗi hoặc không tìm thấy đề), điều hướng sang trang 404
-  if (!examData) {
+  if (!examData || examData.exam_type === 'PRACTICE') {
     notFound();
   }
 

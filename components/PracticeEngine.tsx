@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTestStore } from '@/store/useTestStore';
 import TestLayout from '@/components/layout/TestLayout';
 import Part1 from '@/components/parts/Part1';
@@ -11,20 +11,36 @@ import Part6 from '@/components/parts/Part6';
 import Part7 from '@/components/parts/Part7';
 import QuestionListModal from '@/components/ui/QuestionListModal';
 import { formatTime } from '@/utils/helper';
+import SubmitModal from './ui/SubmitModal';
+import { SubmitExamPayload } from '@/types/exam';
+import { useAuthStore } from '@/store/useAuthStore';
+import { AttemptPayload } from '@/types/attempt';
+import { examService } from '@/services/examService';
+import ResultScreen from './ui/ResultScreen';
+import { useRouter } from 'next/navigation';
 
-interface ExplanationEngineProps {
+interface PracticeEngineProps {
+  slug: string;
   initialData: any; // Dữ liệu đề thi (gồm cả đáp án đúng và giải thích)
+  examSlug: string;
 }
 
-export default function ExplanationEngine({ initialData }: ExplanationEngineProps) {
+export default function PracticeEngine({ initialData, examSlug, slug }: PracticeEngineProps) {
   // LẤY STATE TỪ STORE CHUNG
-  const currentItemIndex = useTestStore((state) => state.currentItemIndex);
+  const router                                  = useRouter();
+  const { accessToken }                         = useAuthStore();
+  const [attemptId, setAttemptId]               = useState<number>(0);
+  const currentItemIndex                        = useTestStore((state) => state.currentItemIndex);
   const [remainingSeconds, setRemainingSeconds] = useState(initialData.total_time * 60);
-  const setPracticeMode = useTestStore((state) => state.setPracticeMode);
-  const setReviewMode = useTestStore((state) => state.setReviewMode);
-  const setShowExplanation = useTestStore((state) => state.setShowExplanation);
-  const setTotalItems = useTestStore((state) => state.setTotalItems);
-  const setCurrentItemIndex = useTestStore((state) => state.setCurrentItemIndex);
+  const setPracticeMode                         = useTestStore((state) => state.setPracticeMode);
+  const setReviewMode                           = useTestStore((state) => state.setReviewMode);
+  const setShowExplanation                      = useTestStore((state) => state.setShowExplanation);
+  const setTotalItems                           = useTestStore((state) => state.setTotalItems);
+  const setCurrentItemIndex                     = useTestStore((state) => state.setCurrentItemIndex);
+  const [isSubmitting, setIsSubmitting]         = useState(false);
+  const [isStart, setIsStart]                   = useState(false);
+  const answers                                 = useTestStore((state) => state.answers);
+  const [testResult, setTestResult]             = useState<any>(null); // State lưu kết quả trả về từ API
   // 1. QUẢN LÝ VÒNG ĐỜI CỦA CHẾ ĐỘ LUYỆN TẬP
   useEffect(() => {
     setCurrentItemIndex(0);
@@ -67,6 +83,75 @@ export default function ExplanationEngine({ initialData }: ExplanationEngineProp
     return list;
   }, [initialData]);
 
+
+
+   const handleStartTest = async () => {
+    if (isStart) return
+    setIsStart(true)
+
+    const payload: AttemptPayload = {
+      exam_slug: examSlug,
+    };
+    
+    const attemptId = await examService.storeUserAttempt(payload)
+    setAttemptId(Number(attemptId))
+    //useTestStore.getState().setAttemptId(attemptId);
+   }
+
+  if (accessToken) {
+    handleStartTest();
+  }
+
+  const handleSubmitTest = useCallback(async () => {
+      // Ngăn chặn submit nhiều lần
+      if (isSubmitting) return;
+  
+      setIsSubmitting(true);
+  
+      const formattedAnswers: any[] = [];
+  
+      // Format dữ liệu giống hệt bước trước
+      flatItemsList.forEach(item => {
+        if (!item.isSystemScreen && item.entity_type === 'SINGLE') {
+          const qId = item.entity_id || item.question_data?.question_id;
+          formattedAnswers.push({
+            question_id: qId,
+            selected_answer: answers[qId]?.option || "" 
+          });
+        } else if (!item.isSystemScreen && item.entity_type === 'GROUP') {
+          item.group_data?.sub_questions?.forEach((q: any) => {
+            const qId = q.id || q.question_id;
+            formattedAnswers.push({
+              question_id: qId,
+              selected_answer: answers[qId]?.option || "" 
+            });
+          });
+        }
+      });
+  
+      const payload: SubmitExamPayload = {
+        attempt_id: attemptId,
+        exam_slug: examSlug,
+        answers: formattedAnswers
+      };
+  
+      try {
+        const result = await examService.submitPractice(payload);
+        if (result && result.data) {
+          setTestResult(result.data);
+        } else {
+          alert("Không thể chấm điểm, dữ liệu trả về không hợp lệ!");
+        }
+      } catch (error) {
+        alert("Lỗi kết nối máy chủ khi nộp bài! Vui lòng kiểm tra lại mạng.");
+        setIsSubmitting(false); // Reset submitting state on error
+      } finally {
+        // Đặt isSubmitting về false và đóng modal sẽ được xử lý trong khối try/catch
+        // để đảm bảo chỉ xảy ra sau khi có kết quả hoặc lỗi.
+        useTestStore.getState().setSubmitModalOpen(false);
+      }
+    }, [isSubmitting, flatItemsList, answers, examSlug, attemptId]);
+  
   // Lấy câu hỏi hiện tại đang hiển thị
   const currentItem = flatItemsList[currentItemIndex];
   const currentSkillCode = currentItem?.skillCode || 'LISTENING';
@@ -98,6 +183,18 @@ export default function ExplanationEngine({ initialData }: ExplanationEngineProp
     return <div className="min-h-screen flex items-center justify-center font-bold text-gray-500">Loading Practice Engine...</div>;
   }
 
+  if (testResult) {
+      return (
+        <ResultScreen 
+          slug={slug}
+          examSlug={examSlug}
+          testResult={testResult} 
+          onBack={() => {
+            router.push('/');
+          }} 
+        />
+      );
+    }
   // 5. RENDER BỘ KHUNG (LAYOUT) LÀM BÀI
   return (
     <TestLayout
@@ -123,6 +220,11 @@ export default function ExplanationEngine({ initialData }: ExplanationEngineProp
       isTestStarted={true}
       currentItem={currentItem}
     >
+       <SubmitModal 
+              flatItemsList={flatItemsList} 
+              onSubmitTest={handleSubmitTest}
+              isSubmitting={isSubmitting}
+            />
       {/* Modal danh sách 200 câu hỏi (Dùng chung với thi thật) */}
       <QuestionListModal flatItemsList={flatItemsList} isReviewMode={true}/>
       

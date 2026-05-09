@@ -96,6 +96,27 @@ export const examService = {
     }
   },
 
+   // Hàm nộp bài thi
+  submitPractice: async (payload: SubmitExamPayload) => {
+    try {
+      const response = await apiClient(`/api/v1/exams/calculate/score/practice`, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      return result;
+      
+    } catch (error) {
+      console.error("[examService] Error submitting test:", error);
+      throw error;
+    }
+  },
+
   // Store User Attempt
   storeUserAttempt: async (payload: AttemptPayload) => {
     try {

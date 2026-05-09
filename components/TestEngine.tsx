@@ -312,7 +312,7 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
 
   const disableNextButton = currentItemIndex === flatItemsList.length - 1;
   
-    const handleStartTest = async () => {
+  const handleStartTest = async () => {
   
       if (isStart) return
   

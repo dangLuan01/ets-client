@@ -1,15 +1,51 @@
-import { Metadata } from "next";
+"use client"
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://toiecviet.com';
+import { attemptService } from "@/services/attemptService";
+import { AttemptResponse } from "@/types/attempt";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
-export const metadata: Metadata = {
-    title: 'Lịch sử thi',
-    alternates: {
-        canonical: SITE_URL + '/lich-su-thi',
-    },
-};
+interface Pagination {
+    page: number;
+    limit: number;
+    total_records: number;
+    total_pages: number;
+    has_next: boolean;
+    has_prev: boolean;
+}
 
 const History = () => {
+    const [attempts, setAttempts] = useState<AttemptResponse[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [status, setStatus] = useState('');
+    const [page, setPage] = useState(1);
+    const [pagination, setPagination] = useState<Pagination | null>(null);
+
+    useEffect(() => {
+        setPage(1);
+    }, [status]);
+
+    useEffect(() => {
+        const fetchAttempts = async () => {
+            setLoading(true);
+            try {
+                const limit = 12;
+                const data = await attemptService.getAttempts(status, limit, page);
+                if (data) {
+                    setAttempts(prevAttempts => page === 1 ? data.response : [...prevAttempts, ...data.response]);
+                    setPagination(data.pagination);
+                }
+                
+            } catch (error) {
+                console.error("Failed to fetch attempts", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAttempts();
+    }, [status, page]);
+    
     return (
     <main className="container mx-auto max-w-7xl md:pt-32 p-4 md:p-6">
         
@@ -59,121 +95,144 @@ const History = () => {
         </section>
 
         <section className="flex items-center gap-3 mb-8 overflow-x-auto no-scrollbar pb-2">
-            <button className="whitespace-nowrap px-6 py-3.5 rounded-2xl font-bold text-sm bg-slate-900 text-white shadow-lg transition-all">
+            <button 
+                onClick={() => setStatus('')}
+                className={`whitespace-nowrap px-6 py-3.5 rounded-2xl font-bold text-sm transition-all ${status === '' ? 'bg-slate-900 text-white shadow-lg' : 'bg-white border border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-300'}`}
+            >
                 Tất cả lịch sử
             </button>
-            <button className="whitespace-nowrap px-6 py-3.5 rounded-2xl font-bold text-sm bg-white border border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-300 transition-all">
-                Đang làm dở <span className="bg-amber-100 text-amber-600 px-2 py-0.5 rounded-lg ml-1 text-xs">2</span>
+            <button 
+                onClick={() => setStatus('1')}
+                className={`whitespace-nowrap px-6 py-3.5 rounded-2xl font-bold text-sm transition-all ${status === '1' ? 'bg-slate-900 text-white shadow-lg' : 'bg-white border border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-300'}`}
+            >
+                Đang làm dở
             </button>
-            <button className="whitespace-nowrap px-6 py-3.5 rounded-2xl font-bold text-sm bg-white border border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-300 transition-all">
+            <button 
+                onClick={() => setStatus('2')}
+                className={`whitespace-nowrap px-6 py-3.5 rounded-2xl font-bold text-sm transition-all ${status === '2' ? 'bg-slate-900 text-white shadow-lg' : 'bg-white border border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-300'}`}
+            >
                 Đã nộp bài
             </button>
         </section>
 
         
         <section className="space-y-5">
-            
-            <div className="bg-white border-2 border-amber-100 rounded-[2rem] p-5 md:p-6 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden group">
-        
-                <div className="absolute top-0 right-0 bg-amber-400 text-slate-900 text-[9px] font-black px-4 py-1.5 rounded-bl-xl uppercase tracking-widest">
-                    Chưa hoàn thành
+                {loading && page === 1 ? (
+                <div className="fixed inset-0 bg-black/10 rounded-lg flex items-center justify-center z-50">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600 bg-white/50"></div>
                 </div>
+                ) : attempts.length === 0 ? (
+                    <div>Chưa có lịch sử thi.</div>
+                ) : (
+                    attempts.map((attempt) => {
+                        if (attempt.status === 1 && attempt.exam_type !== "PRACTICE") { // In-progress
+                            return (
+                                <div key={`${attempt.exam_slug}-${attempt.start_time}`} className="bg-white border-2 border-amber-100 rounded-[2rem] p-5 md:p-6 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 bg-amber-400 text-slate-900 text-[9px] font-black px-4 py-1.5 rounded-bl-xl uppercase tracking-widest">
+                                        Chưa hoàn thành
+                                    </div>
+                                    <div className="flex items-center gap-5 md:w-5/12 mt-3 md:mt-0">
+                                        <div className="w-14 h-14 bg-amber-50 text-amber-500 rounded-[1.25rem] flex items-center justify-center text-xl flex-shrink-0 group-hover:scale-110 transition-transform">
+                                            <i className="fas fa-pause-circle"></i>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-lg font-black text-slate-900 leading-tight mb-1 group-hover:text-amber-600 transition">{attempt.title}</h3>
+                                            <p className="text-xs font-bold text-slate-400"><i className="far fa-clock mr-1"></i> Tạm dừng: {new Date(attempt.start_time).toLocaleDateString()}</p>
+                                        </div>
+                                    </div>
+                                    <div className="md:w-4/12 px-2 md:px-6 md:border-x border-slate-100">
+                                        <div className="flex justify-between items-end mb-2">
+                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tiến độ làm bài</span>
+                                            <span className="text-xs font-black text-amber-500">{attempt.total_answer}/{attempt.total_question} câu</span>
+                                        </div>
+                                        <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                                            <div className="bg-amber-400 h-full" style={{ width: `${(attempt.total_answer / attempt.total_question) * 100}%` }}></div>
+                                        </div>
+                                    </div>
+                                    <div className="md:w-3/12 flex justify-end lg:mt-1">
+                                        <Link href={`/test/toiec-listening-reading/${attempt.exam_slug}`} className="w-full md:w-auto bg-slate-900 text-white px-8 py-3.5 rounded-2xl font-bold hover:bg-amber-500 transition-colors shadow-lg shadow-slate-200">
+                                            Làm tiếp <i className="fas fa-play ml-2 text-xs"></i>
+                                        </Link>
+                                    </div>
+                                </div>
+                            );
+                        } else if (attempt.status === 2 && attempt.exam_type !== "PRACTICE") { // Completed
+                            return (
+                                <div key={`${attempt.exam_slug}-${attempt.start_time}`} className="bg-white border border-slate-100 rounded-[2rem] p-5 md:p-6 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 group">
+                                    <div className="flex items-center gap-5 md:w-5/12">
+                                        <div className="w-14 h-14 bg-slate-50 border border-slate-100 rounded-[1.25rem] flex items-center justify-center text-slate-400 text-xl flex-shrink-0 group-hover:bg-emerald-50 group-hover:text-emerald-500 group-hover:border-emerald-100 transition-colors">
+                                            <i className="fas fa-check"></i>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-lg font-black text-slate-900 leading-tight mb-1 group-hover:text-indigo-600 transition">{attempt.title}</h3>
+                                            <p className="text-xs font-bold text-slate-400"><i className="far fa-calendar-check mr-1"></i> Nộp bài: {attempt.end_time ? new Date(attempt.end_time).toLocaleDateString() : 'N/A'}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-between md:justify-center gap-6 md:gap-8 md:w-4/12 border-y md:border-y-0 md:border-x border-slate-100 py-4 md:py-0 px-2 md:px-4">
+                                        <div className="text-center">
+                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Tổng điểm</p>
+                                            <p className="text-3xl font-black text-indigo-600">{attempt.total_score}</p>
+                                        </div>
+                                        <div className="text-center">
+                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Listening</p>
+                                            <p className="text-xl font-bold text-emerald-500">{attempt.listening_score}</p>
+                                        </div>
+                                        <div className="text-center">
+                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Reading</p>
+                                            <p className="text-xl font-bold text-amber-500">{attempt.reading_score}</p>
+                                        </div>
+                                    </div>
+                                    <div className="md:w-3/12 flex gap-3 justify-end">
+                                        <Link href={`/explanation/toiec-listening-reading/${attempt.exam_slug}`} className="flex-1 md:flex-none bg-indigo-50 text-indigo-600 px-6 py-3.5 rounded-2xl font-bold text-sm hover:bg-indigo-600 hover:text-white transition-colors">
+                                            Xem chi tiết
+                                        </Link>
+                                        <Link href={`/test/toiec-listening-reading/${attempt.exam_slug}`} className="w-12 h-12 flex-shrink-0 bg-slate-50 text-slate-500 rounded-2xl flex items-center justify-center hover:bg-slate-200 hover:text-slate-900 transition-colors" title="Làm lại đề này">
+                                            <i className="fas fa-redo text-sm"></i>
+                                        </Link>
+                                    </div>
+                                </div>
+                            )
+                        } else if (attempt.exam_type == "PRACTICE" && attempt.status === 2)  {
+                            return (
+                                <div key={`${attempt.exam_slug}-${attempt.start_time}`} className="bg-white border border-slate-100 rounded-[2rem] p-5 md:p-6 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 group">
+                
+                                    <div className="flex items-center gap-5 md:w-5/12">
+                                        <div className="w-14 h-14 bg-slate-50 border border-slate-100 rounded-[1.25rem] flex items-center justify-center text-slate-400 text-xl flex-shrink-0 group-hover:bg-blue-50 group-hover:text-blue-500 group-hover:border-blue-100 transition-colors">
+                                            <i className="fas fa-bolt text-yellow-500"></i>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-lg font-black text-slate-900 leading-tight mb-1 group-hover:text-indigo-600 transition">{attempt.title}</h3>
+                                            <p className="text-xs font-bold text-slate-400"><i className="far fa-calendar-check mr-1"></i> Nộp bài: {attempt.end_time ? new Date(attempt.end_time).toLocaleDateString() : 'N/A'}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex justify-between md:justify-center gap-8 md:w-4/12 border-y md:border-y-0 md:border-x border-slate-100 py-4 md:py-0 px-4">
+                                        <div className="text-center w-full">
+                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Độ chính xác</p>
+                                            <p className="text-3xl font-black text-slate-900">{attempt.total_score}<span className="text-lg text-slate-400">/{attempt.total_question}</span></p>
+                                        </div>
+                                    </div>
     
-                <div className="flex items-center gap-5 md:w-5/12 mt-3 md:mt-0">
-                    <div className="w-14 h-14 bg-amber-50 text-amber-500 rounded-[1.25rem] flex items-center justify-center text-xl flex-shrink-0 group-hover:scale-110 transition-transform">
-                        <i className="fas fa-pause-circle"></i>
-                    </div>
-                    <div>
-                        <h3 className="text-lg font-black text-slate-900 leading-tight mb-1 group-hover:text-amber-600 transition">ETS TOEIC 2026 - Test 03</h3>
-                        <p className="text-xs font-bold text-slate-400"><i className="far fa-clock mr-1"></i> Tạm dừng: 2 ngày trước</p>
-                    </div>
-                </div>
-                
-                
-                <div className="md:w-4/12 px-2 md:px-6 md:border-x border-slate-100">
-                    <div className="flex justify-between items-end mb-2">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tiến độ làm bài</span>
-                        <span className="text-xs font-black text-amber-500">45/200 câu</span>
-                    </div>
-                    <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                        <div className="bg-amber-400 h-full w-[22%] rounded-full shadow-[0_0_10px_rgba(251,191,36,0.5)]"></div>
-                    </div>
-                </div>
-
-                <div className="md:w-3/12 flex justify-end">
-                    <button className="w-full md:w-auto bg-slate-900 text-white px-8 py-3.5 rounded-2xl font-bold hover:bg-amber-500 transition-colors shadow-lg shadow-slate-200">
-                        Làm tiếp <i className="fas fa-play ml-2 text-xs"></i>
-                    </button>
-                </div>
-            </div>
-            <div className="bg-white border border-slate-100 rounded-[2rem] p-5 md:p-6 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 group">
-                <div className="flex items-center gap-5 md:w-5/12">
-                    <div className="w-14 h-14 bg-slate-50 border border-slate-100 rounded-[1.25rem] flex items-center justify-center text-slate-400 text-xl flex-shrink-0 group-hover:bg-emerald-50 group-hover:text-emerald-500 group-hover:border-emerald-100 transition-colors">
-                        <i className="fas fa-check"></i>
-                    </div>
-                    <div>
-                        <h3 className="text-lg font-black text-slate-900 leading-tight mb-1 group-hover:text-indigo-600 transition">ETS TOEIC 2026 - Test 01</h3>
-                        <p className="text-xs font-bold text-slate-400"><i className="far fa-calendar-check mr-1"></i> Nộp bài: 15 Tháng 4, 2026</p>
-                    </div>
-                </div>
-                
-                <div className="flex justify-between md:justify-center gap-6 md:gap-8 md:w-4/12 border-y md:border-y-0 md:border-x border-slate-100 py-4 md:py-0 px-2 md:px-4">
-                    <div className="text-center">
-                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Tổng điểm</p>
-                        <p className="text-3xl font-black text-indigo-600">850</p>
-                    </div>
-                    <div className="text-center">
-                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Listening</p>
-                        <p className="text-xl font-bold text-emerald-500">450</p>
-                    </div>
-                    <div className="text-center">
-                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Reading</p>
-                        <p className="text-xl font-bold text-amber-500">400</p>
-                    </div>
-                </div>
-
-                <div className="md:w-3/12 flex gap-3 justify-end">
-                    <button className="flex-1 md:flex-none bg-indigo-50 text-indigo-600 px-6 py-3.5 rounded-2xl font-bold text-sm hover:bg-indigo-600 hover:text-white transition-colors">
-                        Xem chi tiết
-                    </button>
-                    <button className="w-12 h-12 flex-shrink-0 bg-slate-50 text-slate-500 rounded-2xl flex items-center justify-center hover:bg-slate-200 hover:text-slate-900 transition-colors" title="Làm lại đề này">
-                        <i className="fas fa-redo text-sm"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div className="bg-white border border-slate-100 rounded-[2rem] p-5 md:p-6 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 group">
-                
-                <div className="flex items-center gap-5 md:w-5/12">
-                    <div className="w-14 h-14 bg-slate-50 border border-slate-100 rounded-[1.25rem] flex items-center justify-center text-slate-400 text-xl flex-shrink-0 group-hover:bg-blue-50 group-hover:text-blue-500 group-hover:border-blue-100 transition-colors">
-                        <i className="fas fa-bolt text-yellow-500"></i>
-                    </div>
-                    <div>
-                        <h3 className="text-lg font-black text-slate-900 leading-tight mb-1 group-hover:text-indigo-600 transition">Mini Test Part 5 #12</h3>
-                        <p className="text-xs font-bold text-slate-400"><i className="far fa-calendar-check mr-1"></i> Nộp bài: 10 Tháng 4, 2026</p>
-                    </div>
-                </div>
-                
-                <div className="flex justify-between md:justify-center gap-8 md:w-4/12 border-y md:border-y-0 md:border-x border-slate-100 py-4 md:py-0 px-4">
-                    <div className="text-center w-full">
-                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Độ chính xác</p>
-                        <p className="text-3xl font-black text-slate-900">24<span className="text-lg text-slate-400">/30</span></p>
-                    </div>
-                </div>
-
-                <div className="md:w-3/12 flex justify-end">
-                    <button className="w-full md:w-auto bg-indigo-50 text-indigo-600 px-8 py-3.5 rounded-2xl font-bold text-sm hover:bg-indigo-600 hover:text-white transition-colors">
-                        Xem đáp án
-                    </button>
-                </div>
-            </div>
-
-        </section>
+                                    <div className="md:w-3/12 flex justify-end">
+                                        <Link href={`/explanation/toiec-listening-reading/${attempt.exam_slug}`} className="w-full md:w-auto bg-indigo-50 text-indigo-600 px-8 py-3.5 rounded-2xl font-bold text-sm hover:bg-indigo-600 hover:text-white transition-colors">
+                                            Xem đáp án
+                                        </Link>
+                                    </div>
+                                </div>
+                            )
+                        }
+                    })
+                )}
+            </section>
 
         <div className="mt-12 text-center">
-            <button className="bg-white border-2 border-slate-100 text-slate-500 font-bold px-8 py-4 rounded-2xl hover:border-indigo-600 hover:text-indigo-600 transition-all shadow-sm">
-                Tải thêm lịch sử cũ <i className="fas fa-sync-alt ml-2 text-xs"></i>
-            </button>
+            {pagination?.has_next && (
+                <button 
+                    onClick={() => setPage(prev => prev + 1)}
+                    className="bg-white border-2 border-slate-100 text-slate-500 font-bold px-8 py-4 rounded-2xl hover:border-indigo-600 hover:text-indigo-600 transition-all shadow-sm">
+                    Tải thêm lịch sử cũ <i className="fas fa-sync-alt ml-2 text-xs"></i>
+                </button>
+            )}
         </div>
        
     </main>

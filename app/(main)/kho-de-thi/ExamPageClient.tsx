@@ -8,6 +8,7 @@ interface ExamListItem {
   id: number;
   title: string;
   slug: string;
+  exam_type: string;
   cert_slug: string;
   year: number;
   total_time: number;
@@ -51,7 +52,8 @@ const ExamCard = ({ exam }: { exam: ExamListItem }) => {
           <span><i className="far fa-clock mr-1 text-indigo-500"></i> {exam.total_time} phút</span>
           <span><i className="far fa-question-circle mr-1 text-indigo-500"></i> {exam.total_question} câu</span>
         </div>
-        <Link href={`/test/${exam.cert_slug}/${exam.slug}`}>
+
+        <Link href={`/${exam.exam_type === "PRACTICE" ? 'practice' : 'test'}/${exam.cert_slug}/${exam.slug}`}>
           <button className="w-full font-bold py-3 rounded-lg transition-all duration-300 bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white">
             Vào thi ngay
           </button>
@@ -82,7 +84,7 @@ const ExamListRow = ({ exam }: { exam: ExamListItem }) => {
           <span><i className="far fa-question-circle text-indigo-500 mr-1"></i>{exam.total_question} câu</span>
         </div>
       </div>
-      <Link href={`/test/${exam.cert_slug}/${exam.id}`}>
+      <Link href={`/${exam.exam_type === "PRACTICE" ? 'practice' : 'test'}/${exam.cert_slug}/${exam.slug}`}>
         <button className="font-bold py-2 px-6 rounded-lg transition-all duration-300 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white whitespace-nowrap">
           Vào thi ngay
         </button>

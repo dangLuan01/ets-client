@@ -52,7 +52,7 @@ export default function TestLayout({
         totalQuestion={totalQuestion}
         onBack={() => {
           router.push('/');
-        }} 
+        }}
       />
 
       {/* 2. THANH AUDIO ẨN */}

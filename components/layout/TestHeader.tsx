@@ -16,7 +16,7 @@ export default function TestHeader({
   currentQuestionNumber, 
   timeLeft,
   totalQuestion,
-  onBack
+  onBack,
 }: TestHeaderProps) {
   const setSubmitModalOpen = useTestStore((state) => state.setSubmitModalOpen);
   const volume = useTestStore((state) => state.volume);
@@ -147,7 +147,7 @@ export default function TestHeader({
         </div>
 
         {/* Đồng hồ đếm ngược */}
-        <div className="bg-[#4b84e6] text-white font-bold rounded-[6px] px-2 md:px-4 h-[34px] flex items-center space-x-1 md:space-x-2 text-[12px] md:text-[14px] shadow-sm">
+        <div className="bg-[#4b84e6] text-white font-bold rounded-[6px] px-2 md:px-4 h-[34px] w-[90px] md:w-[110px] flex items-center justify-center space-x-1 md:space-x-2 text-[12px] md:text-[14px] shadow-sm">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 hidden md:inline-block">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -164,6 +164,7 @@ export default function TestHeader({
         <button onClick={() =>setSubmitModalOpen(true)} className="bg-[#f28322] hover:bg-[#d97017] transition-colors text-white font-bold rounded-[6px] px-3 md:px-6 h-[34px] text-[12px] md:text-[14px] shadow-sm">
           Submit
         </button>
+        
         )}
       </div>
     </header>

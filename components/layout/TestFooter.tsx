@@ -43,6 +43,14 @@ export default function TestFooter({
     nextQuestion();
   }
 
+    const handlePrevQuestion = () => {
+    if (isPracticeMode) {
+      setShowExplanation(false);  
+    }
+    
+    prevQuestion();
+  }
+
   return (
     <footer className="shrink-0 z-10 w-full bg-white border-t border-gray-300 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] px-4 py-2 flex items-center justify-between">
       <div className="flex-1 overflow-hidden mr-6 flex items-center">
@@ -84,7 +92,7 @@ export default function TestFooter({
        
         <div className="flex items-center space-x-2 border-l-2 border-gray-300 pl-2 ml-2">
           <button
-            onClick={prevQuestion}
+            onClick={handlePrevQuestion}
             disabled={disableBackButton}
             className="px-5 py-2 h-[35px] lg:h-[40px] bg-gray-500 hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold rounded-[4px] shadow-sm transition-colors flex items-center"
           >

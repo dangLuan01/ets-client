@@ -29,6 +29,7 @@ export type ExamItem = SingleItem | any;
 export interface ExamPayload {
   exam_id: number;
   title: string;
+  exam_type: string;
   year: number;
   audio_full_url: string;
   total_time: number;
