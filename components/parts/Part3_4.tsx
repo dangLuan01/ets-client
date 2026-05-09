@@ -1,5 +1,3 @@
-'use client';
-
 import { useTestStore } from '@/store/useTestStore';
 
 interface Part3_4Props {
@@ -7,18 +5,14 @@ interface Part3_4Props {
 }
 
 export default function Part3_4({ item }: Part3_4Props) {
-  // Bóc tách dữ liệu từ group_data
-  const { group_data } = item;
-  const subQuestions = group_data?.sub_questions || [];
-  
-  const setAnswer = useTestStore((state) => state.setAnswer);
-  const answers = useTestStore((state) => state.answers);
-
-  const isReviewMode = useTestStore((state) => state.isReviewMode);
+  const optionsKeys     = ['A', 'B', 'C', 'D'];
+  const setAnswer       = useTestStore((state) => state.setAnswer);
+  const answers         = useTestStore((state) => state.answers);
+  const isReviewMode    = useTestStore((state) => state.isReviewMode);
   const showExplanation = useTestStore((state) => state.showExplanation);
 
-  // Part 3 và 4 luôn có 4 đáp án A, B, C, D
-  const optionsKeys = ['A', 'B', 'C', 'D'];
+  const { group_data }  = item;
+  const subQuestions    = group_data?.sub_questions || [];
 
   return (
     <div className="flex flex-col lg:flex-row h-full w-full p-2 lg:p-4 gap-4 bg-[#f0f2f5] overflow-hidden">
@@ -84,9 +78,9 @@ export default function Part3_4({ item }: Part3_4Props) {
                 <div className="flex flex-col space-y-3">
                   {optionsKeys.map((key) => {
                     //const optionText = q.options[key];
-                    const optionText = q.options[key];
-                    const isSelected = currentAnswer === key;
-                    const isCorrect = q.correct_answer?.toUpperCase() === key;
+                    const optionText  = q.options[key];
+                    const isSelected  = currentAnswer === key;
+                    const isCorrect   = q.correct_answer?.toUpperCase() === key;
                     let reviewBgClass = 'border-gray-300 bg-white';
                     if (isReviewMode) {
                       if (isCorrect) reviewBgClass = 'border-blue-500 bg-blue-50'; 
@@ -130,7 +124,6 @@ export default function Part3_4({ item }: Part3_4Props) {
           })}
         </div>
       </div>
-
     </div>
   );
 }

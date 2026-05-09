@@ -1,5 +1,3 @@
-'use client';
-
 import { useTestStore } from '@/store/useTestStore';
 import { ExamOption, SingleItem } from '@/types/exam';
 
@@ -8,41 +6,19 @@ interface Part2Props {
 }
 
 export default function Part2({ item }: Part2Props) {
+  const part2Options = ['A', 'B', 'C'];
+
+  const isReviewMode    = useTestStore((state) => state.isReviewMode);
+  const showExplanation = useTestStore((state) => state.showExplanation);
+  const setAnswer       = useTestStore((state) => state.setAnswer);
+  const answers         = useTestStore((state) => state.answers);
   const { question_data, order_index } = item;
   
-  const setAnswer = useTestStore((state) => state.setAnswer);
-  const answers = useTestStore((state) => state.answers);
-
-  const currentAnswer = answers[question_data.question_id]?.option || '';
+  const currentAnswer   = answers[question_data.question_id]?.option || '';
 
   const handleOptionSelect = (optionKey: string) => {
     setAnswer(question_data.question_id, optionKey, order_index);
   };
-
-  // Part 2 luôn chỉ có 3 đáp án
-  const part2Options = ['A', 'B', 'C'];
-
-  const isReviewMode = useTestStore((state) => state.isReviewMode);
-  const showExplanation = useTestStore((state) => state.showExplanation);
-
-  // const highlightQuestionKeywords = (text: string) => {
-  //   if (!text) return "Chưa có transcript câu hỏi";
-    
-  //   // Biểu thức chính quy (Regex) tìm các từ để hỏi kinh điển của TOEIC Part 2
-  //   const regex = /\b(Who|What|When|Where|Why|How|Whose|Which|Is|Are|Do|Does|Did|Can|Could|Should|Would)\b/gi;
-    
-  //   // Cắt chuỗi và bọc thẻ <span> vào các từ khóa
-  //   const parts = text.split(regex);
-  //   return parts.map((part, i) => 
-  //     regex.test(part) ? (
-  //       <span key={i} className="text-red-600 font-extrabold bg-red-100 px-1 rounded">
-  //         {part}
-  //       </span>
-  //     ) : (
-  //       part
-  //     )
-  //   );
-  // };
 
   return (
     <div className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-[#f0f2f5] overflow-y-auto">
@@ -95,9 +71,9 @@ export default function Part2({ item }: Part2Props) {
         {/* Các khung đáp án (A), (B), (C) đổ dọc */}
         <div className="flex flex-col space-y-3">
           {part2Options.map((key) => {
-            const optionText = question_data.options[key as keyof ExamOption];
-            const isSelected = currentAnswer === key;
-            const isCorrect = question_data.correct_answer?.toUpperCase() === key;
+            const optionText  = question_data.options[key as keyof ExamOption];
+            const isSelected  = currentAnswer === key;
+            const isCorrect   = question_data.correct_answer?.toUpperCase() === key;
 
             let reviewBgClass = 'border-gray-300 bg-white';
             if (isReviewMode) {

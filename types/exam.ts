@@ -29,6 +29,7 @@ export type ExamItem = SingleItem | any;
 export interface ExamPayload {
   exam_id: number;
   title: string;
+  exam_type: string;
   year: number;
   audio_full_url: string;
   total_time: number;
@@ -88,8 +89,8 @@ export interface UserAnswerPayload {
 }
 
 export interface FeaturedExam {
-    id: number;
     title: string;
+    slug: string;
     year: number;
     total_time: number;
     total_question: number;

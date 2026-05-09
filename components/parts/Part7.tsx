@@ -1,6 +1,3 @@
-'use client';
-
-import React from 'react';
 import { useTestStore } from '@/store/useTestStore';
 
 interface Part7Props {
@@ -8,16 +5,14 @@ interface Part7Props {
 }
 
 export default function Part7({ item }: Part7Props) {
-  const { group_data } = item;
-  const subQuestions = group_data?.sub_questions || [];
-  
-  const setAnswer = useTestStore((state) => state.setAnswer);
-  const answers = useTestStore((state) => state.answers);
-
-  const optionsKeys = ['A', 'B', 'C', 'D'];
-
-  const isReviewMode = useTestStore((state) => state.isReviewMode);
+  const optionsKeys     = ['A', 'B', 'C', 'D'];
+  const setAnswer       = useTestStore((state) => state.setAnswer);
+  const answers         = useTestStore((state) => state.answers);
+  const isReviewMode    = useTestStore((state) => state.isReviewMode);
   const showExplanation = useTestStore((state) => state.showExplanation);
+
+  const { group_data }  = item;
+  const subQuestions    = group_data?.sub_questions || [];
 
   return (
     <div className="flex flex-col lg:flex-row h-full w-full p-2 lg:p-4 gap-4 bg-[#f0f2f5] overflow-hidden">

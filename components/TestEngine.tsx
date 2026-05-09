@@ -16,6 +16,7 @@ import ResultScreen from './ui/ResultScreen';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
 import { AttemptPayload, ResumedAttempt, ResumedAttemptData } from '@/types/attempt';
+import { formatTime } from '@/utils/helper';
 
 interface PageProps {
   slug: string;
@@ -311,7 +312,7 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
 
   const disableNextButton = currentItemIndex === flatItemsList.length - 1;
   
-    const handleStartTest = async () => {
+  const handleStartTest = async () => {
   
       if (isStart) return
   
@@ -466,14 +467,7 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
   }, [currentSkillCode, hasResetForReading]);
 
   // 3. HÀM FORMAT GIÂY THÀNH CHUỖI HH:MM:SS
-  const formatTime = (totalSeconds: number) => {
-    const h = Math.floor(totalSeconds / 3600);
-    const m = Math.floor((totalSeconds % 3600) / 60);
-    const s = totalSeconds % 60;
-    
-    // Thêm số 0 đằng trước nếu nhỏ hơn 10 (VD: 9 -> 09)
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  };
+ 
   if (testResult) {
     return (
       <ResultScreen 

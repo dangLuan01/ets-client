@@ -1,5 +1,3 @@
-'use client';
-
 import { useTestStore } from '@/store/useTestStore';
 
 interface Part1Props {
@@ -7,21 +5,18 @@ interface Part1Props {
 }
 
 export default function Part1({ item }: Part1Props) {
-  const { question_data, order_index } = item;
-  
-  const setAnswer = useTestStore((state) => state.setAnswer);
-  const answers = useTestStore((state) => state.answers);
+  const setAnswer         = useTestStore((state) => state.setAnswer);
+  const answers           = useTestStore((state) => state.answers);
+  const isReviewMode      = useTestStore((state) => state.isReviewMode);
+  const showExplanation   = useTestStore((state) => state.showExplanation);
+  const part1Options      = ['A', 'B', 'C', 'D'];
 
-  const currentAnswer = answers[question_data.question_id]?.option || '';
+  const { question_data, order_index } = item;
+  const currentAnswer                  = answers[question_data.question_id]?.option || '';
 
   const handleOptionSelect = (optionKey: string) => {
     setAnswer(question_data.question_id, optionKey, question_data.display_number);
   };
-
-  const part1Options = ['A', 'B', 'C', 'D'];
-
-  const isReviewMode = useTestStore((state) => state.isReviewMode);
-  const showExplanation = useTestStore((state) => state.showExplanation);
 
   return (
     <div className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-[#f0f2f5] overflow-y-auto">
@@ -58,9 +53,9 @@ export default function Part1({ item }: Part1Props) {
         <div className="flex flex-col space-y-3 mt-4">
           {part1Options.map((key) => {
             
-            const optionText = question_data.options?.[key];
-            const isSelected = currentAnswer === key;
-            const isCorrect = question_data.correct_answer?.toUpperCase() === key;
+            const optionText  = question_data.options?.[key];
+            const isSelected  = currentAnswer === key;
+            const isCorrect   = question_data.correct_answer?.toUpperCase() === key;
             let reviewBgClass = 'border-gray-300 bg-white';
 
             if (isReviewMode) {
@@ -100,14 +95,14 @@ export default function Part1({ item }: Part1Props) {
           })}
           {isReviewMode && showExplanation && question_data.explanation && (
             <div className="mt-5 bg-white border border-gray-200 border-l-4 border-l-[#1e3a8a] rounded-r-md shadow-sm overflow-hidden animate-fade-in">
-                    <div className="bg-blue-50/50 px-4 py-2 border-b border-gray-100 flex items-center">
-                      <span className="text-blue-600 mr-2">🌐</span>
-                      <span className="font-bold text-[#1e3a8a] text-[14px] uppercase tracking-wide">
-                        Bản dịch tiếng việt
-                      </span>
-                    </div>
-                    <div className="p-4 text-[14px] text-gray-700 leading-relaxed" dangerouslySetInnerHTML={{__html: question_data.explanation}}/>
-                  </div>
+              <div className="bg-blue-50/50 px-4 py-2 border-b border-gray-100 flex items-center">
+                <span className="text-blue-600 mr-2">🌐</span>
+                <span className="font-bold text-[#1e3a8a] text-[14px] uppercase tracking-wide">
+                  Bản dịch tiếng việt
+                </span>
+              </div>
+              <div className="p-4 text-[14px] text-gray-700 leading-relaxed" dangerouslySetInnerHTML={{__html: question_data.explanation}}/>
+            </div>
           )}
         </div>
       </div>

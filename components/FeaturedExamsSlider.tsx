@@ -40,7 +40,7 @@ export default function FeaturedExamsSlider({ featuredData }: FeaturedExamsSlide
         className="w-full"
       >
         {featuredData.exams.map((exam) => (
-          <SwiperSlide key={exam.id}>
+          <SwiperSlide key={exam.slug}>
             <div className="bg-white rounded-[2.5rem] p-6 md:p-10 border border-slate-100 relative overflow-hidden group h-full">
               <div className="relative z-10 space-y-4">
                 <span className="bg-amber-100 text-amber-700 text-[10px] font-black px-3 py-1 rounded-full">{featuredData.name}</span>
@@ -56,7 +56,7 @@ export default function FeaturedExamsSlider({ featuredData }: FeaturedExamsSlide
                         <p className="text-xl font-black">{exam.total_question}</p>
                         <p className="text-[10px] text-slate-400 font-bold uppercase">Câu hỏi</p>
                     </div>
-                    <Link href={`/test/toiec-listening-reading/${exam.id}`} className="bg-indigo-600 text-white px-8 py-3 rounded-2xl font-bold ml-auto shadow-xl">
+                    <Link href={`/test/toiec-listening-reading/${exam.slug}`} className="bg-indigo-600 text-white px-8 py-3 rounded-2xl font-bold ml-auto shadow-xl">
                       THI NGAY
                     </Link>
                 </div>

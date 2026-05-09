@@ -1,5 +1,3 @@
-'use client';
-
 import { useTestStore } from '@/store/useTestStore';
 
 interface Part6Props {
@@ -7,16 +5,14 @@ interface Part6Props {
 }
 
 export default function Part6({ item }: Part6Props) {
-  const { group_data } = item;
-  const subQuestions = group_data?.sub_questions || [];
-  
-  const setAnswer = useTestStore((state) => state.setAnswer);
-  const answers = useTestStore((state) => state.answers);
-
-  const optionsKeys = ['A', 'B', 'C', 'D'];
-
-  const isReviewMode = useTestStore((state) => state.isReviewMode);
+  const optionsKeys     = ['A', 'B', 'C', 'D'];
+  const setAnswer       = useTestStore((state) => state.setAnswer);
+  const answers         = useTestStore((state) => state.answers);
+  const isReviewMode    = useTestStore((state) => state.isReviewMode);
   const showExplanation = useTestStore((state) => state.showExplanation);
+
+  const { group_data }  = item;
+  const subQuestions    = group_data?.sub_questions || [];
 
   return (
     <div className="flex flex-col lg:flex-row h-full w-full p-2 lg:p-4 gap-4 bg-[#f0f2f5] overflow-hidden">
@@ -87,8 +83,8 @@ export default function Part6({ item }: Part6Props) {
                     const optionText = q.options?.[key];
                     if (!optionText) return null;
 
-                    const isSelected = currentAnswer === key;
-                    const isCorrect = q.correct_answer?.toUpperCase() === key;
+                    const isSelected  = currentAnswer === key;
+                    const isCorrect   = q.correct_answer?.toUpperCase() === key;
                     let reviewBgClass = 'border-gray-300 bg-white';
                     if (isReviewMode) {
                       if (isCorrect) reviewBgClass = 'border-blue-500 bg-blue-50';

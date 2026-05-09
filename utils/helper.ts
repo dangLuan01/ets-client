@@ -29,3 +29,12 @@ export const validateTarget = (target: number) => {
   return target >= 10 && target <= 990;
 };
 
+export const formatTime = (totalSeconds: number) => {
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+  
+  // Thêm số 0 đằng trước nếu nhỏ hơn 10 (VD: 9 -> 09)
+  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+};
+
