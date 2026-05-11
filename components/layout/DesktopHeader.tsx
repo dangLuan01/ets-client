@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import LoginRegisterModal from '@/components/ui/LoginRegisterModal';
+import { useNotification } from '../NotificationContext';
 
 interface Props {
   navLinks: Menu[];
@@ -18,6 +19,7 @@ const DesktopHeader = ({ navLinks }: Props) => {
     return pathname === slug || pathname.startsWith(slug + '/');
   };
   
+  const notify = useNotification();
   const pathname = usePathname();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,7 +45,7 @@ const DesktopHeader = ({ navLinks }: Props) => {
     try {
       await logout();
     } catch (error) {
-      console.error("Logout failed", error);
+      notify.error("Đăng xuất thất bại 😅!")
     } finally {
       clearTokens();
       setIsUserMenuOpen(false);
@@ -103,7 +105,7 @@ const DesktopHeader = ({ navLinks }: Props) => {
                 className="flex items-center gap-3 bg-white border border-slate-200 p-1 pr-4 rounded-full hover:shadow-md hover:border-indigo-200 transition-all focus:outline-none group"
               >
                 <img 
-                  src={ "https://i.pravatar.cc/150?u=user1"} 
+                  src={user.avatar || "https://i.pravatar.cc/150?u=user1"} 
                   alt="Avatar" 
                   className="w-8 h-8 rounded-full object-cover shadow-sm border border-slate-100" 
                 />
