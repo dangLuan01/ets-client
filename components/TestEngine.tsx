@@ -266,7 +266,7 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
       case 6:
         return <Part6 item={currentItem}/>
       case 7:
-        return <Part7 item={currentItem}/>
+        return <Part6 item={currentItem}/>
       default:
         return <div>Question UI for Part {currentItem.partId}</div>;
     }

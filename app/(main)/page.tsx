@@ -86,7 +86,7 @@ export default async function Home() {
         <section className="mt-16">
             <div className="flex justify-between items-center mb-6">
                 <h3 className="text-2xl font-black">Thảo luận mới nhất</h3>
-                <a href="https://discord.gg/gpyCRrKF" target="__blank" className="text-indigo-600 text-xs font-bold uppercase">Tham gia Group</a>
+                <a href="https://discord.gg/2EYJx569BD" target="__blank" className="text-indigo-600 text-xs font-bold uppercase">Tham gia Group</a>
             </div>
             <div className="space-y-4">
                 <div className="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm">

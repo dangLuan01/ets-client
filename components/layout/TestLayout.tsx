@@ -19,6 +19,7 @@ interface TestLayoutProps {
   disableBackButton?: boolean;
   disableNextButton?: boolean;
   isReviewMode?: boolean;
+  isPracticeMode?: boolean;
   isTestStarted?:boolean;
   currentItem?: any;
 }
@@ -36,6 +37,7 @@ export default function TestLayout({
   disableBackButton = false,
   disableNextButton = false,
   isReviewMode = false,
+  isPracticeMode = false,
   isTestStarted = false,
   currentItem
 }: TestLayoutProps) {
@@ -58,7 +60,7 @@ export default function TestLayout({
       {/* 2. THANH AUDIO ẨN */}
 
       {audioUrl && (
-        <div className={isReviewMode ? 
+        <div className={(isReviewMode || isPracticeMode) ? 
           "w-full p-2" : 
           "h-1 opacity-0 pointer-events-none"}
         >

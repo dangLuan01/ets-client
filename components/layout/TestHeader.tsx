@@ -1,6 +1,7 @@
 'use client';
 
 import { useTestStore } from "@/store/useTestStore";
+import { Clock, Infinity } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 interface TestHeaderProps {
@@ -53,6 +54,7 @@ export default function TestHeader({
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
           </svg>
         </button>
+        
       ): (
         <div className="flex justify-start">
           <div className="bg-white rounded-[4px] px-3 py-1 flex items-center justify-center h-10 w-auto md:w-[100px]">
@@ -76,7 +78,7 @@ export default function TestHeader({
           >
             {/* 2. RESPONSIVE TEXT: Rút gọn thành "Lời giải" trên mobile, "Hiển thị lời giải" trên tablet/PC */}
             <span className="text-xs sm:text-sm font-bold text-gray-600 whitespace-nowrap">
-              <span className="hidden sm:inline">Hiển thị </span>Lời giải
+              <span className="hidden sm:inline">Hiển Thị </span> Giải
             </span>
             
             {/* 3. NÚT GẠT: Giảm nhẹ kích thước trên mobile, trở lại bình thường trên màn >= 640px (sm) */}
@@ -148,14 +150,11 @@ export default function TestHeader({
 
         {/* Đồng hồ đếm ngược */}
         <div className="bg-[#4b84e6] text-white font-bold rounded-[6px] px-2 md:px-4 h-[34px] w-[90px] md:w-[110px] flex items-center justify-center space-x-1 md:space-x-2 text-[12px] md:text-[14px] shadow-sm">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 hidden md:inline-block">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          
+          <Clock className="w-4 lg:w-5"/>
           {!isReviewMode ? (
             <span>{timeLeft}</span>
           ): (
-            <svg fill="#ffffff" width="35px" height="35px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" transform="rotate(0)"><g id="SVGRepo_bgCarrier" strokeWidth={0}></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M20.288 9.463a4.856 4.856 0 0 0-4.336-2.3 4.586 4.586 0 0 0-3.343 1.767c.071.116.148.226.212.347l.879 1.652.134-.254a2.71 2.71 0 0 1 2.206-1.519 2.845 2.845 0 1 1 0 5.686 2.708 2.708 0 0 1-2.205-1.518L13.131 12l-1.193-2.26a4.709 4.709 0 0 0-3.89-2.581 4.845 4.845 0 1 0 0 9.682 4.586 4.586 0 0 0 3.343-1.767c-.071-.116-.148-.226-.212-.347l-.879-1.656-.134.254a2.71 2.71 0 0 1-2.206 1.519 2.855 2.855 0 0 1-2.559-1.369 2.825 2.825 0 0 1 0-2.946 2.862 2.862 0 0 1 2.442-1.374h.121a2.708 2.708 0 0 1 2.205 1.518l.7 1.327 1.193 2.26a4.709 4.709 0 0 0 3.89 2.581h.209a4.846 4.846 0 0 0 4.127-7.378z"></path> </g></svg>
+            <Infinity className="w-5 lg:w-6"/>
           )}
         </div>
 
