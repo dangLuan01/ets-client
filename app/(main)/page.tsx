@@ -1,5 +1,6 @@
 import FeaturedExamsSlider from "@/components/FeaturedExamsSlider";
 import SortFilter from "@/components/SortFilter";
+import SearchBar from "@/components/ui/SearchBar";
 import { examService } from "@/services/examService";
 import { menuService } from "@/services/menuService";
 import { postService } from "@/services/postService";
@@ -19,10 +20,7 @@ export default async function Home() {
             <h1 className="text-3xl md:text-6xl font-black leading-tight mb-4">
                 Hôm nay bạn muốn <br className="hidden md:block" /> đạt bao nhiêu <span className="text-indigo-600">TOEIC?</span>
             </h1>
-            <div className="relative group">
-                <i className="fas fa-search absolute left-4 top-4 text-slate-400"></i>
-                <input type="text" placeholder="Tìm bộ đề ETS 2026..." className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm" />
-            </div>
+            <SearchBar placeholder="Tìm bộ đề ETS 2026, ngữ pháp Part 5..." />
         </section>
 
         <section className="mb-10">
