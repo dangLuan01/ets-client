@@ -52,11 +52,12 @@ export default function QuestionListModal({ flatItemsList, isReviewMode = false 
   },[isReviewMode, flatItemsList])
     
   const readingParts = useMemo(() => getPartsData([5, 6, 7]), [flatItemsList]);
-
   if (!isOpen) return null;
 
   // Hàm render giao diện cho từng cụm Kỹ năng
   const renderSkillSection = (title: string, partsData: any[]) => (
+    
+    
     <div className="mb-8">
       <div className="bg-[#0a1b3f] text-white font-bold py-2 px-4 rounded-[4px] mb-6 text-lg">
         {title}

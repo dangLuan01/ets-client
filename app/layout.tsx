@@ -3,6 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import { AuthInitializer } from "@/components/AuthInitializer";
+import { NotificationProvider } from "@/components/NotificationContext";
 
 const siteUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}`;
 
@@ -27,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi">
+    <html lang="vi" className="scroll-smooth">
       <head>
         
         <Script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></Script>
@@ -35,7 +36,9 @@ export default function RootLayout({
       <body className="bg-slate-50 text-slate-900 md:pb-0">
         <AuthInitializer />
         <ServiceWorkerRegister />
-        {children}
+        <NotificationProvider>
+          {children}
+        </NotificationProvider>
       </body>
     </html>
   );

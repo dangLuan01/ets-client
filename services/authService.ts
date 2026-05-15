@@ -40,6 +40,7 @@ interface MeResponse {
   data: {
     username: string;
     email: string;
+    avatar?: string;
     target: number;
   }
 }

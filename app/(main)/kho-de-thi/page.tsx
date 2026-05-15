@@ -98,8 +98,6 @@ const KhoDeThiPage = async ({
             </Suspense>
         );
     } catch (error) {
-        console.error('Error fetching exam data:', error);
-        
         // Fallback: render page rỗng
         return (
             <ExamPageClient 

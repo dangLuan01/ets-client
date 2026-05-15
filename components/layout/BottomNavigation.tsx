@@ -6,8 +6,10 @@ import { useEffect, useState } from 'react';
 import LoginRegisterModal from '../ui/LoginRegisterModal';
 import { useAuthStore } from '@/store/useAuthStore';
 import { logout } from '@/services/authService';
+import { useNotification } from '../NotificationContext';
 
 const navItems = [
+  { href: '/', label: 'Trang chủ', icon: 'fa-house' },
   { href: '/kho-de-thi', label: 'Đề thi', icon: 'fa-book-open' },
   { href: '/lo-trinh', label: 'Thống kê', icon: 'fa-chart-pie' },
   { href: '/bai-viet', label: 'Bài viết', icon: 'fa-pen-to-square' },
@@ -21,12 +23,12 @@ const BottomNavigation = () => {
     if (!slug) return false;
     return pathname === slug || pathname.startsWith(slug + '/');
   };
-
-  const user = useAuthStore((state) => state.user);
-  const clearTokens = useAuthStore((state) => state.clearTokens);
-  const [isClient, setIsClient] = useState(false);
+   const notify                                 = useNotification();
+  const user                                    = useAuthStore((state) => state.user);
+  const clearTokens                             = useAuthStore((state) => state.clearTokens);
+  const [isClient, setIsClient]                 = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen]           = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -36,7 +38,7 @@ const BottomNavigation = () => {
     try {
       await logout();
     } catch (error) {
-      console.error("Logout failed", error);
+      notify.error("Đăng xuất thất bại 😅!")
     } finally {
       clearTokens();
       setIsMobileMenuOpen(false);
@@ -52,12 +54,11 @@ const BottomNavigation = () => {
           <span className="text-[10px] font-bold">{item.label}</span>
         </Link>
       ))}
-      <Link href={'/'}>
+      {/* <Link href={'/'}>
       <div className="bg-indigo-600 w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-200 -mt-8 border-4 border-slate-50">
         <i className="fas fa-house text-sm"></i>
       </div>
-      </Link>
-
+      </Link> */}
       {navItems.slice(2, 4).map((item) => (
         <Link href={item.href} key={item.href} className={`flex flex-col items-center gap-1 ${isActive(item.href) ? 'text-indigo-600' : 'text-slate-400'}`}>
           <i className={`fas ${item.icon} text-lg`}></i>
@@ -75,7 +76,7 @@ const BottomNavigation = () => {
             >
               <div className={`w-[22px] h-[22px] rounded-full transition-colors ${isMobileMenuOpen ? 'bg-indigo-600' : 'bg-transparent'}`}>
                 <img 
-                  src={"https://i.pravatar.cc/150?u=user1"} 
+                  src={user.avatar || "https://i.pravatar.cc/150?u=user1"} 
                   alt="Avatar" 
                   className="w-full h-full rounded-full object-cover border border-slate-200" 
                 />

@@ -7,6 +7,7 @@ export interface ExamOption {
 
 export interface QuestionData {
   question_id: number;
+  display_number: number;
   question_text?: string;
   image_url?: string;
   correct_answer: string;
@@ -35,6 +36,23 @@ export interface ExamPayload {
   total_time: number;
   total_question: number;
   skills: ExamSkill[];
+}
+
+export interface SubQuestion {
+  question_id: string;
+  display_number: number;
+  question_text: string;
+  options: ExamOption;
+  correct_answer?: string;
+  explanation?: string;
+}
+
+export interface QuestionGroup {
+  group_id?: string;
+  image_url?: string;
+  transcript?: string;
+  explanation?: string;
+  sub_questions: SubQuestion[];
 }
 
 export interface DirectionExample {

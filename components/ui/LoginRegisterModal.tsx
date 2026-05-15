@@ -1,11 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { register, login, getMe } from "@/services/authService";
 import { validateEmail, validatePassword, validateTarget, validateUsername } from "@/utils/helper";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useNotification } from "../NotificationContext";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.vidhub.io.vn';
+
 
 const LoginRegisterModal = ({
   onClose,
@@ -27,6 +31,7 @@ const LoginRegisterModal = ({
   const [apiError, setApiError]           = useState("");
   const setTokens                         = useAuthStore((state) => state.setTokens);
   const setUser                           = useAuthStore((state) => state.setUser);
+  const notify                            = useNotification();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,13 +61,15 @@ const LoginRegisterModal = ({
         // Then, fetch user information
         const meResponse = await getMe();
         setUser(meResponse.data);
-
+        notify.success("Đăng nhập thành công 🎉!", `Chào mừng bạn trở lại đường đua ${meResponse.data.target} TOEIC.`)
         onClose();
       } catch (error) {
         if (error instanceof Error) {
-          setApiError(error.message);
+          notify.error("Đăng nhập thất bại 😅", error.message);
+          //setApiError(error.message);
         } else {
-          setApiError("Đã có lỗi xảy ra.  Kiểm tra lại thông tin.");
+          notify.error("Đăng nhập thất bại 😅", "Sai email hoặc mật khẩu. Vui lòng kiểm tra lại nhé!");
+          //setApiError("Đã có lỗi xảy ra.  Kiểm tra lại thông tin.");
         }
       }
     }
@@ -109,15 +116,60 @@ const LoginRegisterModal = ({
       try {
         await register({ username, email, password, target, token });
         setIsLogin(true);
+        notify.success("Đăng ký thành công 🎉!");
       } catch (error) {
         if (error instanceof Error) {
-          setApiError(error.message);
+          notify.error("Đăng ký thất bại 😅!", error.message);
+          //setApiError(error.message);
         } else {
-          setApiError("Đã có lỗi xảy ra.");
+          notify.error("Đăng ký thất bại 😅!");
         }
       }
     }
   };
+  
+  const handleLoginWithGoogle = () => {
+    const width = 500;
+    const height = 600;
+
+    const left = window.screenX + (window.innerWidth - width) / 2;
+    const top = window.screenY + (window.innerHeight - height) / 2;
+
+    window.open(
+      `${API_BASE_URL}/api/v1/auth/google`,
+      "google-login",
+      `width=${width},height=${height},left=${left},top=${top}`
+    );
+  };
+
+   useEffect(() => {
+    const handler = async (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) {
+        return;
+      }
+
+      switch (event.data.type) {
+        case "oauth-success":
+          setTokens(event.data.accessToken, event.data.refreshToken);
+          const meResponse = await getMe();
+          setUser(meResponse.data);
+          notify.success("Đăng nhập thành công 🎉!", `Chào mừng bạn trở lại đường đua ${meResponse.data.target} TOEIC.`);
+          onClose();
+          break;
+
+        case "oauth-error":
+          notify.error("Đăng nhập thất bại 😅!")
+          break;
+      }
+    };
+
+    window.addEventListener("message", handler);
+
+    return () => {
+      window.removeEventListener("message", handler);
+    };
+  }, []);
+
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
@@ -232,20 +284,20 @@ const LoginRegisterModal = ({
               >
                 ĐĂNG NHẬP
               </button>
-              {/* <div className="relative flex items-center justify-center mt-8 mb-6">
+              <div className="relative flex items-center justify-center mt-8 mb-6">
                 <div className="w-full border-t border-slate-100"></div>
                 <span className="absolute bg-white px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                   Hoặc tiếp tục với
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <button type="button" className="flex items-center justify-center gap-3 bg-slate-50 py-3.5 rounded-2xl font-bold text-sm text-slate-700 hover:bg-slate-100 border border-slate-100 transition">
+                <button onClick={handleLoginWithGoogle} type="button" className="flex items-center justify-center gap-3 bg-slate-50 py-3.5 rounded-2xl font-bold text-sm text-slate-700 hover:bg-slate-100 border border-slate-100 transition">
                   <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="Google" /> Google
                 </button>
                 <button type="button" className="flex items-center justify-center gap-3 bg-slate-50 py-3.5 rounded-2xl font-bold text-sm text-slate-700 hover:bg-slate-100 border border-slate-100 transition">
-                  <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" className="w-5 h-5" alt="Facebook" /> Facebook
+                  <img src="https://www.svgrepo.com/show/508761/apple.svg" className="w-5 h-5" alt="Facebook" /> Apple
                 </button>
-              </div> */}
+              </div>
             </form>
           ) : (
             <form onSubmit={handleRegister} className="space-y-6">

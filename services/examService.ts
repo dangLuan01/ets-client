@@ -213,6 +213,30 @@ export const examService = {
     }
   },
 
+   async searchExams(search: string, limit: number, page: number) {
+    try {
+      const query = new URLSearchParams();      
+      if (search !== undefined) query.append('search', search);
+      if (limit !== undefined) query.append('limit', String(limit));
+      if (page !== undefined) query.append('page', String(page));
+      
+      const url = `${API_BASE_URL}/api/v1/exams/filter?${query.toString()}`;
+      const response = await fetch(url, {
+        method: 'GET',
+        next: {revalidate: 30},
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('[examService] Error filtering exams:', error);
+      throw error;
+    }
+  },
+
+
   // Resume an active attempt
   resumeAttempt: async (examSlug: string) => {
     try {

@@ -17,10 +17,11 @@ interface ExplanationEngineProps {
 
 export default function ExplanationEngine({ initialData }: ExplanationEngineProps) {
   // LẤY STATE TỪ STORE CHUNG
-  const currentItemIndex = useTestStore((state) => state.currentItemIndex);
-  const setReviewMode = useTestStore((state) => state.setReviewMode);
-  const setShowExplanation = useTestStore((state) => state.setShowExplanation);
-  const setTotalItems = useTestStore((state) => state.setTotalItems);
+  const currentItemIndex    = useTestStore((state) => state.currentItemIndex);
+  const setReviewMode       = useTestStore((state) => state.setReviewMode);
+  const setShowExplanation  = useTestStore((state) => state.setShowExplanation);
+  const setPracticeMode     = useTestStore((state) => state.setPracticeMode);
+  const setTotalItems       = useTestStore((state) => state.setTotalItems);
   const setCurrentItemIndex = useTestStore((state) => state.setCurrentItemIndex);
   // 1. QUẢN LÝ VÒNG ĐỜI CỦA CHẾ ĐỘ LUYỆN TẬP
   useEffect(() => {
@@ -29,7 +30,7 @@ export default function ExplanationEngine({ initialData }: ExplanationEngineProp
     setReviewMode(true);
     // Mặc định ẩn giải thích để học viên tự suy nghĩ trước
     setShowExplanation(true); 
-
+    setPracticeMode(false);
     // Dọn dẹp: Tắt chế độ Review khi thoát khỏi trang này (để không ảnh hưởng trang Thi thật)
     return () => {
       setReviewMode(false);
@@ -80,7 +81,7 @@ export default function ExplanationEngine({ initialData }: ExplanationEngineProp
       case 4: return <Part3_4 item={currentItem} />;
       case 5: return <Part5 item={currentItem} />;
       case 6: return <Part6 item={currentItem} />;
-      case 7: return <Part7 item={currentItem} />;
+      case 7: return <Part6 item={currentItem} />;
       default: return <div className="p-8 text-center text-red-500">Part Not Found!</div>;
     }
   };
@@ -112,6 +113,7 @@ export default function ExplanationEngine({ initialData }: ExplanationEngineProp
       // Khóa nút Next nếu đang ở câu cuối cùng
       disableNextButton={currentItemIndex === flatItemsList.length - 1}
       isReviewMode={true}
+      isPracticeMode={false}
       isTestStarted={true}
       currentItem={currentItem}
     >

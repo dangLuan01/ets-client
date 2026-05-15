@@ -49,15 +49,11 @@ export default function PracticeEngine({ initialData, examSlug, slug }: Practice
     setReviewMode(false);
     // Mặc định ẩn giải thích để học viên tự suy nghĩ trước
     setShowExplanation(false); 
-
-    const timerId = setInterval(() => {
-      setRemainingSeconds((prev) => prev - 1);
-    }, 1000);
+    
     // Dọn dẹp: Tắt chế độ Review khi thoát khỏi trang này (để không ảnh hưởng trang Thi thật)
     return () => {
         setReviewMode(false);
         setShowExplanation(false);
-        clearInterval(timerId);
     };
   }, [setReviewMode, setShowExplanation, setCurrentItemIndex]);
 
@@ -82,8 +78,6 @@ export default function PracticeEngine({ initialData, examSlug, slug }: Practice
     
     return list;
   }, [initialData]);
-
-
 
    const handleStartTest = async () => {
     if (isStart) return
@@ -152,6 +146,23 @@ export default function PracticeEngine({ initialData, examSlug, slug }: Practice
       }
     }, [isSubmitting, flatItemsList, answers, examSlug, attemptId]);
   
+    // 1. EFFECT ĐẾM NGƯỢC THỜI GIAN
+  useEffect(() => {
+    // Chỉ đếm ngược khi test đã bắt đầu và chưa bị submit
+    if (isSubmitting) return;
+
+    if (remainingSeconds <= 0) {
+      handleSubmitTest();
+      return;
+    }
+
+    const timerId = setInterval(() => {
+      setRemainingSeconds((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timerId);
+  }, [isSubmitting, remainingSeconds, handleSubmitTest]);
+  
   // Lấy câu hỏi hiện tại đang hiển thị
   const currentItem = flatItemsList[currentItemIndex];
   const currentSkillCode = currentItem?.skillCode || 'LISTENING';
@@ -173,7 +184,7 @@ export default function PracticeEngine({ initialData, examSlug, slug }: Practice
       case 4: return <Part3_4 item={currentItem} />;
       case 5: return <Part5 item={currentItem} />;
       case 6: return <Part6 item={currentItem} />;
-      case 7: return <Part7 item={currentItem} />;
+      case 7: return <Part6 item={currentItem} />;
       default: return <div className="p-8 text-center text-red-500">Part Not Found!</div>;
     }
   };
@@ -217,14 +228,15 @@ export default function PracticeEngine({ initialData, examSlug, slug }: Practice
       // Khóa nút Next nếu đang ở câu cuối cùng
       disableNextButton={currentItemIndex === flatItemsList.length - 1}
       isReviewMode={false}
+      isPracticeMode={true}
       isTestStarted={true}
       currentItem={currentItem}
     >
-       <SubmitModal 
-              flatItemsList={flatItemsList} 
-              onSubmitTest={handleSubmitTest}
-              isSubmitting={isSubmitting}
-            />
+      <SubmitModal 
+        flatItemsList={flatItemsList} 
+        onSubmitTest={handleSubmitTest}
+        isSubmitting={isSubmitting}
+      />
       {/* Modal danh sách 200 câu hỏi (Dùng chung với thi thật) */}
       <QuestionListModal flatItemsList={flatItemsList} isReviewMode={true}/>
       
