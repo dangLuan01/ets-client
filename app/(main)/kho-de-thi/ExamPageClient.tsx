@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useCallback, useTransition, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from 'next/navigation';
+import { CldImage } from "next-cloudinary";
 
 interface ExamListItem {
   id: number;
@@ -37,9 +38,12 @@ const ExamCard = ({ exam }: { exam: ExamListItem }) => {
   return (
     <div className="bg-white rounded-2xl border border-slate-200/80 hover:shadow-xl hover:shadow-indigo-100/50 transition-all duration-300 group">
       <div className="relative rounded-t-2xl overflow-hidden aspect-[16/9]">
-        <img 
-          src={exam.thumbnail} 
-          alt={exam.title} 
+        <CldImage 
+          src={exam.thumbnail}
+          alt={exam.title}
+          format="auto"
+          quality="auto:eco"
+          fill
           style={{objectFit: "cover"}} 
           className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500" 
         />
@@ -68,9 +72,10 @@ const ExamListRow = ({ exam }: { exam: ExamListItem }) => {
   return (
     <div className="bg-white border border-slate-200/80 rounded-xl p-4 hover:shadow-lg hover:shadow-indigo-100/50 transition-all flex gap-4 items-center group">
       <div className="relative w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
-        <img 
+        <CldImage
           src={exam.thumbnail} 
-          alt={exam.title} 
+          alt={exam.title}
+          fill
           style={{objectFit: "cover"}} 
           className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500" 
         />

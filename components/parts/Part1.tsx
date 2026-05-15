@@ -1,13 +1,14 @@
 import { useTestStore } from '@/store/useTestStore';
 import { SingleItem } from '@/types/exam';
-import { CheckCircle, ImageIcon, Volume2, XCircle } from 'lucide-react';
+import { CheckCircle, ImageIcon, XCircle } from 'lucide-react';
+import { CldImage } from 'next-cloudinary';
 
 interface Part1Props {
   item: SingleItem;
 }
 
 export default function Part1({ item }: Part1Props) {
- const isPracticeMode      = useTestStore((state) => state.isPracticeMode);
+  const isPracticeMode      = useTestStore((state) => state.isPracticeMode);
   const isReviewMode        = useTestStore((state) => state.isReviewMode);
   const showExplanation     = useTestStore((state) => state.showExplanation);
   const setAnswer           = useTestStore((state) => state.setAnswer);
@@ -100,13 +101,32 @@ export default function Part1({ item }: Part1Props) {
         )}
         
         <div className="p-1 flex items-center justify-center w-full animate-fade-in">
-          <img 
-            src={question_data.image_url} 
-            alt={`Question ${displayNumber}`} 
-            referrerPolicy="no-referrer"
-            className="max-h-[300px] md:max-h-[450px] w-auto object-contain pointer-events-none select-none"
-            loading='lazy'
-            draggable={false}
+          <CldImage 
+            src={question_data.image_url ?? ""} 
+            alt={`Question ${displayNumber}`}
+            width={1920}
+            height={1080}
+            format='auto'
+            quality='auto'
+            priority={true}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 60vw"
+            className="max-h-[300px] md:max-h-[450px] w-auto object-contain pointer-events-none select-none"            
+            // overlays={[
+            //   {
+            //     publicId: 'logo-watermark_rdtggu',  
+            //     position: {
+            //       gravity: 'south_east',
+            //       x: 20, // Cách mép phải 20px
+            //       y: 20, // Cách mép dưới 20px
+            //     },
+            //     effects: [
+            //       {
+            //         opacity: 55,
+            //       }
+            //     ],
+            //     width: 350, 
+            //   }
+            // ]}
           />
         </div>
         
@@ -136,7 +156,7 @@ export default function Part1({ item }: Part1Props) {
           </p>
         </div>
         
-        <div className="flex flex-col space-y-3 flex-1">
+        <div className="flex flex-col space-y-3 flex-1 ">
           {optionsKeys.map((key) => {
             const optionText  = question_data.options?.[key];
             if (!optionText) return null;

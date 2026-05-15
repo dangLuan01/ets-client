@@ -1,6 +1,7 @@
 import { useTestStore } from '@/store/useTestStore';
 import { QuestionGroup, SubQuestion } from '@/types/exam';
 import { CheckCircle, XCircle, Lightbulb, Image as ImageIcon, Volume2 } from 'lucide-react';
+import { CldImage } from 'next-cloudinary';
 
 interface Part3_4Props {
   item: {
@@ -105,13 +106,16 @@ export default function Part3_4({ item }: Part3_4Props) {
         {/* Khung ảnh Graphic (nếu có) */}
         {group_data?.image_url && (
           <div className="mb-4 p-3 rounded-lg flex items-center justify-center">
-            <img 
+            <CldImage 
               src={group_data.image_url} 
-              alt="Graphic" 
-              referrerPolicy="no-referrer"
-              className="max-h-[200px] md:max-h-[280px] w-auto object-contain pointer-events-none select-none rounded shadow-sm"
-              draggable={false}
-              loading="lazy"
+              alt="Graphic"
+              width={1920}
+              height={1080}
+              format='auto'
+              quality='auto'
+              priority={true}
+              sizes="(max-width: 768px) 100vw, 500px"
+              className="max-h-[200px] md:max-h-[280px] object-contain pointer-events-none select-none rounded"
             />
           </div>
         )}

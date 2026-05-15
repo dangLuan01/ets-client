@@ -1,6 +1,7 @@
 import { useTestStore } from '@/store/useTestStore';
 import { CheckCircle, XCircle, Lightbulb } from 'lucide-react';
 import QuestionExplanation from '../ui/QuestionExplanation';
+import { CldImage } from 'next-cloudinary';
 
 interface Part6Props {
   item: any;
@@ -75,12 +76,12 @@ export default function Part6({ item }: Part6Props) {
         <div className="mb-4 pb-3 border-b border-gray-100">
           <div className="flex items-center gap-2">
             <div>
-              <h2 className="font-bold text-[#1e3a8a] text-lg leading-tight select-none">
-                Text Completion
+              <h2 className="font-bold text-[#1e3a8a] text-lg leading-tight select-none" >
+                {group_data?.passage_text ? group_data.passage_text : 'Text Completion'}
               </h2>
               {isPracticeMode &&(
               <p className="text-xs text-gray-500 select-none">
-                Đọc đoạn văn → Trả lời {subQuestions.length} câu hỏi
+                Đọc những đoạn văn → Trả lời {subQuestions.length} câu hỏi
               </p>
               )}
             </div>
@@ -91,13 +92,15 @@ export default function Part6({ item }: Part6Props) {
         <div className="flex-1 w-full">
           {group_data?.image_url ? (
             <div className="items-center justify-center w-full max-w-[900px]">
-              <img 
-                src={group_data.image_url} 
+              <CldImage 
+                src={group_data.image_url}
                 alt="Passage" 
-                referrerPolicy="no-referrer"
+                width={1920}
+                height={1080}
+                format='auto'
+                quality='auto'
+                priority={true}
                 className="min-w-[600px] md:min-w-full h-auto object-contain pointer-events-none select-none"
-                draggable={false}
-                loading="lazy"
               />
             </div>
           ) : (
