@@ -5,8 +5,9 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
+  expiresAt: number | null;
   user: User | null;
-  setTokens: (accessToken: string, refreshToken:string) => void;
+  setTokens: (accessToken: string, refreshToken: string, expiresIn: number) => void;
   setUser: (user: User) => void;
   clearTokens: () => void;
 }
@@ -16,10 +17,14 @@ export const useAuthStore = create(
     (set) => ({
       accessToken: null,
       refreshToken: null,
+      expiresAt: null,
       user: null,
-      setTokens: (accessToken, refreshToken) => set({ accessToken, refreshToken }),
+      setTokens: (accessToken, refreshToken, expiresIn) => {
+        const expiresAt = Date.now() + expiresIn * 1000;
+        set({ accessToken, refreshToken, expiresAt });
+      },
       setUser: (user) => set({ user }),
-      clearTokens: () => set({ accessToken: null, refreshToken: null, user: null }),
+      clearTokens: () => set({ accessToken: null, refreshToken: null, expiresAt: null, user: null }),
     }),
     {
       name: 'auth-storage', // name of the item in the storage (must be unique)

@@ -53,10 +53,10 @@ const LoginRegisterModal = ({
       try {
         const loginResponse = await login({ email, password, token });
        
-        const { access_token, refresh_token } = loginResponse.data;
+        const { access_token, refresh_token, expires_in } = loginResponse.data;
         
         // Store tokens first
-        setTokens(access_token, refresh_token);
+        setTokens(access_token, refresh_token, expires_in);
         
         // Then, fetch user information
         const meResponse = await getMe();
@@ -150,7 +150,7 @@ const LoginRegisterModal = ({
 
       switch (event.data.type) {
         case "oauth-success":
-          setTokens(event.data.accessToken, event.data.refreshToken);
+          setTokens(event.data.accessToken, event.data.refreshToken, event.data.expiresIn || 0);
           const meResponse = await getMe();
           setUser(meResponse.data);
           notify.success("Đăng nhập thành công 🎉!", `Chào mừng bạn trở lại đường đua ${meResponse.data.target} TOEIC.`);
