@@ -2,69 +2,49 @@
 
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
-import { refreshToken as refreshTokenApi, getMe } from '@/services/authService';
+import { handleRefreshToken } from '@/utils/apiClient';
 
 /**
- * Hook kiểm tra token khi load page
- * 1. Gọi getMe() để test token
- * 2. Nếu 401 → refresh token
- * 3. Nếu refresh fail → xóa tokens
+ * Hook to check for token expiry on page load.
+ * 1. Checks if the access token exists and is expired using `expiresAt`.
+ * 2. If expired, it calls the central `handleRefreshToken` logic.
+ * 3. If the refresh fails, it clears all tokens.
  */
 export const useAuthInit = () => {
   const [isInitialized, setIsInitialized] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const { accessToken, refreshToken, setTokens, clearTokens } = useAuthStore();
-
+  
   useEffect(() => {
+    let isMounted = true;
+
     const initAuth = async () => {
-    
-      // Nếu không có token → không cần làm gì
-      if (!accessToken) {
-        setIsInitialized(true);
-        return;
-      }
+      const { accessToken, expiresAt, clearTokens } = useAuthStore.getState();
 
-      setIsRefreshing(true);
-
-      try {
-        // Test token bằng cách gọi getMe
-        try {
-          await getMe();
-          return;
-        } catch (error: any) {
-          // Nếu không phải 401 → return (có thể là network error)
-          if (!error.message?.includes('401')) {
-            console.warn('getMe failed:', error.message);
-            return;
+      if (accessToken && expiresAt) {
+        // Check if token is expired
+        if (expiresAt < Date.now()) {
+          console.log('Token expired on load, attempting to refresh...');
+          try {
+            await handleRefreshToken();
+          } catch (error) {
+            console.error('Initial refresh failed, clearing tokens.', error);
+            if (isMounted) {
+              clearTokens();
+            }
           }
-
-          // Token hết hạn (401), tiến hành refresh
-          console.log('Token expired (401), attempting to refresh...');
         }
-
-        // Refresh token
-        if (!refreshToken) {
-          console.warn('No refresh token available, clearing tokens');
-          clearTokens();
-          return;
-        }
-
-        try {
-          const response = await refreshTokenApi(refreshToken, accessToken);
-          const { access_token: newAccessToken, refresh_token: newRefreshToken } = response.data;
-          setTokens(newAccessToken, newRefreshToken);
-        } catch (refreshError) {
-          console.error('Refresh token failed:', refreshError);
-          clearTokens();
-        }
-      } finally {
-        setIsRefreshing(false);
+      }
+      
+      if (isMounted) {
         setIsInitialized(true);
       }
     };
 
     initAuth();
-  }, [accessToken]); // Chạy khi component mount hoặc accessToken thay đổi (hydrate từ localStorage)
 
-  return { isInitialized, isRefreshing };
+    return () => {
+      isMounted = false;
+    };
+  }, []); // Run only once on mount
+
+  return { isInitialized };
 };
