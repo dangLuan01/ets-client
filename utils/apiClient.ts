@@ -38,10 +38,7 @@ export const handleRefreshToken = async () => {
     const response = await refreshTokenApi(currentRefreshToken, currentAccessToken || '');
     const { access_token: newAccessToken, refresh_token: newRefreshToken, expires_in: expiresIn } = response.data;
     
-    // Ensure expiresIn is a valid number, default to 0 if not
-    const validExpiresIn = typeof expiresIn === 'number' ? expiresIn : 0;
-    
-    setTokens(newAccessToken, newRefreshToken, validExpiresIn);
+    setTokens(newAccessToken, newRefreshToken, expiresIn);
     processQueue(null, newAccessToken);
     return newAccessToken;
   } catch (err) {
@@ -57,7 +54,7 @@ export const handleRefreshToken = async () => {
 
 const apiClient = async (url: string, options: RequestInit = {}) => {
   let { accessToken } = useAuthStore.getState();
-  const { refreshToken, expiresAt } = useAuthStore.getState();
+  //const { refreshToken, expiresAt } = useAuthStore.getState();
 
   // Proactive token refresh (60-second buffer)
   // if (expiresAt && refreshToken && expiresAt < Date.now() + 60000) {

@@ -22,7 +22,6 @@ export const useAuthInit = () => {
       if (accessToken && expiresAt) {
         // Check if token is expired
         if (expiresAt < Date.now()) {
-          console.log('Token expired on load, attempting to refresh...');
           try {
             await handleRefreshToken();
           } catch (error) {
