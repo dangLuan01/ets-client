@@ -141,6 +141,13 @@ const DesktopHeader = ({ navLinks }: Props) => {
                     >
                       <i className="fas fa-layer-group w-5 text-center"></i> Bảng điều khiển
                     </Link> */}
+
+                     <Link 
+                      href="/ca-nhan" 
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors"
+                    >
+                      <i className="far fa-user-circle w-5 text-center"></i> Hồ sơ cá nhân
+                    </Link>
                     
                     <Link 
                       href="/lich-su-thi" 
@@ -149,13 +156,6 @@ const DesktopHeader = ({ navLinks }: Props) => {
                       <i className="fas fa-history w-5 text-center"></i> Lịch sử làm bài
                     </Link>
                     
-                    {/* <Link 
-                      href="/ca-nhan" 
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors"
-                    >
-                      <i className="far fa-user-circle w-5 text-center"></i> Hồ sơ cá nhân
-                    </Link> */}
-
                     {/* Mục Upsell Premium */}
                     {/* <Link 
                       href="/premium" 

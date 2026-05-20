@@ -7,6 +7,8 @@ import { register, login, getMe } from "@/services/authService";
 import { validateEmail, validatePassword, validateTarget, validateUsername } from "@/utils/helper";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useNotification } from "../NotificationContext";
+import { tagetList } from "@/app/(main)/ca-nhan/page";
+import { ApiErrorResponse } from "@/types/error";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.vidhub.io.vn';
 
@@ -23,53 +25,59 @@ const LoginRegisterModal = ({
   const [target, setTarget]               = useState(990);
   const [agree, setAgree]                 = useState(false);
   const [token, setToken]                 = useState("");
-  const [usernameError, setUsernameError] = useState("");
-  const [emailError, setEmailError]       = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [targetError, setTargetError]     = useState("");
-  const [agreeError, setAgreeError]       = useState("");
-  const [apiError, setApiError]           = useState("");
+  const [userErrors, setUserErrors]       = useState({ username: '', email: '', password: '', target: '', agree: '' });
   const setTokens                         = useAuthStore((state) => state.setTokens);
   const setUser                           = useAuthStore((state) => state.setUser);
   const notify                            = useNotification();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setEmailError("");
-    setPasswordError("");
-    setApiError("");
-
+    
+    let newErrors = { username: '', email: '', password: '', target: '', agree: '' };
     let hasError = false;
+
     if (!validateEmail(email)) {
-      setEmailError("Email không hợp lệ.");
+      newErrors.email = "Email không hợp lệ.";
       hasError = true;
     }
+
     if (!password) {
-      setPasswordError("Mật khẩu không được để trống.");
+      newErrors.password = "Mật khẩu không được để trống.";
       hasError = true;
     }
+
+    setUserErrors(newErrors);
 
     if (!hasError) {
       try {
         const loginResponse = await login({ email, password, token });
        
         const { access_token, refresh_token, expires_in } = loginResponse.data;
-        
-        // Store tokens first
+              
         setTokens(access_token, refresh_token, expires_in);
         
-        // Then, fetch user information
         const meResponse = await getMe();
+
         setUser(meResponse.data);
+
         notify.success("Đăng nhập thành công 🎉!", `Chào mừng bạn trở lại đường đua ${meResponse.data.target} TOEIC.`)
         onClose();
       } catch (error) {
-        if (error instanceof Error) {
-          notify.error("Đăng nhập thất bại 😅", error.message);
-          //setApiError(error.message);
+        const err = error as ApiErrorResponse
+
+        if (err.error && userErrors.hasOwnProperty(err.error)) {
+            setUserErrors(prev => ({
+                ...prev,
+                [err.error as string]: err.detail
+            }));
+        } 
+        else if (err.errors) {
+          setUserErrors((prev) => ({
+            ...prev,
+            ...err.errors
+          }));
         } else {
-          notify.error("Đăng nhập thất bại 😅", "Sai email hoặc mật khẩu. Vui lòng kiểm tra lại nhé!");
-          //setApiError("Đã có lỗi xảy ra.  Kiểm tra lại thông tin.");
+          notify.error("Đăng nhập không thành công 😅", "Lỗi hệ thống vui lòng thử lại!");
         }
       }
     }
@@ -78,39 +86,36 @@ const LoginRegisterModal = ({
   
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    setUsernameError("");
-    setEmailError("");
-    setPasswordError("");
-    setAgreeError("");
-    setTargetError("");
-    setApiError("");
 
+    let newErrors = { username: '', email: '', password: '', target: '', agree: '' };
     let hasError = false;
+
     if (!validateUsername(username)) {
-      setUsernameError(
-        "Họ và tên không được để trống."
-      );
+      newErrors.username = "Họ và tên không được để trống."
       hasError = true;
     }
-    if (!validateEmail(email)) {
-      setEmailError("Email không hợp lệ.");
+
+    if (!validateEmail(email)) {      
+      newErrors.email = "Email không hợp lệ.";
       hasError = true;
     }
+
     if (!validatePassword(password)) {
-      setPasswordError(
-        "Mật khẩu phải dài ít nhất 8 ký tự."
-      );
+      newErrors.password = "Mật khẩu phải dài ít nhất 8 ký tự."
       hasError = true;
     }
+
     if(!agree) {
-      setAgreeError("Bạn phải đồng ý với điều khoản sử dụng.");
+      newErrors.agree = "Bạn phải đồng ý với điều khoản sử dụng."
       hasError = true;
     }
 
     if (!validateTarget(target)) {
-      setTargetError("Mục tiêu phải từ 10 đến 990.")
+      newErrors.target = "Mục tiêu phải từ 10 đến 990.";
       hasError = true;
     }
+
+    setUserErrors(newErrors);
 
     if (!hasError) {
       try {
@@ -118,17 +123,31 @@ const LoginRegisterModal = ({
         setIsLogin(true);
         notify.success("Đăng ký thành công 🎉!");
       } catch (error) {
-        if (error instanceof Error) {
-          notify.error("Đăng ký thất bại 😅!", error.message);
-          //setApiError(error.message);
+        const err = error as ApiErrorResponse
+
+        if (err.error && userErrors.hasOwnProperty(err.error)) {
+          setUserErrors(prev => ({
+              ...prev,
+              [err.error as string]: err.detail
+          }));
+        } else if (err.errors) {
+          setUserErrors((prev) => ({
+            ...prev,
+            ...err.errors
+          }));
         } else {
-          notify.error("Đăng ký thất bại 😅!");
+          notify.error("Đăng ký thất bại 😅!", "Lỗi hệ thống vui lòng thử lại.");
         }
       }
     }
   };
   
-  const handleLoginWithGoogle = () => {
+  const handleOauth2Login = (provider: string) => {
+    if (provider === "facebook") {
+      notify.info("Hệ thống đang phát triển.", "Vui lòng đăng nhập với tài khoản google. Cảm ơn ❤️ ❤️ ❤️");
+      return;
+    }
+
     const width = 500;
     const height = 600;
 
@@ -136,8 +155,8 @@ const LoginRegisterModal = ({
     const top = window.screenY + (window.innerHeight - height) / 2;
 
     window.open(
-      `${API_BASE_URL}/api/v1/auth/google`,
-      "google-login",
+      `${API_BASE_URL}/api/v1/auth/${provider}`,
+      `${provider}-login`,
       `width=${width},height=${height},left=${left},top=${top}`
     );
   };
@@ -169,7 +188,6 @@ const LoginRegisterModal = ({
       window.removeEventListener("message", handler);
     };
   }, []);
-
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
@@ -236,24 +254,23 @@ const LoginRegisterModal = ({
 
           {isLogin ? (
             <form onSubmit={handleLogin} className="space-y-6">
-              {apiError && <p className="text-red-500 text-sm text-center font-bold">{apiError}</p>}
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">
+                  <label className={`block text-xs font-bold ${userErrors.email ? 'text-rose-500' : 'text-slate-500'} uppercase tracking-widest mb-2 px-1`}>
                     Email của bạn
                   </label>
                   <input
                     type="email"
                     placeholder="Ví dụ: hi@toiecviet.com"
-                    className={`w-full bg-slate-50 border-2 ${emailError ? 'border-red-500' : 'border-transparent'} px-5 py-4 rounded-2xl text-sm outline-none transition-all focus:bg-white focus:border-indigo-600 focus:shadow-sm`}
+                    className={`w-full bg-slate-50 border-2 ${userErrors.email ? 'border-red-500' : 'border-transparent'} px-5 py-4 rounded-2xl text-sm outline-none transition-all focus:bg-white focus:border-indigo-600 focus:shadow-sm`}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
-                  {emailError && <p className="text-red-500 text-xs mt-1 px-1">{emailError}</p>}
+                  {userErrors.email && <p className="text-red-500 text-xs mt-1 px-1">{userErrors.email}</p>}
                 </div>
                 <div>
                   <div className="flex justify-between items-center mb-2 px-1">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">
+                    <label className={`block text-xs font-bold ${userErrors.password ? 'text-rose-500' : 'text-slate-500'} uppercase tracking-widest`}>
                       Mật khẩu
                     </label>
                     {/* <a href="#" className="text-xs font-bold text-indigo-600 hover:underline">
@@ -264,13 +281,13 @@ const LoginRegisterModal = ({
                     <input
                       type="password"
                       placeholder="••••••••"
-                      className={`w-full bg-slate-50 border-2 ${passwordError ? 'border-red-500' : 'border-transparent'} px-5 py-4 rounded-2xl text-sm outline-none transition-all focus:bg-white focus:border-indigo-600 focus:shadow-sm`}
+                      className={`w-full bg-slate-50 border-2 ${userErrors.password ? 'border-red-500' : 'border-transparent'} px-5 py-4 rounded-2xl text-sm outline-none transition-all focus:bg-white focus:border-indigo-600 focus:shadow-sm`}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
                     {/* Eye icon can be added here */}
                   </div>
-                   {passwordError && <p className="text-red-500 text-xs mt-1 px-1">{passwordError}</p>}
+                   {userErrors.password && <p className="text-red-500 text-xs mt-1 px-1">{userErrors.password}</p>}
                 </div>
                 
               </div>
@@ -291,69 +308,66 @@ const LoginRegisterModal = ({
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <button onClick={handleLoginWithGoogle} type="button" className="flex items-center justify-center gap-3 bg-slate-50 py-3.5 rounded-2xl font-bold text-sm text-slate-700 hover:bg-slate-100 border border-slate-100 transition">
+                <button onClick={() => handleOauth2Login("google")} type="button" className="flex items-center justify-center gap-3 bg-slate-50 py-3.5 rounded-2xl font-bold text-sm text-slate-700 hover:bg-slate-100 border border-slate-100 transition">
                   <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="Google" /> Google
                 </button>
-                <button type="button" className="flex items-center justify-center gap-3 bg-slate-50 py-3.5 rounded-2xl font-bold text-sm text-slate-700 hover:bg-slate-100 border border-slate-100 transition">
-                  <img src="https://www.svgrepo.com/show/508761/apple.svg" className="w-5 h-5" alt="Facebook" /> Apple
+                <button onClick={() => handleOauth2Login("facebook")} type="button" className="flex items-center justify-center gap-3 bg-slate-50 py-3.5 rounded-2xl font-bold text-sm text-slate-700 hover:bg-slate-100 border border-slate-100 transition">
+                  <img src="https://www.svgrepo.com/show/448224/facebook.svg" className="w-5 h-5" alt="Facebook" /> Facebook
                 </button>
               </div>
             </form>
           ) : (
             <form onSubmit={handleRegister} className="space-y-6">
-               {apiError && <p className="text-red-500 text-sm text-center font-bold">{apiError}</p>}
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">
+                  <label className={`block text-xs font-bold ${userErrors.username ? 'text-rose-500' : 'text-slate-500'} uppercase tracking-widest mb-2 px-1`}>
                     Tên người dùng
                   </label>
                   <input
                     type="text"
                     placeholder="Nhập tên của bạn"
-                    className={`w-full bg-slate-50 border-2 ${usernameError ? 'border-red-500' : 'border-transparent'} px-5 py-4 rounded-2xl text-sm outline-none transition-all focus:bg-white focus:border-indigo-600 focus:shadow-sm`}
+                    className={`w-full bg-slate-50 border-2 ${userErrors.username ? 'border-red-500' : 'border-transparent'} px-5 py-4 rounded-2xl text-sm outline-none transition-all focus:bg-white focus:border-indigo-600 focus:shadow-sm`}
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                   />
-                  {usernameError && <p className="text-red-500 text-xs mt-1 px-1">{usernameError}</p>}
+                  {userErrors.username && <p className="text-red-500 text-xs mt-1 px-1">{userErrors.username}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">
+                  <label className={`block text-xs font-bold ${userErrors.email ? 'text-rose-500' : 'text-slate-500'} uppercase tracking-widest mb-2 px-1`}>
                     Email
                   </label>
                   <input
                     type="email"
                     placeholder="hi@toiecviet.com"
-                    className={`w-full bg-slate-50 border-2 ${emailError ? 'border-red-500' : 'border-transparent'} px-5 py-4 rounded-2xl text-sm outline-none transition-all focus:bg-white focus:border-indigo-600 focus:shadow-sm`}
+                    className={`w-full bg-slate-50 border-2 ${userErrors.email ? 'border-red-500' : 'border-transparent'} px-5 py-4 rounded-2xl text-sm outline-none transition-all focus:bg-white focus:border-indigo-600 focus:shadow-sm`}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
-                  {emailError && <p className="text-red-500 text-xs mt-1 px-1">{emailError}</p>}
+                  {userErrors.email && <p className="text-red-500 text-xs mt-1 px-1">{userErrors.email}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">
+                  <label className={`block text-xs font-bold uppercase tracking-widest mb-2 px-1 ${userErrors.password ? 'text-rose-500' : 'text-slate-500'}`}>
                     Mật khẩu
                   </label>
                   <input
                     type="password"
                     placeholder="Tạo mật khẩu (tối thiểu 8 ký tự)"
-                    className={`w-full bg-slate-50 border-2 ${passwordError ? 'border-red-500' : 'border-transparent'} px-5 py-4 rounded-2xl text-sm outline-none transition-all focus:bg-white focus:border-indigo-600 focus:shadow-sm`}
+                    className={`w-full bg-slate-50 border-2 ${userErrors.password ? 'border-red-500' : 'border-transparent'} px-5 py-4 rounded-2xl text-sm outline-none transition-all focus:bg-white focus:border-indigo-600 focus:shadow-sm`}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
-                  {passwordError && <p className="text-red-500 text-xs mt-1 px-1">{passwordError}</p>}
+                  {userErrors.password && <p className="text-red-500 text-xs mt-1 px-1">{userErrors.password}</p>}
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">
                     Mục tiêu điểm
                   </label>
-                  <input
-                    type="number"
-                    placeholder="Nhập mục tiêu đạt điểm của bạn"
-                    className={`w-full bg-slate-50 border-2 ${targetError ? 'border-red-500' : 'border-transparent'} px-5 py-4 rounded-2xl text-sm outline-none transition-all focus:bg-white focus:border-indigo-600 focus:shadow-sm`}
-                    value={target}
-                    onChange={(e) => setTarget(Number(e.target.value))}
-                  />
-                  {targetError && <p className="text-red-500 text-xs mt-1 px-1">{targetError}</p>}
+                   <select value={target} onChange={(e) => setTarget(Number(e.target.value))} className="w-full bg-slate-50 border-2 border-transparent px-5 py-4 rounded-2xl text-sm font-bold text-slate-900 outline-none transition-all focus:bg-white focus:border-indigo-600 focus:shadow-sm appearance-none">
+                      {tagetList.map((item) => (
+                          <option key={item.taget} value={item.taget}>{item.label}</option>
+                      ))}
+                    </select>
+                  {userErrors.target && <p className="text-red-500 text-xs mt-1 px-1">{userErrors.target}</p>}
                 </div>
               </div>
 
@@ -368,16 +382,16 @@ const LoginRegisterModal = ({
                 <div>
                   <p className="text-xs text-slate-500 leading-relaxed font-medium">
                     Tôi đồng ý với{" "}
-                    <a href="#" className="text-indigo-600 font-bold hover:underline">
+                    <a href="/dieu-khoan" target="__blank" className="text-indigo-600 font-bold hover:underline">
                       Điều khoản sử dụng
                     </a>{" "}
                     và{" "}
-                    <a href="#" className="text-indigo-600 font-bold hover:underline">
+                    <a href="/bao-mat" target="__blank" className="text-indigo-600 font-bold hover:underline">
                       Chính sách bảo mật
                     </a>{" "}
                     của Toiecviet.com.
                   </p>
-                  {agreeError && <p className="text-red-500 text-xs mt-1">{agreeError}</p>}
+                  {userErrors.agree && <p className="text-red-500 text-xs mt-1">{userErrors.agree}</p>}
                 </div>
               </div>
 

@@ -47,7 +47,7 @@ const History = () => {
     }, [status, page]);
     
     return (
-    <main className="container mx-auto max-w-7xl md:pt-32 p-4 md:p-6">
+    <main className="mx-auto max-w-7xl md:pt-32 p-4 md:p-6">
         
         <div className="mb-10">
             <nav className="flex gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">

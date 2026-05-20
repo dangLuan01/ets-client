@@ -104,9 +104,9 @@ const BottomNavigation = () => {
 
                   {/* Danh sách tính năng */}
                   <div className="p-2 space-y-1">
-                    {/* <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-slate-50 text-sm font-bold text-slate-700 active:bg-slate-100" onClick={() => setIsMobileMenuOpen(false)}>
-                      <i className="fas fa-layer-group w-4 text-center text-slate-400"></i> Bảng điều khiển
-                    </Link> */}
+                    <Link href="/ca-nhan" className="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-slate-50 text-sm font-bold text-slate-700 active:bg-slate-100" onClick={() => setIsMobileMenuOpen(false)}>
+                      <i className="fas fa-user-circle w-4 text-center text-slate-400"></i> Hồ sơ cá nhân
+                    </Link>
                     <Link href="/lich-su-thi" className="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-slate-50 text-sm font-bold text-slate-700 active:bg-slate-100" onClick={() => setIsMobileMenuOpen(false)}>
                       <i className="fas fa-history w-4 text-center text-slate-400"></i> Lịch sử thi
                     </Link>

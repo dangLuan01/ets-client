@@ -19,7 +19,7 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="max-w-6xl mx-auto px-4 md:px-6 pt-24 pb-32">
+    <main className="max-w-6xl mx-auto px-4 md:px-6 pt-5 lg:pt-24">
       
       {/* 1. HEADER */}
       <div className="mb-12 md:mb-16 text-center md:text-left">
@@ -57,7 +57,7 @@ export default function ContactPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
                 {/* Bento Box 2: Hotline */}
-                <div className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm hover:shadow-md transition-shadow flex items-center gap-5">
+                {/* <div className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm hover:shadow-md transition-shadow flex items-center gap-5">
                     <div className="w-14 h-14 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center text-xl flex-shrink-0">
                         <i className="fas fa-phone-alt"></i>
                     </div>
@@ -66,7 +66,7 @@ export default function ContactPage() {
                         <h4 className="text-lg font-black text-slate-900">1900 1900</h4>
                         <p className="text-xs font-medium text-slate-500">T2 - T7 (08:00 - 18:00)</p>
                     </div>
-                </div>
+                </div> */}
 
                 {/* Bento Box 3: Address */}
                 <div className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm hover:shadow-md transition-shadow flex items-center gap-5">

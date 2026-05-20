@@ -1,5 +1,7 @@
 import { useAuthStore } from '@/store/useAuthStore';
 import { RegisterData, LoginData, LoginResponse } from '@/types/auth';
+import { ApiErrorResponse } from '@/types/error';
+import { MeResponse } from '@/types/user';
 import apiClient from '@/utils/apiClient';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.vidhub.io.vn';
@@ -11,15 +13,11 @@ export const register = async (data: RegisterData) => {
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Đã có lỗi xảy ra.');
+    const errorData: ApiErrorResponse = await response.json();
+    throw errorData;
   }
 
-  if (response.status === 200) {
-    return null;
-  }
-
-  return response.json();
+  return;
 };
 
 export const login = async (data: LoginData): Promise<LoginResponse> => {
@@ -29,21 +27,12 @@ export const login = async (data: LoginData): Promise<LoginResponse> => {
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Đã có lỗi xảy ra.');
+    const errorData: ApiErrorResponse = await response.json();
+    throw errorData;
   }
 
   return response.json();
 };
-
-interface MeResponse {
-  data: {
-    username: string;
-    email: string;
-    avatar?: string;
-    target: number;
-  }
-}
 
 export const getMe = async (): Promise<MeResponse> => {
     const response = await apiClient('/api/v1/user/info', {
