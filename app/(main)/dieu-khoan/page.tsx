@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function TermsOfServicePage() {
   return (
-    <main className="max-w-6xl mx-auto px-4 md:px-6 pt-24 pb-32">
+    <main className="max-w-6xl mx-auto px-4 md:px-6 pt-5 lg:pt-24">
       
       {/* 1. HEADER (Bento Style) */}
       <div className="mb-12 md:mb-16">

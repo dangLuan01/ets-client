@@ -1,12 +1,11 @@
-// components/SearchBar.tsx
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Search, X, Clock, ChevronRight, Timer, FileText } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { examService } from '@/services/examService';
 import { useRouter } from 'next/navigation';
+import { CldImage } from 'next-cloudinary';
 
 // Interface phù hợp với API response
 interface ExamResult {
@@ -285,13 +284,14 @@ export default function SearchBar({
                       {/* Thumbnail */}
                       {result.thumbnail && (
                         <div className="w-16 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-slate-100">
-                          <Image
+                          <CldImage
                             src={result.thumbnail}
                             alt={result.title}
                             width={64}
                             height={48}
                             className="w-full h-full object-cover"
-                            unoptimized
+                            format='auto'
+                            quality='auto'
                           />
                         </div>
                       )}
