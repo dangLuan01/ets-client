@@ -8,7 +8,6 @@ import Part2 from '@/components/parts/Part2';
 import Part3_4 from '@/components/parts/Part3_4';
 import Part5 from '@/components/parts/Part5';
 import Part6 from '@/components/parts/Part6';
-import Part7 from '@/components/parts/Part7';
 import QuestionListModal from '@/components/ui/QuestionListModal';
 import { formatTime } from '@/utils/helper';
 import SubmitModal from './ui/SubmitModal';
@@ -49,7 +48,6 @@ export default function PracticeEngine({ initialData, examSlug, slug }: Practice
     setReviewMode(false);
     // Mặc định ẩn giải thích để học viên tự suy nghĩ trước
     setShowExplanation(false); 
-    
     // Dọn dẹp: Tắt chế độ Review khi thoát khỏi trang này (để không ảnh hưởng trang Thi thật)
     return () => {
         setReviewMode(false);

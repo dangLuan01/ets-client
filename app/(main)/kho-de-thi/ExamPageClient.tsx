@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useCallback, useTransition, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CldImage } from "next-cloudinary";
+import { ChevronLeft, ChevronRight, CircleQuestionMark, Clock3, Grid3X3, List, Search } from "lucide-react";
 
 interface ExamListItem {
   id: number;
@@ -53,8 +54,8 @@ const ExamCard = ({ exam }: { exam: ExamListItem }) => {
           {exam.title}
         </h4>
         <div className="flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-tighter mb-4">
-          <span><i className="far fa-clock mr-1 text-indigo-500"></i> {exam.total_time} phút</span>
-          <span><i className="far fa-question-circle mr-1 text-indigo-500"></i> {exam.total_question} câu</span>
+          <span><Clock3 className="w-3 h-3 mr-1 text-indigo-500" /> {exam.total_time} phút</span>
+          <span><CircleQuestionMark className="w-3 h-3 mr-1 text-indigo-500" /> {exam.total_question} câu</span>
         </div>
 
         <Link href={`/${exam.exam_type === "PRACTICE" ? 'practice' : 'test'}/${exam.cert_slug}/${exam.slug}`}>
@@ -238,7 +239,8 @@ const ExamPageClient = ({
                 onChange={handleSearchChange}
                 disabled={isPending}
               />
-              <i className="fas fa-search absolute left-3.5 top-3.5 text-slate-400"></i>
+              {/* <i className="fas fa-search absolute left-3.5 top-3.5 text-slate-400"></i> */}
+              <Search className="absolute left-2.5 top-2.5 text-slate-400"/>
             </div>
 
             {/* Category Filters */}
@@ -308,7 +310,8 @@ const ExamPageClient = ({
                 className={`px-3 py-1.5 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'hover:bg-slate-100'}`}
                 title="Grid View"
               >
-                <i className="fas fa-th"></i>
+                {/* <i className="fas fa-th"></i> */}
+                <Grid3X3 className="w-5 h-5"/>
               </button>
               <div className="w-px h-5 bg-slate-200"></div>
               <button
@@ -316,7 +319,8 @@ const ExamPageClient = ({
                 className={`px-3 py-1.5 rounded-lg transition-all ${viewMode === 'list' ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'hover:bg-slate-100'}`}
                 title="List View"
               >
-                <i className="fas fa-list"></i>
+                {/* <i className="fas fa-list"></i> */}
+                <List className="w-5 h-5"/>
               </button>
             </div>
           </div>
@@ -355,7 +359,8 @@ const ExamPageClient = ({
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1 || isPending}
                 >
-                  <i className="fas fa-chevron-left"></i>
+                  {/* <i className="fas fa-chevron-left"></i> */}
+                  <ChevronLeft />
                 </button>
 
                 {/* Page numbers */}
@@ -396,7 +401,8 @@ const ExamPageClient = ({
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages || isPending}
                 >
-                  <i className="fas fa-chevron-right"></i>
+                  {/* <i className="fas fa-chevron-right"></i> */}
+                  <ChevronRight />
                 </button>
               </div>
             </div>

@@ -10,10 +10,11 @@ interface GlobalAudioPlayerProps {
   currentAudioStartMs: number | null;
   currentAudioEndMs: number | null;
   currentSkillCode?: string;
+  screenType: string;
 }
 
 export default function GlobalAudioPlayer({ 
-  audioUrl, currentAudioStartMs, currentAudioEndMs, currentSkillCode 
+  audioUrl, currentAudioStartMs, currentAudioEndMs, currentSkillCode, screenType
 }: GlobalAudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -118,9 +119,15 @@ export default function GlobalAudioPlayer({
       setIsPlaying(false);
       setIsWaiting(true);
       
-      timeoutRef.current = setTimeout(() => {
-        nextQuestion();
-      }, 5000);
+      if (screenType === 'DIRECTION' || screenType === 'EXAMPLE') {
+        timeoutRef.current = setTimeout(() => {
+          nextQuestion();
+        }, 1000);  
+      } else {
+        timeoutRef.current = setTimeout(() => {
+          nextQuestion();
+        }, 5000);
+      }
     }
   };
 

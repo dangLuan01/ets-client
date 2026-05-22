@@ -13,15 +13,14 @@ export default function Part1({ item }: Part1Props) {
   const showExplanation     = useTestStore((state) => state.showExplanation);
   const setAnswer           = useTestStore((state) => state.setAnswer);
   const answers             = useTestStore((state) => state.answers);
-
-  const optionsKeys         = ['A', 'B', 'C', 'D'] as const;
   const { question_data }   = item;
   const qId                 = question_data?.question_id;
   const displayNumber       = question_data?.display_number;
   const currentAnswer       = answers[qId]?.option || '';
   const hasAnswered         = !!currentAnswer;
   const correctAnswer       = question_data.correct_answer?.toUpperCase();  
-  
+  const optionsKeys         = ['A', 'B', 'C', 'D'] as const;
+
   const handleOptionSelect = (optionKey: string) => {
     if (isReviewMode || (isPracticeMode && hasAnswered)) return;
     setAnswer(qId, optionKey, displayNumber);

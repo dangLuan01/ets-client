@@ -258,4 +258,22 @@ export const examService = {
       return null;
     }
   },
+
+  // Increate Count Exam
+  countExam: async (examSlug: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/exams/${examSlug}/count`, {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return;
+    } catch (error) {
+      console.error('[count exam] Error count exam:', error);
+      return;
+    }
+  },
 };

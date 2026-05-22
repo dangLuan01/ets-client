@@ -132,7 +132,7 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessToken, examSlug]); // Run only once on mount
 
-  const handleResumeTest = () => {
+  const handleResumeTest = async () => {
     if (!resumableAttempt) return;
 
     const { attempt } = { attempt: resumableAttempt };
@@ -314,65 +314,54 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
   
   const handleStartTest = async () => {
   
-      if (isStart) return
-  
-      setIsStart(true)
-  
-      resetTest();
-  
-      setTotalItems(flatItemsList.length);
-  
-      useTestStore.getState().setTestStartTime(new Date().getTime());
-  
-      // Ngay khoảnh khắc người dùng click chuột, ta "tóm" lấy thẻ audio và ép nó phát!
-  
-      // Trình duyệt sẽ cấp quyền Autoplay vĩnh viễn cho thẻ này trong phiên làm việc.
-  
-      const audioEl = document.getElementById('global-audio-player') as HTMLAudioElement;
-  
-      if (audioEl) {
-  
-        audioEl.play().catch(() => {
-  
-          console.warn("Unlock audio ngầm thất bại, nhưng không sao.");
-  
-        });
-  
+    if (isStart) return
+
+    setIsStart(true)
+
+    resetTest();
+
+    setTotalItems(flatItemsList.length);
+
+    useTestStore.getState().setTestStartTime(new Date().getTime());
+
+    // Ngay khoảnh khắc người dùng click chuột, ta "tóm" lấy thẻ audio và ép nó phát!
+
+    // Trình duyệt sẽ cấp quyền Autoplay vĩnh viễn cho thẻ này trong phiên làm việc.
+
+    const audioEl = document.getElementById('global-audio-player') as HTMLAudioElement;
+
+    if (audioEl) {
+
+      audioEl.play().catch(() => {
+
+        console.warn("Unlock audio ngầm thất bại, nhưng không sao.");
+
+      });
+
+    }
+
+    try {
+      // Chỉ lưu attempt nếu user đã đăng nhập
+      if (accessToken) {
+        const payload: AttemptPayload = {
+          exam_slug: examSlug,
+        };
+
+        const attemptId = await examService.storeUserAttempt(payload)
+
+        setAttemptId(attemptId)
+
+        useTestStore.getState().setAttemptId(attemptId); // Cập nhật ID vào store để dùng cho việc lưu câu trả lời
+
       }
-  
-      try {
-  
-        // Chỉ lưu attempt nếu user đã đăng nhập
-  
-        if (accessToken) {
-  
-          const payload: AttemptPayload = {
-  
-            exam_slug: examSlug,
-  
-          };
-  
-          const attemptId = await examService.storeUserAttempt(payload)
-  
-          setAttemptId(attemptId)
-  
-          useTestStore.getState().setAttemptId(attemptId); // Cập nhật ID vào store để dùng cho việc lưu câu trả lời
-  
-        }
-  
-        // Đổi state để giao diện nhảy vào Câu 1 cho cả guest và user
-  
-        setIsTestStarted(true);
-  
-      } catch (error) {
-  
-        console.error("Error starting test:", error);
-  
-        setIsStart(false);
-  
-      }
-  
-    };
+      // Đổi state để giao diện nhảy vào Câu 1 cho cả guest và user
+      setIsTestStarted(true);
+
+    } catch (error) {
+      console.error("Error starting test:", error);
+      setIsStart(false);
+    }
+  };
 
   // HÀM DEBUG: NHẢY THẲNG ĐẾN READING
   const handleSkipToReading = () => {
@@ -388,6 +377,10 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
       alert("Oops! Không tìm thấy phần READING trong JSON của bạn.");
     }
   };
+
+  const handleCountExam = async () => {
+    await examService.countExam(examSlug);
+  }
 
   const handleSubmitTest = useCallback(async () => {
     // Ngăn chặn submit nhiều lần
@@ -538,7 +531,10 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
                     // TRƯỜNG HỢP 1: CÓ BÀI ĐANG LÀM DỞ
                     <>
                       <button
-                        onClick={handleResumeTest}
+                        onClick={ () => {
+                          handleResumeTest();
+                          handleCountExam();
+                        }}
                         className="w-full sm:w-auto order-1 sm:order-2 bg-[#0a1b3f] hover:bg-[#152b69] transition-colors text-white font-bold py-3 sm:py-2.5 px-6 sm:px-10 rounded-[6px] shadow-md text-[15px] sm:text-[16px] flex items-center justify-center whitespace-nowrap"
                       >
                         Tiếp tục làm bài
@@ -548,7 +544,10 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
                       </button>
 
                       <button
-                        onClick={handleStartTest}
+                        onClick={() => {
+                          handleStartTest();
+                          handleCountExam();
+                        }}
                         className="w-full sm:w-auto order-2 sm:order-1 bg-white border-2 border-[#f28322] text-[#f28322] hover:bg-orange-50 transition-colors font-bold py-3 sm:py-2.5 px-6 rounded-[6px] shadow-sm text-[15px] whitespace-nowrap"
                       >
                         Làm mới (Xóa bài cũ)
@@ -557,7 +556,10 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
                   ) : (
                     // TRƯỜNG HỢP 2: BẮT ĐẦU MỚI HOÀN TOÀN
                     <button
-                      onClick={handleStartTest}
+                      onClick={() => {
+                        handleStartTest();
+                        handleCountExam();
+                      }}
                       className="bg-[#f28322] hover:bg-[#d97017] transition-colors text-white font-bold py-3 px-14 rounded-[6px] shadow-md text-[16px] uppercase tracking-wider"
                     >
                       Bắt đầu thi
