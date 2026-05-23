@@ -104,6 +104,7 @@ export interface UserAnswerPayload {
   question_id: number;
   selected_answer: string;
   time_spent_sec: number;
+  answer_time_sec: number;
 }
 
 export interface FeaturedExam {

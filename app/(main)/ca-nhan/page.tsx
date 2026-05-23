@@ -29,7 +29,7 @@ export default function ProfilePage() {
     const [pwdErrors, setPwdErrors]             = useState({ current_password: '', new_password: '', confirm_password: '' });
 
     useEffect(() => {
-       // if (!accessToken) return;
+        if (!accessToken) {return};
 
         const fetchUserDetail = async () => {
             const resp = await getUserDetail();
@@ -468,6 +468,6 @@ export default function ProfilePage() {
 
         </div>
       </div>
-    </main>
+    </main>    
   );
 }

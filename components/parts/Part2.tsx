@@ -1,6 +1,7 @@
 import { useTestStore } from '@/store/useTestStore';
 import { ExamOption, SingleItem } from '@/types/exam';
 import { CheckCircle, ImageIcon, Lightbulb, Volume2, XCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface Part2Props {
   item: SingleItem;
@@ -20,10 +21,18 @@ export default function Part2({ item }: Part2Props) {
   const currentAnswer       = answers[qId]?.option || '';
   const hasAnswered         = !!currentAnswer;
   const correctAnswer       = question_data.correct_answer?.toUpperCase() as keyof ExamOption;
+
+  const [startTime, setStartTime] = useState<number>(Date.now());
+    
+    useEffect(() => {
+      setStartTime(Date.now());
+    }, [qId]);
   
   const handleOptionSelect = (optionKey: string) => {
     if (isReviewMode || (isPracticeMode && hasAnswered)) return;
-    setAnswer(qId, optionKey, displayNumber);
+
+    const answerTime = Date.now() - startTime;
+    setAnswer(qId, optionKey, displayNumber, answerTime);
   };
 
   // Helper: Xác định trạng thái hiển thị cho từng option

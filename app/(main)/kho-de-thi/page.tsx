@@ -48,6 +48,7 @@ const KhoDeThiPage = async ({
     const page = Number(params?.page) || 1;
     const limit = 12;
     const search = (params?.search as string) || '';
+    const sort = (params?.sort as string) || 'all';
     const categoryParams = params?.category;
     const selectedCategories = categoryParams 
         ? (Array.isArray(categoryParams) 
@@ -61,6 +62,12 @@ const KhoDeThiPage = async ({
         page,
         search,
     };
+
+    if (sort !== 'all') {
+        console.log(sort);
+        
+        apiParams.sort = sort;
+    }
 
     if (selectedCategories.length > 0) {
         apiParams.category_id = selectedCategories;
@@ -94,6 +101,7 @@ const KhoDeThiPage = async ({
                     currentPage={page}
                     currentSearch={search}
                     selectedCategories={selectedCategories}
+                    currentSort={apiParams.sort}
                 />
             </Suspense>
         );
@@ -108,6 +116,7 @@ const KhoDeThiPage = async ({
                 currentPage={1}
                 currentSearch=""
                 selectedCategories={[]}
+                currentSort="all"
             />
         );
     }

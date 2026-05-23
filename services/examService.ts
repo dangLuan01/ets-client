@@ -188,12 +188,13 @@ export const examService = {
    * Lấy danh sách đề thi với filter
    * @param params Các tham số filter: limit, page, search, category_id
    */
-  async filterExams(params: { limit?: number; page?: number; search?: string; category_id?: number[] }) {
+  async filterExams(params: { limit?: number; page?: number; search?: string; category_id?: number[], sort?: string }) {
     try {
       const query = new URLSearchParams();      
       if (params.search !== undefined) query.append('search', params.search);
       if (params.limit !== undefined) query.append('limit', String(params.limit));
       if (params.page !== undefined) query.append('page', String(params.page));
+      if (params.sort !== undefined) query.append('sort', String(params.sort));
       if (params.category_id && Array.isArray(params.category_id)) {
         params.category_id.forEach(id => query.append('category_id', String(id)));
       }
@@ -256,6 +257,24 @@ export const examService = {
       console.error('[examService] Error resuming attempt:', error);
       // It's okay to fail here, we'll just start a new test
       return null;
+    }
+  },
+
+  // Increate Count Exam
+  countExam: async (examSlug: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/exams/${examSlug}/count`, {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return;
+    } catch (error) {
+      console.error('[count exam] Error count exam:', error);
+      return;
     }
   },
 };

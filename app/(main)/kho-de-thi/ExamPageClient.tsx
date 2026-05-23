@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useCallback, useTransition, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CldImage } from "next-cloudinary";
+import { ChevronLeft, ChevronRight, CircleQuestionMark, Clock3, Grid3X3, List, Search } from "lucide-react";
 
 interface ExamListItem {
   id: number;
@@ -31,6 +32,7 @@ interface ExamPageClientProps {
   currentPage: number;
   currentSearch: string;
   selectedCategories: number[];
+  currentSort: string;
 }
 
 // Exam Card Component - Grid view
@@ -53,8 +55,8 @@ const ExamCard = ({ exam }: { exam: ExamListItem }) => {
           {exam.title}
         </h4>
         <div className="flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-tighter mb-4">
-          <span><i className="far fa-clock mr-1 text-indigo-500"></i> {exam.total_time} phút</span>
-          <span><i className="far fa-question-circle mr-1 text-indigo-500"></i> {exam.total_question} câu</span>
+          <span><Clock3 className="w-3 h-3 mr-1 text-indigo-500" /> {exam.total_time} phút</span>
+          <span><CircleQuestionMark className="w-3 h-3 mr-1 text-indigo-500" /> {exam.total_question} câu</span>
         </div>
 
         <Link href={`/${exam.exam_type === "PRACTICE" ? 'practice' : 'test'}/${exam.cert_slug}/${exam.slug}`}>
@@ -102,11 +104,11 @@ const ExamListRow = ({ exam }: { exam: ExamListItem }) => {
 const ExamPageClient = ({ 
   initialExams, 
   totalPages, 
-  totalItems,
   filters, 
   currentPage,
   currentSearch,
-  selectedCategories 
+  selectedCategories,
+  currentSort
 }: ExamPageClientProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -118,23 +120,26 @@ const ExamPageClient = ({
   // URL-based filters for SSR
   const [searchInput, setSearchInput] = useState(currentSearch);
   const [checkedCategories, setCheckedCategories] = useState<number[]>(selectedCategories);
+  const [selectedPreset, setSelectedPreset] = useState(currentSort || 'all');
   
   // Debounce timer ref
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
   // URL update function (no debounce)
-  const updateURL = useCallback((newSearch?: string, newCategories?: number[], newPage?: number) => {
+  const updateURL = useCallback((newSearch?: string, newCategories?: number[], newPage?: number, newSort?: string) => {
     const params = new URLSearchParams(searchParams.toString());
     
     // Clear old params
     params.delete('search');
     params.delete('category');
     params.delete('page');
+    params.delete('sort');
     
     // Set new params
     const search = newSearch ?? searchInput;
     const categories = newCategories ?? checkedCategories;
     const page = newPage ?? 1;
+    const sort = newSort ?? selectedPreset;
     
     if (search.trim()) {
       params.set('search', search.trim());
@@ -147,12 +152,16 @@ const ExamPageClient = ({
     if (page > 1) {
       params.set('page', String(page));
     }
+
+    if (sort && sort !== 'all') {
+      params.set('sort', sort);
+    }
     
     // Trigger server-side re-fetch via URL navigation
     startTransition(() => {
       router.push(`?${params.toString()}`, { scroll: false });
     });
-  }, [searchParams, router, searchInput, checkedCategories]);
+  }, [searchParams, router, searchInput, checkedCategories, selectedPreset]);
 
   // Debounced search handler
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -206,11 +215,14 @@ const ExamPageClient = ({
   // Filter presets
   const filterPresets = [
     { id: 'all', label: '📚 Tất cả đề', icon: 'fa-th' },
-    { id: 'newest', label: '✨ Mới nhất', icon: 'fa-flame' },
-    { id: 'popular', label: '🔥 Phổ biến', icon: 'fa-star' },
+    { id: 'updated_at', label: '✨ Mới nhất', icon: 'fa-flame' },
+    { id: 'view', label: '🔥 Phổ biến', icon: 'fa-star' },
   ];
 
-  const [selectedPreset, setSelectedPreset] = useState('all');
+  const handlePresetChange = (id: string) => {
+    setSelectedPreset(id);
+    updateURL(searchInput, checkedCategories, 1, id); // Reset to page 1 on sort change
+  };
 
   return (
     <main className="container mx-auto max-w-7xl md:pt-32 p-4 md:p-6">
@@ -238,7 +250,8 @@ const ExamPageClient = ({
                 onChange={handleSearchChange}
                 disabled={isPending}
               />
-              <i className="fas fa-search absolute left-3.5 top-3.5 text-slate-400"></i>
+              {/* <i className="fas fa-search absolute left-3.5 top-3.5 text-slate-400"></i> */}
+              <Search className="absolute left-2.5 top-2.5 text-slate-400"/>
             </div>
 
             {/* Category Filters */}
@@ -279,7 +292,8 @@ const ExamPageClient = ({
               {filterPresets.map(preset => (
                 <button
                   key={preset.id}
-                  onClick={() => setSelectedPreset(preset.id)}
+                  onClick={() => handlePresetChange(preset.id)}
+                  disabled={isPending}
                   className={`whitespace-nowrap px-4 py-2 rounded-lg font-bold text-sm transition-all ${
                     selectedPreset === preset.id
                       ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100'
@@ -308,7 +322,8 @@ const ExamPageClient = ({
                 className={`px-3 py-1.5 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'hover:bg-slate-100'}`}
                 title="Grid View"
               >
-                <i className="fas fa-th"></i>
+                {/* <i className="fas fa-th"></i> */}
+                <Grid3X3 className="w-5 h-5"/>
               </button>
               <div className="w-px h-5 bg-slate-200"></div>
               <button
@@ -316,7 +331,8 @@ const ExamPageClient = ({
                 className={`px-3 py-1.5 rounded-lg transition-all ${viewMode === 'list' ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'hover:bg-slate-100'}`}
                 title="List View"
               >
-                <i className="fas fa-list"></i>
+                {/* <i className="fas fa-list"></i> */}
+                <List className="w-5 h-5"/>
               </button>
             </div>
           </div>
@@ -355,7 +371,8 @@ const ExamPageClient = ({
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1 || isPending}
                 >
-                  <i className="fas fa-chevron-left"></i>
+                  {/* <i className="fas fa-chevron-left"></i> */}
+                  <ChevronLeft />
                 </button>
 
                 {/* Page numbers */}
@@ -396,7 +413,8 @@ const ExamPageClient = ({
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages || isPending}
                 >
-                  <i className="fas fa-chevron-right"></i>
+                  {/* <i className="fas fa-chevron-right"></i> */}
+                  <ChevronRight />
                 </button>
               </div>
             </div>

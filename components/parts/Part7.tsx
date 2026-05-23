@@ -5,14 +5,14 @@ interface Part7Props {
 }
 
 export default function Part7({ item }: Part7Props) {
-  const optionsKeys     = ['A', 'B', 'C', 'D'];
+  
   const setAnswer       = useTestStore((state) => state.setAnswer);
   const answers         = useTestStore((state) => state.answers);
   const isReviewMode    = useTestStore((state) => state.isReviewMode);
   const showExplanation = useTestStore((state) => state.showExplanation);
-
   const { group_data }  = item;
   const subQuestions    = group_data?.sub_questions || [];
+  const optionsKeys     = ['A', 'B', 'C', 'D'];
 
   return (
     <div className="flex flex-col lg:flex-row h-full w-full p-2 lg:p-4 gap-4 bg-[#f0f2f5] overflow-hidden">
@@ -108,7 +108,7 @@ export default function Part7({ item }: Part7Props) {
                           name={`q-${qId}`} 
                           value={key}
                           checked={isSelected || (isReviewMode && isCorrect)}
-                          onChange={() => !isReviewMode && setAnswer(qId, key, q.display_number)}
+                          onChange={() => !isReviewMode && setAnswer(qId, key, q.display_number, 0)}
                           className="appearance-none w-5 h-5 rounded-full border-2 border-gray-400 bg-white 
                             checked:bg-[#374151] checked:border-[#374151] 
                             disabled:opacity-70 disabled:cursor-not-allowed

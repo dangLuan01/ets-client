@@ -15,7 +15,7 @@ interface TestState {
   debounceTimers: Record<string | number, NodeJS.Timeout>; // Lưu các bộ đếm debounce
   testStartTime: number | null; // Thời điểm bắt đầu làm bài (timestamp)
 
-  setAnswer: (questionId: string | number, option: string, displayNumber: number) => void;
+  setAnswer: (questionId: string | number, option: string, displayNumber: number, answerTimeMs: number) => void;
   toggleMarkForReview: (questionId: number) => void;
   setCurrentPart: (part: number) => void;
   setTotalItems: (total: number) => void; // Setter cho totalItems
@@ -103,7 +103,7 @@ export const useTestStore = create<TestState>((set, get) => ({
     });
   },
 
-  setAnswer: (questionId, option, displayNumber) => {
+  setAnswer: (questionId, option, displayNumber, answerTimeMs) => {
     const { attemptId, debounceTimers, answers, testStartTime } = get();
 
     // Xóa bộ đếm thời gian cũ của câu hỏi này (nếu có)
@@ -129,12 +129,15 @@ export const useTestStore = create<TestState>((set, get) => ({
     const newTimer = setTimeout(() => {
       const currentTime = new Date().getTime();
       const timeSpent = testStartTime ? Math.round((currentTime - testStartTime) / 1000) : 0;
+      const answerTime = answerTimeMs ? Math.round(answerTimeMs / 1000) : 0;
+
       // Sau 2 giây, gửi câu trả lời lên server
       examService.storeUserAnswer({
         attempt_id: attemptId,
         question_id: Number(questionId), // Đảm bảo questionId là số
         selected_answer: option,
-        time_spent_sec: timeSpent
+        time_spent_sec: timeSpent,
+        answer_time_sec: answerTime,
       });
     }, 2000); // 2 giây
 
