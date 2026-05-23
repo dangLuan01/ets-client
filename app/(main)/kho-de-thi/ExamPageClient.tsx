@@ -32,6 +32,7 @@ interface ExamPageClientProps {
   currentPage: number;
   currentSearch: string;
   selectedCategories: number[];
+  currentSort: string;
 }
 
 // Exam Card Component - Grid view
@@ -103,11 +104,11 @@ const ExamListRow = ({ exam }: { exam: ExamListItem }) => {
 const ExamPageClient = ({ 
   initialExams, 
   totalPages, 
-  totalItems,
   filters, 
   currentPage,
   currentSearch,
-  selectedCategories 
+  selectedCategories,
+  currentSort
 }: ExamPageClientProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -119,23 +120,26 @@ const ExamPageClient = ({
   // URL-based filters for SSR
   const [searchInput, setSearchInput] = useState(currentSearch);
   const [checkedCategories, setCheckedCategories] = useState<number[]>(selectedCategories);
+  const [selectedPreset, setSelectedPreset] = useState(currentSort || 'all');
   
   // Debounce timer ref
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
   // URL update function (no debounce)
-  const updateURL = useCallback((newSearch?: string, newCategories?: number[], newPage?: number) => {
+  const updateURL = useCallback((newSearch?: string, newCategories?: number[], newPage?: number, newSort?: string) => {
     const params = new URLSearchParams(searchParams.toString());
     
     // Clear old params
     params.delete('search');
     params.delete('category');
     params.delete('page');
+    params.delete('sort');
     
     // Set new params
     const search = newSearch ?? searchInput;
     const categories = newCategories ?? checkedCategories;
     const page = newPage ?? 1;
+    const sort = newSort ?? selectedPreset;
     
     if (search.trim()) {
       params.set('search', search.trim());
@@ -148,12 +152,16 @@ const ExamPageClient = ({
     if (page > 1) {
       params.set('page', String(page));
     }
+
+    if (sort && sort !== 'all') {
+      params.set('sort', sort);
+    }
     
     // Trigger server-side re-fetch via URL navigation
     startTransition(() => {
       router.push(`?${params.toString()}`, { scroll: false });
     });
-  }, [searchParams, router, searchInput, checkedCategories]);
+  }, [searchParams, router, searchInput, checkedCategories, selectedPreset]);
 
   // Debounced search handler
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -207,11 +215,14 @@ const ExamPageClient = ({
   // Filter presets
   const filterPresets = [
     { id: 'all', label: '📚 Tất cả đề', icon: 'fa-th' },
-    { id: 'newest', label: '✨ Mới nhất', icon: 'fa-flame' },
-    { id: 'popular', label: '🔥 Phổ biến', icon: 'fa-star' },
+    { id: 'updated_at', label: '✨ Mới nhất', icon: 'fa-flame' },
+    { id: 'view', label: '🔥 Phổ biến', icon: 'fa-star' },
   ];
 
-  const [selectedPreset, setSelectedPreset] = useState('all');
+  const handlePresetChange = (id: string) => {
+    setSelectedPreset(id);
+    updateURL(searchInput, checkedCategories, 1, id); // Reset to page 1 on sort change
+  };
 
   return (
     <main className="container mx-auto max-w-7xl md:pt-32 p-4 md:p-6">
@@ -281,7 +292,8 @@ const ExamPageClient = ({
               {filterPresets.map(preset => (
                 <button
                   key={preset.id}
-                  onClick={() => setSelectedPreset(preset.id)}
+                  onClick={() => handlePresetChange(preset.id)}
+                  disabled={isPending}
                   className={`whitespace-nowrap px-4 py-2 rounded-lg font-bold text-sm transition-all ${
                     selectedPreset === preset.id
                       ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100'

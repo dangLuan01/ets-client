@@ -2,13 +2,15 @@ import { useTestStore } from '@/store/useTestStore';
 import { CheckCircle, XCircle, Lightbulb } from 'lucide-react';
 import QuestionExplanation from '../ui/QuestionExplanation';
 import { CldImage } from 'next-cloudinary';
+import { useEffect, useState, useRef } from 'react';
 
 interface Part6Props {
   item: any;
 }
 
 export default function Part6({ item }: Part6Props) {
-  const optionsKeys       = ['A', 'B', 'C', 'D'];
+  const [questionStartTimes, setQuestionStartTimes] = useState<{ [key: number]: number }>({});
+  
   const setAnswer         = useTestStore((state) => state.setAnswer);
   const answers           = useTestStore((state) => state.answers);
   const isReviewMode      = useTestStore((state) => state.isReviewMode);
@@ -18,6 +20,18 @@ export default function Part6({ item }: Part6Props) {
   const { group_data }    = item;
   const subQuestions      = group_data?.sub_questions || [];
   const groupId           = group_data?.group_id || `group-${item.order_index}`;
+  const optionsKeys       = ['A', 'B', 'C', 'D'];
+
+  // Refs for time tracking
+  const groupStartTime = useRef<number>(Date.now());
+  const lastAnswerTime = useRef<number>(groupStartTime.current);
+
+  useEffect(() => {
+    // Reset timers when the question group changes
+    setQuestionStartTimes({});
+    groupStartTime.current = Date.now();
+    lastAnswerTime.current = groupStartTime.current;
+  }, [groupId]);
 
   // 🔹 Helper: Xác định trạng thái cho từng option (đồng bộ Part5/Part3_4)
   const getOptionStatus = (key: string, correctAnswer: string | undefined, currentAnswer: string, isAnswered: boolean) => {
@@ -64,6 +78,22 @@ export default function Part6({ item }: Part6Props) {
     return `${base} border-gray-200 bg-white ${
       isSelected ? 'border-blue-400 bg-blue-50' : 'hover:bg-blue-50/50 hover:border-blue-300 cursor-pointer'
     }`;
+  };
+
+  const handleOptionSelect = (qId: number, key: string, displayNumber: number) => {
+    const currentTime = Date.now();
+    // Calculate time spent since the last action
+    const timeDelta = currentTime - lastAnswerTime.current;
+    // Update the last action timestamp for the next event
+    lastAnswerTime.current = currentTime;
+    // Get the cumulative time already spent on this question, default to 0
+    const existingTime = questionStartTimes[qId] || 0;
+    // Add the new delta to the cumulative time
+    const newTotalTime = existingTime + timeDelta;
+    // Update the state holding cumulative times
+    setQuestionStartTimes(prev => ({ ...prev, [qId]: newTotalTime }));
+    // Send the final cumulative time to the store
+    setAnswer(qId, key, displayNumber, newTotalTime);
   };
 
   return (
@@ -216,7 +246,7 @@ export default function Part6({ item }: Part6Props) {
                         `}
                         onClick={(e) => {
                           e.preventDefault();
-                          if (!isDisabled) setAnswer(qId, key, displayNumber);
+                          if (!isDisabled) handleOptionSelect(qId, key, displayNumber);
                         }}
                       >
                         {/* 🖊️ Custom Radio - Pencil Style */}
@@ -226,7 +256,7 @@ export default function Part6({ item }: Part6Props) {
                             name={`q-${qId}`} 
                             value={key}
                             checked={isSelected || (isReviewMode && key === correctAnswer)}
-                            onChange={() => setAnswer(qId, key, displayNumber)}
+                            onChange={() => handleOptionSelect(qId, key, displayNumber)}
                             disabled={isDisabled}
                             className="sr-only"
                           />

@@ -1,5 +1,6 @@
 import { useTestStore } from '@/store/useTestStore';
 import { CheckCircle, XCircle, Lightbulb } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface Part5Props {
   item: any;
@@ -18,11 +19,19 @@ export default function Part5({ item }: Part5Props) {
   const displayNumber       = question_data?.display_number || item.order_index;
   const currentAnswer       = answers[qId]?.option || '';
   const hasAnswered         = !!currentAnswer;
-  const correctAnswer       = question_data.correct_answer?.toUpperCase();  
+  const correctAnswer       = question_data.correct_answer?.toUpperCase();
+
+  const [startTime, setStartTime] = useState<number>(Date.now());
   
+  useEffect(() => {
+    setStartTime(Date.now());
+  }, [qId]);
+
   const handleOptionSelect = (optionKey: string) => {
     if (isReviewMode || (isPracticeMode && hasAnswered)) return;
-    setAnswer(qId, optionKey, displayNumber);
+
+    const answerTime = Date.now() - startTime;
+    setAnswer(qId, optionKey, displayNumber, answerTime);
   };
 
   // Helper: Xác định trạng thái hiển thị cho từng option
