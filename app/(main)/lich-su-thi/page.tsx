@@ -149,7 +149,7 @@ const History = () => {
                                         </div>
                                     </div>
                                     <div className="md:w-3/12 flex justify-end lg:mt-1">
-                                        <Link href={`/test/toiec-listening-reading/${attempt.exam_slug}`} className="w-full md:w-auto bg-slate-900 text-white px-8 py-3.5 rounded-2xl font-bold hover:bg-amber-500 transition-colors shadow-lg shadow-slate-200">
+                                        <Link href={`/test/toeic-listening-reading/${attempt.exam_slug}`} className="w-full md:w-auto bg-slate-900 text-white px-8 py-3.5 rounded-2xl font-bold hover:bg-amber-500 transition-colors shadow-lg shadow-slate-200">
                                             Làm tiếp <i className="fas fa-play ml-2 text-xs"></i>
                                         </Link>
                                     </div>
@@ -182,10 +182,10 @@ const History = () => {
                                         </div>
                                     </div>
                                     <div className="md:w-3/12 flex gap-3 justify-end">
-                                        <Link href={`/explanation/toiec-listening-reading/${attempt.exam_slug}`} className="flex-1 md:flex-none bg-indigo-50 text-indigo-600 px-6 py-3.5 rounded-2xl font-bold text-sm hover:bg-indigo-600 hover:text-white transition-colors">
+                                        <Link href={`/explanation/toeic-listening-reading/${attempt.exam_slug}`} className="flex-1 md:flex-none bg-indigo-50 text-indigo-600 px-6 py-3.5 rounded-2xl font-bold text-sm hover:bg-indigo-600 hover:text-white transition-colors">
                                             Xem chi tiết
                                         </Link>
-                                        <Link href={`/test/toiec-listening-reading/${attempt.exam_slug}`} className="w-12 h-12 flex-shrink-0 bg-slate-50 text-slate-500 rounded-2xl flex items-center justify-center hover:bg-slate-200 hover:text-slate-900 transition-colors" title="Làm lại đề này">
+                                        <Link href={`/test/toeic-listening-reading/${attempt.exam_slug}`} className="w-12 h-12 flex-shrink-0 bg-slate-50 text-slate-500 rounded-2xl flex items-center justify-center hover:bg-slate-200 hover:text-slate-900 transition-colors" title="Làm lại đề này">
                                             <i className="fas fa-redo text-sm"></i>
                                         </Link>
                                     </div>
@@ -213,7 +213,7 @@ const History = () => {
                                     </div>
     
                                     <div className="md:w-3/12 flex justify-end">
-                                        <Link href={`/explanation/toiec-listening-reading/${attempt.exam_slug}`} className="w-full md:w-auto bg-indigo-50 text-indigo-600 px-8 py-3.5 rounded-2xl font-bold text-sm hover:bg-indigo-600 hover:text-white transition-colors">
+                                        <Link href={`/explanation/toeic-listening-reading/${attempt.exam_slug}`} className="w-full md:w-auto bg-indigo-50 text-indigo-600 px-8 py-3.5 rounded-2xl font-bold text-sm hover:bg-indigo-600 hover:text-white transition-colors">
                                             Xem đáp án
                                         </Link>
                                     </div>

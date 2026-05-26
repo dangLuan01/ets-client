@@ -18,7 +18,7 @@ export default function PrivacyPolicyPage() {
                     Chính sách <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-500">Bảo mật</span>
                 </h1>
                 <p className="text-slate-500 text-sm md:text-base font-medium max-w-xl leading-relaxed">
-                    Dữ liệu của bạn là tài sản của bạn. Toiecviet.com cam kết bảo vệ thông tin cá nhân và lịch sử học tập của bạn bằng các tiêu chuẩn bảo mật cao nhất hiện nay.
+                    Dữ liệu của bạn là tài sản của bạn. Toeicviet.com cam kết bảo vệ thông tin cá nhân và lịch sử học tập của bạn bằng các tiêu chuẩn bảo mật cao nhất hiện nay.
                 </p>
             </div>
             

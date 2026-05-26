@@ -56,7 +56,7 @@ const DesktopHeader = ({ navLinks }: Props) => {
     <>
       <header className="hidden md:flex fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 h-20 items-center px-10 justify-between">
           <div className="flex items-center gap-10">
-              <Link href="/" className="text-2xl font-black tracking-tighter">Toiecviet<span className="text-indigo-600">.com</span></Link>
+              <Link href="/" className="text-2xl font-black tracking-tighter">Toeicviet<span className="text-indigo-600">.com</span></Link>
               <nav className="flex gap-8 font-bold text-slate-500 text-sm">
                 {navLinks?.map(link => (
                   <div 
