@@ -7,8 +7,8 @@ services:
     expose:
       - "3000"
     environment:
-      - VIRTUAL_HOST=vidhub.io.vn
-      - LETSENCRYPT_HOST=vidhub.io.vn
+      - VIRTUAL_HOST=staging.toeicviet.com
+      - LETSENCRYPT_HOST=staging.toeicviet.com
       - LETSENCRYPT_EMAIL=ml2673572@gmail.com
       - VIRTUAL_PORT=3000
     networks:
