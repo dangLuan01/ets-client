@@ -1,12 +1,12 @@
  {
-  "name": "Toiec Việt",
-  "short_name": "ToiecViet",
-  "description": "Nơi mô phỏng môi trường thi Toiec Online như thi thực tế.",
+  "name": "Toeic Việt",
+  "short_name": "ToeicViet",
+  "description": "Nơi mô phỏng môi trường thi Toeic Online như thi thực tế.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#ffffff",
-  "theme_color": "#EF4444",
+  "theme_color": "#ffffff",
   "scope": "/",
   "lang": "vi",
   "categories": ["education", "productivity"],
@@ -46,7 +46,7 @@
     {
       "name": "Tài liệu",
       "short_name": "Tài liệu",
-      "description": "Nơi cung cấp tài liệu Toiec",
+      "description": "Nơi cung cấp tài liệu Toeic",
       "url": "/bai-viet",
       "icons": [
         {

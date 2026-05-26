@@ -30,7 +30,7 @@ export default function ContactPage() {
         </nav>
         
         <h1 className="text-4xl md:text-6xl font-black tracking-tighter leading-tight mb-4">
-          Kết nối với <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Toiecviet</span>
+          Kết nối với <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Toeicviet</span>
         </h1>
         <p className="text-slate-500 text-sm md:text-base font-medium max-w-xl mx-auto md:mx-0 leading-relaxed">
           Bạn gặp khó khăn trong quá trình ôn luyện? Hay có thắc mắc về tài khoản Premium? Đừng ngần ngại, đội ngũ học thuật của chúng tôi luôn sẵn sàng hỗ trợ bạn.

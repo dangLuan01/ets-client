@@ -1,4 +1,4 @@
-// app/test/toiec-listening-reading/[testId]/page.tsx
+// app/test/toeic-listening-reading/[testId]/page.tsx
 import { notFound } from 'next/navigation';
 import TestEngine from '@/components/TestEngine';
 import { examService } from '@/services/examService';

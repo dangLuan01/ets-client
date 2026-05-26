@@ -1,7 +1,7 @@
 export default function sitemap() {
   return [
     {
-      url: 'https://toiecviet.com',
+      url: 'https://toeicviet.com',
       lastModified: new Date(),
     },
   ];

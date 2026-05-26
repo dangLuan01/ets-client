@@ -68,7 +68,7 @@ export default function TermsOfServicePage() {
                 <section id="chap-nhan" className="mb-12 scroll-mt-32">
                     <h2 className="text-2xl font-black text-slate-900 mb-4 tracking-tight">1. Chấp nhận điều khoản</h2>
                     <p className="mb-4">
-                        Bằng việc truy cập, đăng ký tài khoản hoặc sử dụng bất kỳ tính năng nào trên website <strong className="text-slate-900">Toiecviet.com</strong> (sau đây gọi tắt là "Website", "Chúng tôi"), bạn xác nhận rằng bạn đã đọc, hiểu và đồng ý bị ràng buộc bởi các Điều khoản Sử dụng này.
+                        Bằng việc truy cập, đăng ký tài khoản hoặc sử dụng bất kỳ tính năng nào trên website <strong className="text-slate-900">Toeicviet.com</strong> (sau đây gọi tắt là "Website", "Chúng tôi"), bạn xác nhận rằng bạn đã đọc, hiểu và đồng ý bị ràng buộc bởi các Điều khoản Sử dụng này.
                     </p>
                     <p>
                         Nếu bạn không đồng ý với bất kỳ điều khoản nào, vui lòng ngừng sử dụng dịch vụ của chúng tôi ngay lập tức.
@@ -92,7 +92,7 @@ export default function TermsOfServicePage() {
                 <section id="ban-quyen" className="mb-12 scroll-mt-32">
                     <h2 className="text-2xl font-black text-slate-900 mb-4 tracking-tight">3. Bản quyền & Sở hữu trí tuệ</h2>
                     <p className="mb-4">
-                        Tất cả các tài liệu, giao diện người dùng, mã nguồn, bài viết hướng dẫn (Blog) và cấu trúc cơ sở dữ liệu trên website này đều thuộc sở hữu độc quyền của Toiecviet.com.
+                        Tất cả các tài liệu, giao diện người dùng, mã nguồn, bài viết hướng dẫn (Blog) và cấu trúc cơ sở dữ liệu trên website này đều thuộc sở hữu độc quyền của Toeicviet.com.
                     </p>
                     <div className="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-2xl my-6">
                         <p className="text-amber-900 font-bold text-sm mb-1">Lưu ý về đề thi ETS:</p>
@@ -124,7 +124,7 @@ export default function TermsOfServicePage() {
                 <section id="gioi-han" className="mb-12 scroll-mt-32">
                     <h2 className="text-2xl font-black text-slate-900 mb-4 tracking-tight">5. Giới hạn trách nhiệm</h2>
                     <p className="mb-4">
-                        Toiecviet.com luôn nỗ lực đảm bảo độ chính xác của đáp án và lời giải chi tiết lên đến 99%. Tuy nhiên, chúng tôi không cam kết nền tảng sẽ không bao giờ có lỗi (Typo, lỗi server).
+                        Toeicviet.com luôn nỗ lực đảm bảo độ chính xác của đáp án và lời giải chi tiết lên đến 99%. Tuy nhiên, chúng tôi không cam kết nền tảng sẽ không bao giờ có lỗi (Typo, lỗi server).
                     </p>
                     <p>
                         Chúng tôi không chịu trách nhiệm pháp lý cho việc điểm số thi thực tế tại IIG của bạn không đạt kỳ vọng (Target). Kết quả thi thực tế phụ thuộc vào sức khỏe, tâm lý và năng lực của bạn trong phòng thi.

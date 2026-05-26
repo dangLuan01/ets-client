@@ -207,7 +207,7 @@ const LoginRegisterModal = ({
         <div className="hidden md:flex md:w-5/12 bg-indigo-600 p-10 flex-col justify-between relative overflow-hidden text-white">
           <div className="relative z-10">
             <a href="#" className="text-2xl font-black tracking-tighter italic opacity-90">
-              Toiecviet<span className="text-indigo-300">.com</span>
+              Toeicviet<span className="text-indigo-300">.com</span>
             </a>
           </div>
 
@@ -389,7 +389,7 @@ const LoginRegisterModal = ({
                     <a href="/bao-mat" target="__blank" className="text-indigo-600 font-bold hover:underline">
                       Chính sách bảo mật
                     </a>{" "}
-                    của Toiecviet.com.
+                    của Toeicviet.com.
                   </p>
                   {userErrors.agree && <p className="text-red-500 text-xs mt-1">{userErrors.agree}</p>}
                 </div>

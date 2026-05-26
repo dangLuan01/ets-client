@@ -11,7 +11,7 @@ const Footer = ({ footerLinks }: Props) => {
         <div className="container mx-auto max-w-7xl px-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
                 <div className="space-y-6">
-                    <a href="#" className="text-2xl font-black tracking-tighter italic">Toiecviet<span className="text-indigo-600">.com</span></a>
+                    <a href="#" className="text-2xl font-black tracking-tighter italic">Toeicviet<span className="text-indigo-600">.com</span></a>
                     <p className="text-slate-500 text-sm leading-relaxed max-w-xs">
                         Hệ thống luyện thi TOEIC thông minh, cập nhật bộ đề ETS mới nhất 2026. Giúp bạn đạt mục tiêu nhanh hơn với luyện thi trên mọi thiết bị.
                     </p>

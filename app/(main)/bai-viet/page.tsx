@@ -5,7 +5,7 @@ import BlogContainer from '@/components/BlogContainer';
 import { tagService } from '@/services/tagService';
 import { Metadata } from 'next';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://toiecviet.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://toeicviet.com';
 
 export const metadata: Metadata = {
     title: 'Mẹo thi TOEIC - Bí kíp và kinh nghiệm luyện thi',
