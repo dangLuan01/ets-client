@@ -1,4 +1,4 @@
-import { AttemptApiResponse, AttemptResponse } from "@/types/attempt";
+import { AttemptApiResponse } from "@/types/attempt";
 import apiClient from "@/utils/apiClient";
 
 export const attemptService = {

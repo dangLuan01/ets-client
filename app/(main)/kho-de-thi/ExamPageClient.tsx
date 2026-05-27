@@ -59,7 +59,7 @@ const ExamCard = ({ exam }: { exam: ExamListItem }) => {
           <span><CircleQuestionMark className="w-3 h-3 mr-1 text-indigo-500" /> {exam.total_question} câu</span>
         </div>
 
-        <Link href={`/${exam.exam_type === "PRACTICE" ? 'practice' : 'test'}/${exam.cert_slug}/${exam.slug}`}>
+        <Link href={`/de-thi/${exam.cert_slug}/${exam.exam_type === "FULL" ? 'full-test' : exam.exam_type === "MINI" ? 'mini-test' : 'luyen-tap-part'}/${exam.slug}`}>
           <button className="w-full font-bold py-3 rounded-lg transition-all duration-300 bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white">
             Vào thi ngay
           </button>
@@ -91,7 +91,7 @@ const ExamListRow = ({ exam }: { exam: ExamListItem }) => {
           <span><i className="far fa-question-circle text-indigo-500 mr-1"></i>{exam.total_question} câu</span>
         </div>
       </div>
-      <Link href={`/${exam.exam_type === "PRACTICE" ? 'practice' : 'test'}/${exam.cert_slug}/${exam.slug}`}>
+      <Link href={`/de-thi/${exam.cert_slug}/${exam.exam_type === "FULL" ? 'full-test' : exam.exam_type === "MINI" ? 'mini-test' : 'luyen-tap-part'}/${exam.slug}`}>
         <button className="font-bold py-2 px-6 rounded-lg transition-all duration-300 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white whitespace-nowrap">
           Vào thi ngay
         </button>

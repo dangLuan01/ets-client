@@ -21,7 +21,15 @@ const nextConfig: NextConfig = {
   productionBrowserSourceMaps: false,
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
-  }
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/sitemap-exams-:page.xml',          // URL người dùng/Google gõ
+        destination: '/sitemap-exams/:page',     // File code thực sự xử lý trong App Router
+      },
+    ];
+  },
 };
 
 export default nextConfig;
