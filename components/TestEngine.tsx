@@ -466,7 +466,8 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
       <ResultScreen 
         slug={slug}
         examSlug={examSlug}
-        testResult={testResult} 
+        testResult={testResult}
+        examType={initialData.exam_type}
         onBack={() => {
           router.push('/');
         }} 

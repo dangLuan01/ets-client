@@ -56,7 +56,7 @@ export default function FeaturedExamsSlider({ featuredData }: FeaturedExamsSlide
                         <p className="text-xl font-black">{exam.total_question}</p>
                         <p className="text-[10px] text-slate-400 font-bold uppercase">Câu hỏi</p>
                     </div>
-                    <Link href={`/test/toeic-listening-reading/${exam.slug}`} className="bg-indigo-600 text-white px-8 py-3 rounded-2xl font-bold ml-auto shadow-xl">
+                    <Link href={`/de-thi/toeic-listening-reading/full-test/${exam.slug}`} className="bg-indigo-600 text-white px-8 py-3 rounded-2xl font-bold ml-auto shadow-xl">
                       THI NGAY
                     </Link>
                 </div>

@@ -125,72 +125,148 @@ const History = () => {
                 ) : (
                     attempts.map((attempt) => {
                         if (attempt.status === 1 && attempt.exam_type !== "PRACTICE") { // In-progress
-                            return (
-                                <div key={`${attempt.exam_slug}-${attempt.start_time}`} className="bg-white border-2 border-amber-100 rounded-[2rem] p-5 md:p-6 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 bg-amber-400 text-slate-900 text-[9px] font-black px-4 py-1.5 rounded-bl-xl uppercase tracking-widest">
-                                        Chưa hoàn thành
-                                    </div>
-                                    <div className="flex items-center gap-5 md:w-5/12 mt-3 md:mt-0">
-                                        <div className="w-14 h-14 bg-amber-50 text-amber-500 rounded-[1.25rem] flex items-center justify-center text-xl flex-shrink-0 group-hover:scale-110 transition-transform">
-                                            <i className="fas fa-pause-circle"></i>
+                            switch (attempt.exam_type) {
+                                case "FULL":
+                                    return (
+                                        <div key={`${attempt.exam_slug}-${attempt.start_time}`} className="bg-white border-2 border-amber-100 rounded-[2rem] p-5 md:p-6 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden group">
+                                            <div className="absolute top-0 right-0 bg-amber-400 text-slate-900 text-[9px] font-black px-4 py-1.5 rounded-bl-xl uppercase tracking-widest">
+                                                Chưa hoàn thành
+                                            </div>
+                                            <div className="flex items-center gap-5 md:w-5/12 mt-3 md:mt-0">
+                                                <div className="w-14 h-14 bg-amber-50 text-amber-500 rounded-[1.25rem] flex items-center justify-center text-xl flex-shrink-0 group-hover:scale-110 transition-transform">
+                                                    <i className="fas fa-pause-circle"></i>
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-lg font-black text-slate-900 leading-tight mb-1 group-hover:text-amber-600 transition">{attempt.title}</h3>
+                                                    <p className="text-xs font-bold text-slate-400"><i className="far fa-clock mr-1"></i> Tạm dừng: {new Date(attempt.start_time).toLocaleDateString()}</p>
+                                                </div>
+                                            </div>
+                                            <div className="md:w-4/12 px-2 md:px-6 md:border-x border-slate-100">
+                                                <div className="flex justify-between items-end mb-2">
+                                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tiến độ làm bài</span>
+                                                    <span className="text-xs font-black text-amber-500">{attempt.total_answer}/{attempt.total_question} câu</span>
+                                                </div>
+                                                <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                                                    <div className="bg-amber-400 h-full" style={{ width: `${(attempt.total_answer / attempt.total_question) * 100}%` }}></div>
+                                                </div>
+                                            </div>
+                                            <div className="md:w-3/12 flex justify-end lg:mt-1">
+                                                <Link href={`/de-thi/toeic-listening-reading/full-test/${attempt.exam_slug}`} className="w-full md:w-auto bg-slate-900 text-white px-8 py-3.5 rounded-2xl font-bold hover:bg-amber-500 transition-colors shadow-lg shadow-slate-200">
+                                                    Làm tiếp <i className="fas fa-play ml-2 text-xs"></i>
+                                                </Link>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 className="text-lg font-black text-slate-900 leading-tight mb-1 group-hover:text-amber-600 transition">{attempt.title}</h3>
-                                            <p className="text-xs font-bold text-slate-400"><i className="far fa-clock mr-1"></i> Tạm dừng: {new Date(attempt.start_time).toLocaleDateString()}</p>
+                                    );
+                                default:
+                                    return (
+                                        <div key={`${attempt.exam_slug}-${attempt.start_time}`} className="bg-white border-2 border-amber-100 rounded-[2rem] p-5 md:p-6 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden group">
+                                            <div className="absolute top-0 right-0 bg-amber-400 text-slate-900 text-[9px] font-black px-4 py-1.5 rounded-bl-xl uppercase tracking-widest">
+                                                Chưa hoàn thành
+                                            </div>
+                                            <div className="flex items-center gap-5 md:w-5/12 mt-3 md:mt-0">
+                                                <div className="w-14 h-14 bg-amber-50 text-amber-500 rounded-[1.25rem] flex items-center justify-center text-xl flex-shrink-0 group-hover:scale-110 transition-transform">
+                                                    <i className="fas fa-pause-circle"></i>
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-lg font-black text-slate-900 leading-tight mb-1 group-hover:text-amber-600 transition">{attempt.title}</h3>
+                                                    <p className="text-xs font-bold text-slate-400"><i className="far fa-clock mr-1"></i> Tạm dừng: {new Date(attempt.start_time).toLocaleDateString()}</p>
+                                                </div>
+                                            </div>
+                                            <div className="md:w-4/12 px-2 md:px-6 md:border-x border-slate-100">
+                                                <div className="flex justify-between items-end mb-2">
+                                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tiến độ làm bài</span>
+                                                    <span className="text-xs font-black text-amber-500">{attempt.total_answer}/{attempt.total_question} câu</span>
+                                                </div>
+                                                <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                                                    <div className="bg-amber-400 h-full" style={{ width: `${(attempt.total_answer / attempt.total_question) * 100}%` }}></div>
+                                                </div>
+                                            </div>
+                                            <div className="md:w-3/12 flex justify-end lg:mt-1">
+                                                <Link href={`/de-thi/toeic-listening-reading/mini-test/${attempt.exam_slug}`} className="w-full md:w-auto bg-slate-900 text-white px-8 py-3.5 rounded-2xl font-bold hover:bg-amber-500 transition-colors shadow-lg shadow-slate-200">
+                                                    Làm tiếp <i className="fas fa-play ml-2 text-xs"></i>
+                                                </Link>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="md:w-4/12 px-2 md:px-6 md:border-x border-slate-100">
-                                        <div className="flex justify-between items-end mb-2">
-                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tiến độ làm bài</span>
-                                            <span className="text-xs font-black text-amber-500">{attempt.total_answer}/{attempt.total_question} câu</span>
-                                        </div>
-                                        <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                                            <div className="bg-amber-400 h-full" style={{ width: `${(attempt.total_answer / attempt.total_question) * 100}%` }}></div>
-                                        </div>
-                                    </div>
-                                    <div className="md:w-3/12 flex justify-end lg:mt-1">
-                                        <Link href={`/test/toeic-listening-reading/${attempt.exam_slug}`} className="w-full md:w-auto bg-slate-900 text-white px-8 py-3.5 rounded-2xl font-bold hover:bg-amber-500 transition-colors shadow-lg shadow-slate-200">
-                                            Làm tiếp <i className="fas fa-play ml-2 text-xs"></i>
-                                        </Link>
-                                    </div>
-                                </div>
-                            );
+                                    );
+                                
+                            }
+                        
                         } else if (attempt.status === 2 && attempt.exam_type !== "PRACTICE") { // Completed
-                            return (
-                                <div key={`${attempt.exam_slug}-${attempt.start_time}`} className="bg-white border border-slate-100 rounded-[2rem] p-5 md:p-6 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 group">
-                                    <div className="flex items-center gap-5 md:w-5/12">
-                                        <div className="w-14 h-14 bg-slate-50 border border-slate-100 rounded-[1.25rem] flex items-center justify-center text-slate-400 text-xl flex-shrink-0 group-hover:bg-emerald-50 group-hover:text-emerald-500 group-hover:border-emerald-100 transition-colors">
-                                            <i className="fas fa-check"></i>
+                            switch (attempt.exam_type) {
+                                case "FULL":
+                                    return (
+                                    <div key={`${attempt.exam_slug}-${attempt.start_time}`} className="bg-white border border-slate-100 rounded-[2rem] p-5 md:p-6 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 group">
+                                        <div className="flex items-center gap-5 md:w-5/12">
+                                            <div className="w-14 h-14 bg-slate-50 border border-slate-100 rounded-[1.25rem] flex items-center justify-center text-slate-400 text-xl flex-shrink-0 group-hover:bg-emerald-50 group-hover:text-emerald-500 group-hover:border-emerald-100 transition-colors">
+                                                <i className="fas fa-check"></i>
+                                            </div>
+                                            <div>
+                                                <h3 className="text-lg font-black text-slate-900 leading-tight mb-1 group-hover:text-indigo-600 transition">{attempt.title}</h3>
+                                                <p className="text-xs font-bold text-slate-400"><i className="far fa-calendar-check mr-1"></i> Nộp bài: {attempt.end_time ? new Date(attempt.end_time).toLocaleDateString() : 'N/A'}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 className="text-lg font-black text-slate-900 leading-tight mb-1 group-hover:text-indigo-600 transition">{attempt.title}</h3>
-                                            <p className="text-xs font-bold text-slate-400"><i className="far fa-calendar-check mr-1"></i> Nộp bài: {attempt.end_time ? new Date(attempt.end_time).toLocaleDateString() : 'N/A'}</p>
+                                        <div className="flex justify-between md:justify-center gap-6 md:gap-8 md:w-4/12 border-y md:border-y-0 md:border-x border-slate-100 py-4 md:py-0 px-2 md:px-4">
+                                            <div className="text-center">
+                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Tổng điểm</p>
+                                                <p className="text-3xl font-black text-indigo-600">{attempt.total_score}</p>
+                                            </div>
+                                            <div className="text-center">
+                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Listening</p>
+                                                <p className="text-xl font-bold text-emerald-500">{attempt.listening_score}</p>
+                                            </div>
+                                            <div className="text-center">
+                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Reading</p>
+                                                <p className="text-xl font-bold text-amber-500">{attempt.reading_score}</p>
+                                            </div>
+                                        </div>
+                                        <div className="md:w-3/12 flex gap-3 justify-end">
+                                            <Link href={`/de-thi/toeic-listening-reading/full-test/${attempt.exam_slug}/giai-chi-tiet`} className="flex-1 md:flex-none bg-indigo-50 text-indigo-600 px-6 py-3.5 rounded-2xl font-bold text-sm hover:bg-indigo-600 hover:text-white transition-colors">
+                                                Xem chi tiết
+                                            </Link>
+                                            <Link href={`/de-thi/toeic-listening-reading/full-test/${attempt.exam_slug}`} className="w-12 h-12 flex-shrink-0 bg-slate-50 text-slate-500 rounded-2xl flex items-center justify-center hover:bg-slate-200 hover:text-slate-900 transition-colors" title="Làm lại đề này">
+                                                <i className="fas fa-redo text-sm"></i>
+                                            </Link>
                                         </div>
                                     </div>
-                                    <div className="flex justify-between md:justify-center gap-6 md:gap-8 md:w-4/12 border-y md:border-y-0 md:border-x border-slate-100 py-4 md:py-0 px-2 md:px-4">
-                                        <div className="text-center">
-                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Tổng điểm</p>
-                                            <p className="text-3xl font-black text-indigo-600">{attempt.total_score}</p>
+                                )
+                                default:
+                                    return (
+                                    <div key={`${attempt.exam_slug}-${attempt.start_time}`} className="bg-white border border-slate-100 rounded-[2rem] p-5 md:p-6 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 group">
+                                        <div className="flex items-center gap-5 md:w-5/12">
+                                            <div className="w-14 h-14 bg-slate-50 border border-slate-100 rounded-[1.25rem] flex items-center justify-center text-slate-400 text-xl flex-shrink-0 group-hover:bg-emerald-50 group-hover:text-emerald-500 group-hover:border-emerald-100 transition-colors">
+                                                <i className="fas fa-check"></i>
+                                            </div>
+                                            <div>
+                                                <h3 className="text-lg font-black text-slate-900 leading-tight mb-1 group-hover:text-indigo-600 transition">{attempt.title}</h3>
+                                                <p className="text-xs font-bold text-slate-400"><i className="far fa-calendar-check mr-1"></i> Nộp bài: {attempt.end_time ? new Date(attempt.end_time).toLocaleDateString() : 'N/A'}</p>
+                                            </div>
                                         </div>
-                                        <div className="text-center">
-                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Listening</p>
-                                            <p className="text-xl font-bold text-emerald-500">{attempt.listening_score}</p>
+                                        <div className="flex justify-between md:justify-center gap-6 md:gap-8 md:w-4/12 border-y md:border-y-0 md:border-x border-slate-100 py-4 md:py-0 px-2 md:px-4">
+                                            <div className="text-center">
+                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Tổng điểm</p>
+                                                <p className="text-3xl font-black text-indigo-600">{attempt.total_score}</p>
+                                            </div>
+                                            <div className="text-center">
+                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Listening</p>
+                                                <p className="text-xl font-bold text-emerald-500">{attempt.listening_score}</p>
+                                            </div>
+                                            <div className="text-center">
+                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Reading</p>
+                                                <p className="text-xl font-bold text-amber-500">{attempt.reading_score}</p>
+                                            </div>
                                         </div>
-                                        <div className="text-center">
-                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Reading</p>
-                                            <p className="text-xl font-bold text-amber-500">{attempt.reading_score}</p>
+                                        <div className="md:w-3/12 flex gap-3 justify-end">
+                                            <Link href={`/toeic-listening-reading/mini-test/${attempt.exam_slug}/giai-chi-tiet`} className="flex-1 md:flex-none bg-indigo-50 text-indigo-600 px-6 py-3.5 rounded-2xl font-bold text-sm hover:bg-indigo-600 hover:text-white transition-colors">
+                                                Xem chi tiết
+                                            </Link>
+                                            <Link href={`/de-thi/toeic-listening-reading/mini-test/${attempt.exam_slug}`} className="w-12 h-12 flex-shrink-0 bg-slate-50 text-slate-500 rounded-2xl flex items-center justify-center hover:bg-slate-200 hover:text-slate-900 transition-colors" title="Làm lại đề này">
+                                                <i className="fas fa-redo text-sm"></i>
+                                            </Link>
                                         </div>
                                     </div>
-                                    <div className="md:w-3/12 flex gap-3 justify-end">
-                                        <Link href={`/explanation/toeic-listening-reading/${attempt.exam_slug}`} className="flex-1 md:flex-none bg-indigo-50 text-indigo-600 px-6 py-3.5 rounded-2xl font-bold text-sm hover:bg-indigo-600 hover:text-white transition-colors">
-                                            Xem chi tiết
-                                        </Link>
-                                        <Link href={`/test/toeic-listening-reading/${attempt.exam_slug}`} className="w-12 h-12 flex-shrink-0 bg-slate-50 text-slate-500 rounded-2xl flex items-center justify-center hover:bg-slate-200 hover:text-slate-900 transition-colors" title="Làm lại đề này">
-                                            <i className="fas fa-redo text-sm"></i>
-                                        </Link>
-                                    </div>
-                                </div>
-                            )
+                                )
+                            }
+                            
                         } else if (attempt.exam_type == "PRACTICE" && attempt.status === 2)  {
                             return (
                                 <div key={`${attempt.exam_slug}-${attempt.start_time}`} className="bg-white border border-slate-100 rounded-[2rem] p-5 md:p-6 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 group">
@@ -213,7 +289,7 @@ const History = () => {
                                     </div>
     
                                     <div className="md:w-3/12 flex justify-end">
-                                        <Link href={`/explanation/toeic-listening-reading/${attempt.exam_slug}`} className="w-full md:w-auto bg-indigo-50 text-indigo-600 px-8 py-3.5 rounded-2xl font-bold text-sm hover:bg-indigo-600 hover:text-white transition-colors">
+                                        <Link href={`/de-thi/toeic-listening-reading/luyen-tap-part/${attempt.exam_slug}/giai-chi-tiet`} className="w-full md:w-auto bg-indigo-50 text-indigo-600 px-8 py-3.5 rounded-2xl font-bold text-sm hover:bg-indigo-600 hover:text-white transition-colors">
                                             Xem đáp án
                                         </Link>
                                     </div>
