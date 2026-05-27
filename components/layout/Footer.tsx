@@ -65,8 +65,8 @@ const Footer = ({ footerLinks }: Props) => {
             <div className="mt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold text-slate-400 uppercase tracking-tighter text-center">
                 <p>© 2026 toiecviet.VN - MADE WITH <i className="fas fa-heart text-red-500 mx-1"></i> BY ETS TEST TEAM</p>
                 <div className="flex gap-6">
-                    <Link href="/dieu-khoan" className="hover:text-slate-900">Điều khoản</Link>
-                    <Link href="/bao-mat" className="hover:text-slate-900">Bảo mật</Link>
+                    <Link href="/dieu-khoan-su-dung" className="hover:text-slate-900">Điều khoản</Link>
+                    <Link href="/chinh-sach-bao-mat" className="hover:text-slate-900">Bảo mật</Link>
                     <Link href="/lien-he" className="hover:text-slate-900">Liên hệ</Link>
                 </div>
             </div>

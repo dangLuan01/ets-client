@@ -160,11 +160,17 @@ export default function SearchBar({
 
     let url: string = '';
     
-    if (result.exam_type === "PRACTICE") {
-        url = `/practice/${result.cert_slug}/${result.slug}`
-    } else {
-        url = `/test/${result.cert_slug}/${result.slug}`
+    switch (result.exam_type) {
+      case "FULL":
+        url = `/de-thi/${result.cert_slug}/full-test/${result.slug}`        
+        break;
+      case "MINI":
+        url = `/de-thi/${result.cert_slug}/mini-test/${result.slug}`
+      default:
+        url = `/de-thi/${result.cert_slug}/luyen-tap-part/${result.slug}`
+        break;
     }
+    
     router.push(url)
   };
 
