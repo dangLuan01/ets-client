@@ -194,10 +194,11 @@ export default function PracticeEngine({ initialData, examSlug, slug }: Practice
 
   if (testResult) {
       return (
-        <ResultScreen 
+        <ResultScreen
           slug={slug}
           examSlug={examSlug}
-          testResult={testResult} 
+          testResult={testResult}
+          examType={initialData.exam_type}
           onBack={() => {
             router.push('/');
           }} 
