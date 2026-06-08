@@ -1,22 +1,6 @@
-"use client";
-import React, { useState } from 'react';
 import Link from 'next/link';
-import { useNotification } from '@/components/NotificationContext';
 
 export default function ContactPage() {
-    const notify = useNotification();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    // Giả lập API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      notify.success("Gửi thành công!", "Chúng tôi sẽ phản hồi bạn trong thời gian sớm nhất 🫶 🫶 🫶.");      
-    }, 1500);
-  };
 
   return (
     <main className="max-w-6xl mx-auto px-4 md:px-6 pt-5 lg:pt-24">
@@ -101,7 +85,7 @@ export default function ContactPage() {
                 <h2 className="text-2xl font-black text-slate-900 mb-2">Gửi tin nhắn cho chúng tôi</h2>
                 <p className="text-sm text-slate-500 mb-8 font-medium">Bạn có góp ý hoặc báo lỗi câu hỏi? Vui lòng điền form bên dưới nhé.</p>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Tên */}
                         <div>
@@ -151,16 +135,8 @@ export default function ContactPage() {
                     </div>
 
                     {/* Nút Submit */}
-                    <button 
-                        type="submit" 
-                        disabled={isSubmitting}
-                        className="w-full bg-slate-900 text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-indigo-600 hover:shadow-indigo-200 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3"
-                    >
-                        {isSubmitting ? (
-                            <><i className="fas fa-spinner fa-spin"></i> Đang gửi...</>
-                        ) : (
-                            <><i className="fas fa-paper-plane"></i> Gửi tin nhắn</>
-                        )}
+                    <button type="submit" className="w-full bg-slate-900 text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-indigo-600 hover:shadow-indigo-200 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3">
+                       <i className="fas fa-paper-plane"></i> Gửi tin nhắn   
                     </button>
                     <p className="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">
                         Chúng tôi cam kết bảo mật thông tin của bạn.

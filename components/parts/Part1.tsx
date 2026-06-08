@@ -118,7 +118,7 @@ export default function Part1({ item }: Part1Props) {
             quality='auto'
             priority={true}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 60vw"
-            className="max-h-[300px] md:max-h-[450px] w-auto object-contain pointer-events-none select-none"            
+            className="max-h-[300px] md:max-h-[550px] w-auto object-contain pointer-events-none select-none"            
             // overlays={[
             //   {
             //     publicId: 'logo-watermark_rdtggu',  

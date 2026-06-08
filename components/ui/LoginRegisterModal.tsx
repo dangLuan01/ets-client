@@ -10,7 +10,7 @@ import { useNotification } from "../NotificationContext";
 import { tagetList } from "@/app/(main)/ca-nhan/page";
 import { ApiErrorResponse } from "@/types/error";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.vidhub.io.vn';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.toeicviet.com';
 
 
 const LoginRegisterModal = ({
