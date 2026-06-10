@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
 import { AttemptPayload, ResumedAttempt, ResumedAttemptData } from '@/types/attempt';
 import { formatTime } from '@/utils/helper';
+import { CldImage } from 'next-cloudinary';
 
 interface PageProps {
   slug: string;
@@ -232,12 +233,17 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
           </div>
           {/* Image */}
           <div className="w-full max-w-3xl mb-10 flex justify-center">
-            <img 
-              src={currentItem.image_url} 
-              alt="Example"
-              referrerPolicy="no-referrer"
-              className="max-h-[280px] w-auto object-contain rounded-md pointer-events-none select-none"
-            />
+          <CldImage 
+           src={currentItem.image_url ?? ""} 
+            alt="Example"
+            width={1920}
+            height={1080}
+            format='auto'
+            quality='auto'
+            priority={true}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 60vw"
+            className="max-h-[280px] w-auto object-contain rounded-md pointer-events-none select-none"
+          />
           </div>
           {/* Explanation */}
           <div className="w-full max-w-2xl">
