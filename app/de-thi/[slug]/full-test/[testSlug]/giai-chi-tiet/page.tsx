@@ -8,7 +8,7 @@ interface PageProps {
   }>;
 }
 
-export default async function ExplanationPage({ params }:PageProps  ) {
+export default async function ExplanationPage({ params }:PageProps ) {
     const resolvedParams = await params;
     const { testSlug } = resolvedParams;
 

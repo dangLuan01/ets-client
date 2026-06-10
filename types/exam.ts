@@ -35,6 +35,7 @@ export interface ExamPayload {
   audio_full_url: string;
   total_time: number;
   total_question: number;
+  thumbnail: string;
   skills: ExamSkill[];
 }
 
