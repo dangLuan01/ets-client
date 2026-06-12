@@ -166,6 +166,7 @@ export default function SearchBar({
         break;
       case "MINI":
         url = `/de-thi/${result.cert_slug}/mini-test/${result.slug}`
+        break;
       default:
         url = `/de-thi/${result.cert_slug}/luyen-tap-part/${result.slug}`
         break;
