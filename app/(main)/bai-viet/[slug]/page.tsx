@@ -1,3 +1,4 @@
+import CloudImage from '@/components/CloudImage';
 import ShareButtons from '@/components/ui/ShareButtons';
 import TableOfContents from '@/components/ui/TableOfContents';
 import { postService } from '@/services/postService';
@@ -77,7 +78,8 @@ const BaiVietPage = async ({params}: PageProps) => {
         </header>
 
         <div className="max-w-5xl mx-auto rounded-[3rem] overflow-hidden mb-16 shadow-2xl shadow-indigo-100/50">
-            <img src={detailPostData?.thumbnail_url} className="w-full aspect-[21/9] object-cover"/>
+            {/* <img src={detailPostData?.thumbnail_url} className="w-full aspect-[21/9] object-cover"/> */}
+            <CloudImage src={detailPostData?.thumbnail_url || ""} alt={detailPostData?.name || ""} width={1080} height={1920} className={"w-full aspect-[21/9] object-cover"}/>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-16 relative">
