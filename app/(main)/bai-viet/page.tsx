@@ -4,6 +4,7 @@ import { Post } from '@/types/post';
 import BlogContainer from '@/components/BlogContainer';
 import { tagService } from '@/services/tagService';
 import { Metadata } from 'next';
+import CloudImage from '@/components/CloudImage';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://toeicviet.com';
 
@@ -57,7 +58,7 @@ const BlogPage = async () => {
                 {hotPostData?.response?.[0] && (
                     <div className="md:col-span-8 bento-item relative rounded-[2.5rem] overflow-hidden group cursor-pointer aspect-video md:aspect-auto md:h-[450px]">
                         <Link href={`/bai-viet/${hotPostData.response[0].slug}`}>
-                            <img src={hotPostData.response[0].thumbnail_url} className="w-full h-full object-cover transition duration-700"/>
+                           <CloudImage src={hotPostData.response[0].thumbnail_url} fill alt={hotPostData.response[0].name} className={"w-full h-full object-cover transition duration-700"}/>
                             <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent"></div>
                             <div className="absolute bottom-8 left-8 right-8">
                                 <span className="bg-indigo-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase mb-4 inline-block">{hotPostData.response[0].tags?.[0].name}</span>
