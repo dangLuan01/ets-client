@@ -15,9 +15,9 @@ interface BlogContainerProps {
 }
 
 const BlogContainer: React.FC<BlogContainerProps> = ({ initialPosts, initialPagination, initialTags }) => {
-    const router = useRouter();
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
+    const router        = useRouter();
+    const pathname      = usePathname();
+    const searchParams  = useSearchParams();
 
     const [posts, setPosts] = useState<Post[]>(initialPosts);
     const [pagination, setPagination] = useState<Pagination | null>(initialPagination);

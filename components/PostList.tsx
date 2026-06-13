@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState, useRef } from 'react';
 import { Post, Pagination } from '@/types/post';
+import CloudImage from './CloudImage';
 
 const textColors = [
     "text-emerald-600", "text-indigo-600", "text-violet-600", "text-amber-600", "text-yellow-600",
@@ -74,7 +75,7 @@ const PostList: React.FC<PostListProps> = ({ posts, pagination, isLoading, curre
                         posts.map((post, index) => (
                             <article key={post.slug} className="flex flex-col md:flex-row gap-6 md:items-center group cursor-pointer">
                                 <div className="w-full md:w-48 h-32 rounded-3xl overflow-hidden flex-shrink-0 border border-slate-50 shadow-sm">
-                                    <Image
+                                    {/* <Image
                                         src={post.thumbnail_url}
                                         alt={post.name}
                                         width={192}
@@ -82,7 +83,8 @@ const PostList: React.FC<PostListProps> = ({ posts, pagination, isLoading, curre
                                         className="w-full h-full object-cover transition group-hover:scale-105"
                                         key={post.slug + '-img'}
                                         unoptimized
-                                    />
+                                    /> */}
+                                    <CloudImage src={post.thumbnail_url} alt={post.name} height={128} width={192} className={"w-full h-full object-cover transition group-hover:scale-105"}/>
                                 </div>
                                 <div className="flex-1 space-y-2">
                                     <div className="flex items-center gap-3 text-[10px] font-bold text-slate-400 uppercase">
