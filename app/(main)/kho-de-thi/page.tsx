@@ -64,8 +64,6 @@ const KhoDeThiPage = async ({
     };
 
     if (sort !== 'all') {
-        console.log(sort);
-        
         apiParams.sort = sort;
     }
 

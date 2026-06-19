@@ -7,7 +7,7 @@ import Part2 from '@/components/parts/Part2';
 import Part3_4 from '@/components/parts/Part3_4';
 import Part5 from './parts/Part5';
 import Part6 from './parts/Part6';
-import Part7 from './parts/Part7';
+//import Part7 from './parts/Part7';
 import SubmitModal from './ui/SubmitModal';
 import QuestionListModal from './ui/QuestionListModal';
 import { examService } from '@/services/examService';
@@ -487,7 +487,7 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
       totalQuestion={initialData.total_question || 200}
       // Nếu chưa bắt đầu, đổi Header thành "Ready to Start"
       headerTitle={!isTestStarted ? "Ready to Start" : headerTitle}
-      currentQuestionNumber={!isTestStarted ? "-" : currentQuestionNumber}
+      currentQuestionNumber={!isTestStarted ? "-" : Object.keys(answers).length}
       audioUrl={initialData.audio_full_url}
       // BƯỚC QUAN TRỌNG: Nếu chưa bắt đầu, truyền null để chặn logic tự nhảy câu
       currentAudioStartMs={isTestStarted ? (currentAudioStartMs ?? null) : null}
@@ -498,6 +498,7 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
       isReviewMode={false}
       isTestStarted={isTestStarted}
       currentItem={currentItem}
+      speed={initialData.speed}
     >
       <SubmitModal 
         flatItemsList={flatItemsList} 

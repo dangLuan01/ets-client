@@ -230,6 +230,7 @@ export default function PracticeEngine({ initialData, examSlug, slug }: Practice
       isPracticeMode={true}
       isTestStarted={true}
       currentItem={currentItem}
+      speed={initialData.speed}
     >
       <SubmitModal 
         flatItemsList={flatItemsList} 

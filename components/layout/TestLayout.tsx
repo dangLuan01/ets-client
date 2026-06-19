@@ -22,6 +22,7 @@ interface TestLayoutProps {
   isPracticeMode?: boolean;
   isTestStarted?:boolean;
   currentItem?: any;
+  speed: number;
 }
 
 export default function TestLayout({ 
@@ -39,7 +40,8 @@ export default function TestLayout({
   isReviewMode = false,
   isPracticeMode = false,
   isTestStarted = false,
-  currentItem
+  currentItem,
+  speed
 }: TestLayoutProps) {
   const router = useRouter();
   
@@ -65,7 +67,8 @@ export default function TestLayout({
           "h-1 opacity-0 pointer-events-none"}
         >
           <GlobalAudioPlayer
-            audioUrl={audioUrl} 
+            audioUrl={audioUrl}
+            speed={speed}
             currentAudioStartMs={currentAudioStartMs || null} 
             currentAudioEndMs={currentAudioEndMs || null} 
             currentSkillCode={currentSkillCode}
