@@ -8,7 +8,7 @@ import Part2 from '@/components/parts/Part2';
 import Part3_4 from '@/components/parts/Part3_4';
 import Part5 from '@/components/parts/Part5';
 import Part6 from '@/components/parts/Part6';
-import Part7 from '@/components/parts/Part7';
+//import Part7 from '@/components/parts/Part7';
 import QuestionListModal from '@/components/ui/QuestionListModal';
 
 interface ExplanationEngineProps {
@@ -116,6 +116,7 @@ export default function ExplanationEngine({ initialData }: ExplanationEngineProp
       isPracticeMode={false}
       isTestStarted={true}
       currentItem={currentItem}
+      speed={initialData.speed}
     >
       {/* Modal danh sách 200 câu hỏi (Dùng chung với thi thật) */}
       <QuestionListModal flatItemsList={flatItemsList} isReviewMode={true}/>

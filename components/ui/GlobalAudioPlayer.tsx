@@ -7,6 +7,7 @@ import { Play, Pause } from 'lucide-react';
 
 interface GlobalAudioPlayerProps {
   audioUrl: string;
+  speed: number | 1;
   currentAudioStartMs: number | null;
   currentAudioEndMs: number | null;
   currentSkillCode?: string;
@@ -14,7 +15,7 @@ interface GlobalAudioPlayerProps {
 }
 
 export default function GlobalAudioPlayer({ 
-  audioUrl, currentAudioStartMs, currentAudioEndMs, currentSkillCode, screenType
+  audioUrl, speed, currentAudioStartMs, currentAudioEndMs, currentSkillCode, screenType
 }: GlobalAudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -36,13 +37,24 @@ export default function GlobalAudioPlayer({
     // Kiểm tra xem trình duyệt có cần Hls.js không (Chrome, Firefox, Edge...)
     if (Hls.isSupported()) {
       hls = new Hls({
-        // Cấu hình tối ưu cho audio dài
-        maxBufferLength: 30, 
+        enableWorker: true,
+        maxBufferLength: 30,
+        maxMaxBufferLength: 60,
+        startFragPrefetch: true,
+        fragLoadingMaxRetry: 6,
+        fragLoadingTimeOut: 15000,
       });
       hls.loadSource(audioUrl);
       hls.attachMedia(audioRef.current);
       
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        if (audioRef.current) {
+          if (screenType === 'DIRECTION' || screenType === 'EXAMPLE') {
+            audioRef.current.playbackRate = 1;  
+          } else {
+            audioRef.current.playbackRate = speed;
+          }
+        }
         //console.log("Đã tải xong luồng M3U8!");
       });
     } 
@@ -163,7 +175,7 @@ export default function GlobalAudioPlayer({
       
       // Lỗi số 2 là MEDIA_ERR_NETWORK (Bị đứt mạng giữa chừng giống lỗi bạn gặp)
       if (error.code === 2) {
-        console.log("🔄 Phát hiện CDN ngắt kết nối. Đang tự động tải lại luồng Audio...");
+        console.warn("🔄 Phát hiện CDN ngắt kết nối. Đang tự động tải lại luồng Audio...");
         
         // Lưu lại vị trí đang nghe dở
         const savedTime = audioEl.currentTime;
@@ -173,7 +185,7 @@ export default function GlobalAudioPlayer({
         
         // Tua lại đúng chỗ vừa đứt và phát tiếp
         audioEl.currentTime = savedTime;
-        audioEl.play().catch(err => console.log("Không thể tự động phát lại:", err));
+        audioEl.play().catch(err => console.error("Không thể tự động phát lại:", err));
       }
     }
   };

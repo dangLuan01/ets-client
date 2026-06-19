@@ -7,7 +7,7 @@ import Part2 from '@/components/parts/Part2';
 import Part3_4 from '@/components/parts/Part3_4';
 import Part5 from './parts/Part5';
 import Part6 from './parts/Part6';
-import Part7 from './parts/Part7';
+//import Part7 from './parts/Part7';
 import SubmitModal from './ui/SubmitModal';
 import QuestionListModal from './ui/QuestionListModal';
 import { examService } from '@/services/examService';
@@ -498,6 +498,7 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
       isReviewMode={false}
       isTestStarted={isTestStarted}
       currentItem={currentItem}
+      speed={initialData.speed}
     >
       <SubmitModal 
         flatItemsList={flatItemsList} 
