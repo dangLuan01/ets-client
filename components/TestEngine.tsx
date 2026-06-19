@@ -487,7 +487,7 @@ export default function TestEngine({ initialData, slug, examSlug }: PageProps) {
       totalQuestion={initialData.total_question || 200}
       // Nếu chưa bắt đầu, đổi Header thành "Ready to Start"
       headerTitle={!isTestStarted ? "Ready to Start" : headerTitle}
-      currentQuestionNumber={!isTestStarted ? "-" : currentQuestionNumber}
+      currentQuestionNumber={!isTestStarted ? "-" : Object.keys(answers).length}
       audioUrl={initialData.audio_full_url}
       // BƯỚC QUAN TRỌNG: Nếu chưa bắt đầu, truyền null để chặn logic tự nhảy câu
       currentAudioStartMs={isTestStarted ? (currentAudioStartMs ?? null) : null}
